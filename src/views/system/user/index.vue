@@ -343,13 +343,13 @@ export default {
           type: 'warning'
         })
         return false
-      } else if (crud.form.jobs.length === 0) {
+      } else if (this.jobDatas.length === 0) {
         this.$message({
           message: '岗位不能为空',
           type: 'warning'
         })
         return false
-      } else if (crud.form.roles.length === 0) {
+      } else if (this.roleDatas.length === 0) {
         this.$message({
           message: '角色不能为空',
           type: 'warning'
@@ -475,7 +475,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
- ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
+  ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
     height: 30px;
     line-height: 30px;
   }
