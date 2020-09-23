@@ -17,7 +17,7 @@
       </crudOperation>
     </div>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @sort-change="crud.changeSortHandler" @selection-change="crud.selectionChangeHandler">
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -42,7 +42,7 @@
           <el-tag v-else type="danger">{{ scope.row.time }}ms</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建日期" width="180px">
+      <el-table-column prop="createTime" label="创建日期" width="180px" sortable="custom">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>

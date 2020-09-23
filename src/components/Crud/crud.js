@@ -376,6 +376,27 @@ function CRUD(options) {
     selectionChangeHandler(val) {
       crud.selections = val
     },
+    // 改变排序参数
+    changeSortHandler(val) {
+      console.log(val)
+      const sortColumn = val.prop
+      const sortOrder = val.order
+      var order = 'asc'
+      if (sortOrder === 'descending') {
+        order = 'desc'
+      } else if (sortOrder === 'ascending') {
+        order = 'asc'
+      } else {
+        order = null
+      }
+      if (order != null) {
+        crud.sort = [sortColumn + ',' + order]
+      } else {
+        crud.sort = defaultOptions.sort
+      }
+      crud.toQuery()
+      // column: {…} order: "ascending" prop: "date"// 根据当前排序重新获取后台数据,一般后台会需要一个排序的参数
+    },
     /**
      * 重置查询参数
      * @param {Boolean} toQuery 重置后进行查询操作
