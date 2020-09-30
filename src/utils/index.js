@@ -386,3 +386,11 @@ export function downloadFile(obj, name, suffix) {
   link.click()
   document.body.removeChild(link)
 }
+
+export function getElDictDesc(elDicValue, elDicKey, vueObj) {
+  if (vueObj._self.el_dict.dict[elDicKey] && vueObj._self.el_dict.dict[elDicKey][elDicValue]) {
+    return vueObj._self.el_dict.dict[elDicKey][elDicValue].desc
+  } else {
+    return '请引入字典' + elDicKey + '查看' + elDicValue + '释意'
+  }
+}

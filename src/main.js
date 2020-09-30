@@ -11,6 +11,7 @@ import 'mavon-editor/dist/css/index.css'
 
 // 数据字典
 import dict from './components/Dict'
+import el_dict from './components/ElDict'
 
 // 权限指令
 import permission from './components/Permission'
@@ -34,6 +35,7 @@ Vue.use(VueHighlightJS)
 Vue.use(mavonEditor)
 Vue.use(permission)
 Vue.use(dict)
+Vue.use(el_dict)
 Vue.use(Element, {
   size: Cookies.get('size') || 'small' // set element-ui default size
 })

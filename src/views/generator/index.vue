@@ -21,9 +21,9 @@
       </crudOperation>
     </div>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler" @sort-change="crud.changeSortHandler">
       <el-table-column type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" prop="tableName" label="表名" />
+      <el-table-column :show-overflow-tooltip="true" prop="tableName" label="表名" sortable="custom" />
       <el-table-column :show-overflow-tooltip="true" prop="engine" label="数据库引擎" />
       <el-table-column :show-overflow-tooltip="true" prop="coding" label="字符编码集" />
       <el-table-column :show-overflow-tooltip="true" prop="remark" label="备注" />

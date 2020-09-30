@@ -4,7 +4,8 @@ import {
 } from '@/api/data'
 import {
   parseTime,
-  downloadFile
+  downloadFile,
+  getElDictDesc
 } from '@/utils/index'
 import checkPermission from '@/utils/permission'
 
@@ -51,6 +52,7 @@ export default {
   methods: {
     parseTime,
     downloadFile,
+    getElDictDesc,
     checkPermission,
     async init() {
       if (!await this.beforeInit()) {
