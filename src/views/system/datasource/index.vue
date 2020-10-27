@@ -189,7 +189,7 @@ export default {
     padding: 0 20px 10px 20px !important;
   }
   .java.hljs {
-    color: #444;
+    color: #444444;
     background: #ffffff !important;
     height: 630px !important;
   }
