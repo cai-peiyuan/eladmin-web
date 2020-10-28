@@ -1,11 +1,16 @@
 <template>
   <div class="navbar">
+    <!-- 切换导航显示 -->
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
+    <!-- 页面路由路径 -->
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
+    <!-- 主页头部右侧菜单功能显示 -->
     <div class="right-menu">
+      <!-- 移动设备不显示 -->
       <template v-if="device!=='mobile'">
+
         <search id="header-search" class="right-menu-item" />
 
         <el-tooltip content="项目文档" effect="dark" placement="bottom">

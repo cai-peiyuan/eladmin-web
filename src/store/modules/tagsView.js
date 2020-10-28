@@ -93,12 +93,14 @@ const actions = {
       })
     })
   },
+
   delVisitedView({ commit, state }, view) {
     return new Promise(resolve => {
       commit('DEL_VISITED_VIEW', view)
       resolve([...state.visitedViews])
     })
   },
+
   delCachedView({ commit, state }, view) {
     return new Promise(resolve => {
       commit('DEL_CACHED_VIEW', view)
@@ -116,12 +118,14 @@ const actions = {
       })
     })
   },
+
   delOthersVisitedViews({ commit, state }, view) {
     return new Promise(resolve => {
       commit('DEL_OTHERS_VISITED_VIEWS', view)
       resolve([...state.visitedViews])
     })
   },
+
   delOthersCachedViews({ commit, state }, view) {
     return new Promise(resolve => {
       commit('DEL_OTHERS_CACHED_VIEWS', view)

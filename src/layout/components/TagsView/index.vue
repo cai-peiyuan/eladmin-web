@@ -1,4 +1,5 @@
 <template>
+  <!-- 中间tab页组件 -->
   <div id="tags-view-container" class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper">
       <router-link
@@ -16,12 +17,15 @@
         <span v-if="!tag.meta.affix" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
       </router-link>
     </scroll-pane>
-    <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+
+    <!-- 右键菜单 -->
+    <ul v-show="visible" :style="{left:left+1+'px',top:top+1+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">刷新</li>
       <li v-if="!(selectedTag.meta&&selectedTag.meta.affix)" @click="closeSelectedTag(selectedTag)">关闭</li>
       <li @click="closeOthersTags">关闭其他</li>
       <li @click="closeAllTags(selectedTag)">关闭全部</li>
     </ul>
+
   </div>
 </template>
 
@@ -121,6 +125,7 @@ export default {
         }
       })
     },
+    // 刷新指定tab内的页面
     refreshSelectedTag(view) {
       this.$store.dispatch('tagsView/delCachedView', view).then(() => {
         const { fullPath } = view
@@ -192,6 +197,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .tags-view-container {
   height: 34px;
   width: 100%;
