@@ -40,7 +40,7 @@ export const constantRouterMap = [
         path: 'dashboard',
         component: (resolve) => require(['@/views/home'], resolve),
         name: 'Dashboard',
-        meta: { title: '首页', icon: 'index', affix: true, noCache: true }
+        meta: { title: '首页', icon: 'index', affix: true, noCache: false }
       }
     ]
   },
