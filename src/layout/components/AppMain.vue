@@ -5,6 +5,7 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
+    <!-- 底部版权信息 -->
     <div v-if="$store.state.settings.showFooter" id="el-main-footer">
       <span v-html="$store.state.settings.footerTxt" />
       <span> .... </span>

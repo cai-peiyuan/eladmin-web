@@ -1,3 +1,4 @@
+<!-- 顶部导航组件 -->
 <template>
   <div class="navbar">
     <!-- 切换导航显示 -->

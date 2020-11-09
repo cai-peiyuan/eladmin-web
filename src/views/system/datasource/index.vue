@@ -39,7 +39,8 @@
             <el-input v-model="form.driverClass" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="密码" prop="userPassword">
-            <el-input v-model="form.userPassword" type="password" style="width: 370px;" />
+            <el-input v-model="form.userPassword" type="password" style="width: 200px;" />
+            <el-button :loading="loading" type="success" style="align: right;" @click="testConnectDataSource">测试连接</el-button>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -108,6 +109,7 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import { testDataSourceConnect } from '@/api/mnt/connect'
 
 const defaultForm = { dsId: null, dsName: null, dsKey: null, jdbcUrl: null, userName: null, createBy: null, updateBy: null, createTime: null, updateTime: null, dsType: null, driverClass: null, userPassword: null }
 export default {
@@ -122,6 +124,7 @@ export default {
   dicts: ['user_status', 'job_status'],
   data() {
     return {
+      loading: false,
       permission: {
         add: ['admin', 'elSysDatasource:add'],
         edit: ['admin', 'elSysDatasource:edit'],
@@ -154,6 +157,23 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    testConnectDataSource() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          testDataSourceConnect(this.form).then((res) => {
+            this.loading = false
+            this.$notify({
+              title: res.success ? '连接成功' : res.message,
+              type: res.success ? 'success' : 'error',
+              duration: 2500
+            })
+          }).catch(() => {
+            this.loading = false
+          })
+        }
+      })
     }
     /*,
     // 根据字典值和字典名称获取字典释义

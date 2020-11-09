@@ -102,18 +102,16 @@
       @selection-change="crud.selectionChangeHandler"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" label="菜单标题" width="125px" prop="title" />
+      <el-table-column :show-overflow-tooltip="true" label="菜单标题" width="200px" prop="title" />
       <el-table-column prop="icon" label="图标" align="center" width="60px">
         <template slot-scope="scope">
           <svg-icon :icon-class="scope.row.icon ? scope.row.icon : ''" />
         </template>
       </el-table-column>
-      <el-table-column prop="menuSort" align="center" label="排序">
-        <template slot-scope="scope">
-          {{ scope.row.menuSort }}
-        </template>
-      </el-table-column>
+
       <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" />
+
+      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" />
       <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径" />
       <el-table-column prop="iframe" label="外链" width="75px">
         <template slot-scope="scope">
@@ -133,11 +131,18 @@
           <span v-else>是</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建日期" width="135px">
+      <el-table-column v-if="false" prop="createTime" label="创建日期" width="135px">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column prop="menuSort" align="center" label="排序">
+        <template slot-scope="scope">
+          {{ scope.row.menuSort }}
+        </template>
+      </el-table-column>
+
       <el-table-column v-permission="['admin','menu:edit','menu:del']" label="操作" width="130px" align="center" fixed="right">
         <template slot-scope="scope">
           <udOperation

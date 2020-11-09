@@ -15,3 +15,11 @@ export function testServerConnect(data) {
     data
   })
 }
+
+export function testDataSourceConnect(data) {
+  return request({
+    url: 'api/elSysDatasource/testConnect',
+    method: 'post',
+    data
+  })
+}
