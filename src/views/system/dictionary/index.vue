@@ -33,7 +33,7 @@
         </div>
       </el-col>
 
-      <!--用户数据-->
+      <!--dictionary detail data grid-->
       <el-col :xs="11" :sm="11" :md="13" :lg="13" :xl="13">
         <!--工具栏-->
         <div class="head-container">
@@ -112,11 +112,11 @@
             @row-click="clickRow"
             @selection-change="crud.selectionChangeHandler"
           >
-            <el-table-column type="selection" width="30" />
+            <el-table-column v-if="false" type="selection" width="30" />
             <el-table-column prop="code" label="字典对照码" width="80" />
             <el-table-column prop="desc" label="字典对照值" width="200" />
             <el-table-column prop="remark" label="备注" show-tooltip-when-overflow show-overflow-tooltip width="150" />
-            <el-table-column prop="status" label="当前状态" width="80" />
+            <el-table-column v-if="false" prop="status" label="当前状态" width="80" />
 
           </el-table>
           <!--分页组件-->
