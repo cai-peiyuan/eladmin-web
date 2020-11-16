@@ -8,6 +8,7 @@
       <crudOperation>
         <el-button
           slot="left"
+          plain
           class="filter-item"
           type="danger"
           icon="el-icon-delete"
@@ -44,10 +45,10 @@
           >
             <p>确定强制退出该用户吗？</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="$refs[scope.$index].doClose()">取消</el-button>
-              <el-button :loading="delLoading" type="primary" size="mini" @click="delMethod(scope.row.key, scope.$index)">确定</el-button>
+              <el-button plain size="mini" type="text" @click="$refs[scope.$index].doClose()">取消</el-button>
+              <el-button plain :loading="delLoading" type="primary" size="mini" @click="delMethod(scope.row.key, scope.$index)">确定</el-button>
             </div>
-            <el-button slot="reference" size="mini" type="text">强退</el-button>
+            <el-button slot="reference" plain size="mini" type="text">强退</el-button>
           </el-popover>
         </template>
       </el-table-column>

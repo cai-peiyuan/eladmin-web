@@ -11,8 +11,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+        <el-button plain type="info" @click="crud.cancelCU">取消</el-button>
+        <el-button plain :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
       </div>
     </el-dialog>
     <!-- 字典列表 -->
@@ -53,6 +53,7 @@
             <span>字典详情</span>
             <el-button
               v-if="checkPermission(['admin','dict:add']) && this.$refs.dictDetail && this.$refs.dictDetail.query.dictName"
+              plain
               class="filter-item"
               size="mini"
               style="float: right;padding: 4px 10px"

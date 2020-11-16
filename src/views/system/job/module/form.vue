@@ -55,12 +55,14 @@
       class="dialog-footer"
     >
       <el-button
+        plain
         type="text"
         @click="crud.cancelCU"
       >
         取消
       </el-button>
       <el-button
+        plain
         :loading="crud.status.cu === 2"
         type="primary"
         @click="crud.submitCU"
