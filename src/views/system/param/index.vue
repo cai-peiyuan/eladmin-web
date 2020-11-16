@@ -4,19 +4,19 @@
     <el-row :gutter="20">
       <!--侧边部门数据-->
       <el-col :xs="5" :sm="5" :md="4" :lg="4" :xl="4">
-        <!--        <div class="head-container">-->
+        <!--        <div class="head-container">
 
-        <!--          <el-input-->
-        <!--            v-model="catalogName"-->
-        <!--            clearable-->
-        <!--            size="small"-->
-        <!--            placeholder="输入分類搜索"-->
-        <!--            prefix-icon="el-icon-search"-->
-        <!--            class="filter-item"-->
-        <!--            @input="getCatalogDatas"-->
-        <!--          />-->
-        <!--          -->
-        <!--        </div>-->
+                  <el-input
+                    v-model="catalogName"
+                    clearable
+                    size="small"
+                    placeholder="输入分類搜索"
+                    prefix-icon="el-icon-search"
+                    class="filter-item"
+                    @input="getCatalogDatas"
+                  />
+
+                </div>-->
         <el-checkbox v-model="cascadeShow" style="margin:0 0 10px 0;" @change="changeCascadeShow()">
           显示下级
         </el-checkbox>
@@ -87,7 +87,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
               <el-button type="text" @click="crud.cancelCU">取消</el-button>
-              <el-button :loading="crud.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+              <el-button plain :loading="crud.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
             </div>
           </el-dialog>
           <!--表格渲染-->

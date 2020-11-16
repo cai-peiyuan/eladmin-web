@@ -4,7 +4,7 @@
       <el-form ref="form" :model="form" :rules="rules" size="small" label-width="88px">
         <el-form-item label="新邮箱" prop="email">
           <el-input v-model="form.email" auto-complete="on" style="width: 200px;" />
-          <el-button :loading="codeLoading" :disabled="isDisabled" size="small" @click="sendCode">{{ buttonName }}</el-button>
+          <el-button plain :loading="codeLoading" :disabled="isDisabled" size="small" @click="sendCode">{{ buttonName }}</el-button>
         </el-form-item>
         <el-form-item label="验证码" prop="code">
           <el-input v-model="form.code" style="width: 320px;" />
@@ -14,8 +14,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="cancel">取消</el-button>
-        <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
+        <el-button plain type="info" @click="cancel">取消</el-button>
+        <el-button plain :loading="loading" type="primary" @click="doSubmit">确认</el-button>
       </div>
     </el-dialog>
   </div>

@@ -44,8 +44,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+        <el-button plain type="info" @click="crud.cancelCU">取消</el-button>
+        <el-button plain :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
       </div>
     </el-dialog>
     <el-row :gutter="15">
@@ -89,6 +89,7 @@
             </el-tooltip>
             <el-button
               v-permission="['admin','roles:edit']"
+              plain
               :disabled="!showButton"
               :loading="menuLoading"
               icon="el-icon-check"
