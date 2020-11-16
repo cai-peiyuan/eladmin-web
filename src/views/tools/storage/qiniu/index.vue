@@ -13,11 +13,12 @@
       <crudOperation :permission="permission">
         <template slot="left">
           <!-- 上传 -->
-          <el-button class="filter-item" size="mini" type="primary" icon="el-icon-upload" @click="dialog = true">上传</el-button>
+          <el-button plain class="filter-item" size="mini" type="primary" icon="el-icon-upload" @click="dialog = true">上传</el-button>
           <!-- 同步 -->
-          <el-button :icon="icon" class="filter-item" size="mini" type="warning" @click="synchronize">同步</el-button>
+          <el-button plain :icon="icon" class="filter-item" size="mini" type="warning" @click="synchronize">同步</el-button>
           <!-- 配置 -->
           <el-button
+            plain
             class="filter-item"
             size="mini"
             type="success"
@@ -38,11 +39,11 @@
           class="upload-demo"
           multiple
         >
-          <el-button size="small" type="primary">点击上传</el-button>
+          <el-button plain size="small" type="primary">点击上传</el-button>
           <div slot="tip" style="display: block;" class="el-upload__tip">请勿上传违法文件，且文件不超过15M</div>
         </el-upload>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="doSubmit">确认</el-button>
+          <el-button plain type="primary" @click="doSubmit">确认</el-button>
         </div>
       </el-dialog>
       <!--表格渲染-->
