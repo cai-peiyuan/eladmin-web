@@ -9,6 +9,7 @@
       <crudOperation>
         <el-tooltip slot="right" class="item" effect="dark" content="数据库中表字段变动时使用该功能" placement="top-start">
           <el-button
+            plain
             class="filter-item"
             size="mini"
             type="success"
@@ -34,18 +35,18 @@
       </el-table-column>
       <el-table-column label="操作" width="160px" align="center" fixed="right">
         <template slot-scope="scope">
-          <el-button size="mini" style="margin-right: 2px" type="text">
+          <el-button plain size="mini" style="margin-right: 2px" type="text">
             <router-link :to="'/sys-tools/generator/preview/' + scope.row.tableName">
               预览
             </router-link>
           </el-button>
-          <el-button size="mini" style="margin-left: -1px;margin-right: 2px" type="text" @click="toDownload(scope.row.tableName)">下载</el-button>
-          <el-button size="mini" style="margin-left: -1px;margin-right: 2px" type="text">
+          <el-button plain size="mini" style="margin-left: -1px;margin-right: 2px" type="text" @click="toDownload(scope.row.tableName)">下载</el-button>
+          <el-button plain size="mini" style="margin-left: -1px;margin-right: 2px" type="text">
             <router-link :to="'/sys-tools/generator/config/' + scope.row.tableName">
               配置
             </router-link>
           </el-button>
-          <el-button type="text" style="margin-left: -1px" size="mini" @click="toGen(scope.row.tableName)">生成</el-button>
+          <el-button plain type="info" style="margin-left: -1px" size="mini" @click="toGen(scope.row.tableName)">生成</el-button>
         </template>
       </el-table-column>
     </el-table>

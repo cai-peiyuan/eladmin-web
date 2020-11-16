@@ -6,6 +6,7 @@
           <div slot="header" class="clearfix">
             <span class="role-span">字段配置：{{ tableName }}</span>
             <el-button
+              plain
               :loading="genLoading"
               icon="el-icon-s-promotion"
               size="mini"
@@ -14,6 +15,7 @@
               @click="toGen"
             >保存&生成</el-button>
             <el-button
+              plain
               :loading="columnLoading"
               icon="el-icon-check"
               size="mini"
@@ -23,6 +25,7 @@
             >保存</el-button>
             <el-tooltip class="item" effect="dark" content="数据库中表字段变动时使用该功能" placement="top-start">
               <el-button
+                plain
                 :loading="syncLoading"
                 icon="el-icon-refresh"
                 size="mini"
@@ -146,6 +149,7 @@
           <div slot="header" class="clearfix">
             <span class="role-span">生成配置</span>
             <el-button
+              plain
               :loading="configLoading"
               icon="el-icon-check"
               size="mini"
