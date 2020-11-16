@@ -3,7 +3,7 @@
     <!--工具栏-->
     <div class="head-container">
       <date-range-picker v-model="query.createTime" class="date-item" />
-      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
+      <el-button plain class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
     </div>
     <el-form size="small" label-width="80px">
       <!--表格渲染-->
@@ -24,8 +24,8 @@
       </el-table>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button type="text" @click="cancel">取消</el-button>
-      <el-button v-permission="['admin','deploy:add']" :loading="submitLoading" type="primary" @click="doSubmit">确认</el-button>
+      <el-button plain type="info" @click="cancel">取消</el-button>
+      <el-button v-permission="['admin','deploy:add']" plain :loading="submitLoading" type="primary" @click="doSubmit">确认</el-button>
     </div>
     <!--分页组件-->
     <el-pagination

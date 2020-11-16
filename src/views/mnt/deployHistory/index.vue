@@ -31,10 +31,10 @@
           >
             <p>确定删除本条数据吗？</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button :loading="delLoading" type="primary" size="mini" @click="delMethod(scope.row.id)">确定</el-button>
+              <el-button plain size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
+              <el-button plain :loading="delLoading" type="primary" size="mini" @click="delMethod(scope.row.id)">确定</el-button>
             </div>
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini" />
+            <el-button slot="reference" plain type="danger" icon="el-icon-delete" size="mini" />
           </el-popover>
         </template>
       </el-table-column>

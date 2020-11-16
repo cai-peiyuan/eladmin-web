@@ -12,6 +12,7 @@
         <el-button
           slot="right"
           v-permission="['admin','database:add']"
+          plain
           :disabled="!selectIndex"
           class="filter-item"
           size="mini"
@@ -31,7 +32,7 @@
         </el-form-item>
         <el-form-item label="JDBC地址" prop="jdbcUrl">
           <el-input v-model="form.jdbcUrl" style="width: 300px" />
-          <el-button :loading="loading" type="success" @click="testConnectDatabase">测试</el-button>
+          <el-button plain :loading="loading" type="success" @click="testConnectDatabase">测试</el-button>
         </el-form-item>
         <el-form-item label="用户" prop="userName">
           <el-input v-model="form.userName" style="width: 370px" />
@@ -41,8 +42,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+        <el-button plain type="info" @click="crud.cancelCU">取消</el-button>
+        <el-button plain :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
       </div>
     </el-dialog>
     <!--表格渲染-->

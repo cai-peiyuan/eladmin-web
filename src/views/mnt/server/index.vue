@@ -27,12 +27,12 @@
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" type="password" style="width: 200px" />
-          <el-button :loading="loading" type="success" style="align: right;" @click="testConnectServer">测试连接</el-button>
+          <el-button plain :loading="loading" type="success" style="align: right;" @click="testConnectServer">测试连接</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+        <el-button plain type="info" @click="crud.cancelCU">取消</el-button>
+        <el-button plain :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
       </div>
     </el-dialog>
     <!--表格渲染-->

@@ -5,6 +5,7 @@
       <crudOperation>
         <el-button
           slot="left"
+          plain
           class="filter-item"
           type="danger"
           icon="el-icon-delete"
