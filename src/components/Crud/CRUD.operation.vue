@@ -10,24 +10,27 @@
         size="mini"
         type="primary"
         icon="el-icon-plus"
+        plain
         @click="crud.toAdd"
       >
         新增
       </el-button>
+      <!-- 修改按钮 :disabled="crud.selections.length !== 1"-->
       <el-button
-        v-if="crud.optShow.edit"
+        v-if="crud.optShow.edit && crud.selections.length === 1"
         v-permission="permission.edit"
         class="filter-item"
         size="mini"
         type="success"
         icon="el-icon-edit"
-        :disabled="crud.selections.length !== 1"
+        plain
         @click="crud.toEdit(crud.selections[0])"
       >
         修改
       </el-button>
+      <!-- 删除按钮 :disabled="crud.selections.length === 0" -->
       <el-button
-        v-if="crud.optShow.del"
+        v-if="crud.optShow.del && crud.selections.length > 0"
         slot="reference"
         v-permission="permission.del"
         class="filter-item"
@@ -35,28 +38,31 @@
         icon="el-icon-delete"
         size="mini"
         :loading="crud.delAllLoading"
-        :disabled="crud.selections.length === 0"
+        plain
         @click="toDelete(crud.selections)"
       >
         删除
       </el-button>
+      <!-- 导出按钮 :disabled="!crud.data.length" -->
       <el-button
-        v-if="crud.optShow.download"
+        v-if="crud.optShow.download && crud.data.length > 0"
         :loading="crud.downloadLoading"
-        :disabled="!crud.data.length"
         class="filter-item"
         size="mini"
         type="warning"
         icon="el-icon-download"
+        plain
         @click="crud.doExport"
-      >导出</el-button>
+      >
+        导出
+      </el-button>
       <!--右侧-->
       <slot name="right" />
     </span>
     <el-button-group class="crud-opts-right">
       <el-button
-        size="mini"
         plain
+        size="mini"
         type="info"
         icon="el-icon-search"
         @click="toggleSearch()"
@@ -64,6 +70,7 @@
       <el-button
         size="mini"
         icon="el-icon-refresh"
+        plain
         @click="crud.refresh()"
       />
       <el-popover
@@ -75,6 +82,7 @@
           slot="reference"
           size="mini"
           icon="el-icon-s-grid"
+          plain
         >
           <i
             class="fa fa-caret-down"
@@ -123,15 +131,21 @@ export default {
   props: {
     permission: {
       type: Object,
-      default: () => { return {} }
+      default: () => {
+        return {}
+      }
     },
     hiddenColumns: {
       type: Array,
-      default: () => { return [] }
+      default: () => {
+        return []
+      }
     },
     ignoreColumns: {
       type: Array,
-      default: () => { return [] }
+      default: () => {
+        return []
+      }
     }
   },
   data() {
@@ -259,6 +273,7 @@ export default {
     display: flex;
     align-items: center;
   }
+
   .crud-opts .crud-opts-right {
     margin-left: auto;
   }
