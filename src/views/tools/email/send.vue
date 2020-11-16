@@ -10,11 +10,11 @@
         :label="'收件邮箱' + (index === 0 ? '': index)"
       >
         <el-input v-model="domain.value" style="width: 550px" />
-        <el-button icon="el-icon-plus" @click="addDomain" />
-        <el-button style="margin-left:0;" icon="el-icon-minus" @click.prevent="removeDomain(domain)" />
+        <el-button plain icon="el-icon-plus" @click="addDomain" />
+        <el-button plain style="margin-left:0;" icon="el-icon-minus" @click.prevent="removeDomain(domain)" />
       </el-form-item>
       <div ref="editor" class="editor" />
-      <el-button :loading="loading" style="margin-left:1.6%;" size="medium" type="primary" @click="doSubmit">发送邮件</el-button>
+      <el-button plain :loading="loading" style="margin-left:1.6%;" size="medium" type="primary" @click="doSubmit">发送邮件</el-button>
     </el-form>
   </div>
 </template>
