@@ -1,5 +1,6 @@
 <template>
   <div class="crud-opts">
+    <!-- 表格操作左侧内容 -->
     <span class="crud-opts-left">
       <!--左侧插槽-->
       <slot name="left" />
@@ -59,6 +60,7 @@
       <!--右侧-->
       <slot name="right" />
     </span>
+    <!-- 表格操作右侧内容 -->
     <el-button-group class="crud-opts-right">
       <el-button
         plain
