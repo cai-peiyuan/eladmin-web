@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Logo from '@/assets/images/logo_w.png'
+import Logo from '@/assets/images/logo.png'
 export default {
   name: 'SidebarLogo',
   props: {
@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      title: '',
+      title: '仓储管理系统',
       logo: Logo
     }
   }
@@ -57,7 +57,7 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 82px;
+      width: 32px;
       height: 32px;
       vertical-align: middle;
       margin-right: 6px;
