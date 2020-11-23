@@ -71,7 +71,7 @@
 
 <script>
 import checkPermission from '@/utils/permission'
-import dictDetail from './dictDetail'
+import dictDetail from './dictDetail.vue'
 import crudDict from '@/api/system/dict'
 
 import CRUD, { presenter, header, form } from '@crud/crud'
