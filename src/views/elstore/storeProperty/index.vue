@@ -41,7 +41,18 @@
             <el-input v-model="form.propertyDesc" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="属性类型">
-            <el-input v-model="form.propertyType" style="width: 370px;" />
+            <el-select
+              v-model="form.propertyType"
+              style="width: 370px"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in dict.APP_STORE_PROPERTY_TYPE"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="输入长度">
             <el-input v-model="form.propertyLength" style="width: 370px;" />
@@ -93,11 +104,15 @@
         <el-table-column prop="propertyCatalogId" label="类别id" />
         <el-table-column prop="propertyCode" label="属性代码" />
         <el-table-column prop="propertyDesc" label="数据描述" />
-        <el-table-column prop="propertyType" label="属性类型" />
+        <el-table-column prop="propertyType" label="属性类型">
+          <template slot-scope="scope">
+            {{ getDictLabel(scope.row.propertyType,'APP_STORE_PROPERTY_TYPE',scope) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="propertyLength" label="输入长度" />
         <el-table-column prop="propertyPrecision" label="输入精度" />
         <el-table-column prop="propertyFormat" label="输入格式" />
-        <el-table-column v-permission="['admin','storeProperty:edit','storeProperty:del']" label="操作" width="150px" align="center">
+        <el-table-column v-permission="['admin','storeProperty:edit','storeProperty:del']" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -128,6 +143,7 @@ export default {
   cruds() {
     return CRUD({ title: 'StoreProperty', url: 'api/storeProperty', idField: 'id', sort: 'id,desc', crudMethod: { ...crudStoreProperty }})
   },
+  dicts: ['APP_STORE_PROPERTY_TYPE'],
   data() {
     return {
       permission: {

@@ -20,6 +20,8 @@ const api = {
     swaggerApi: baseUrl + '/swagger-ui.html',
     // 文件上传
     fileUploadApi: baseUrl + '/api/localStorage',
+    // msp样式编辑 监控
+    maputnikEditor: baseUrl + '/maputnik/editor.html',
     // baseUrl，
     baseApi: baseUrl
   }

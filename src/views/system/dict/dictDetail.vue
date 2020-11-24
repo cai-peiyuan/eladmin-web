@@ -12,6 +12,7 @@
           <rrOperation />
         </div>
       </div>
+      <span>字典名称 {{ query.dictName }}</span>
       <!--表单组件-->
       <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible="crud.status.cu > 0" :title="crud.status.title" width="500px">
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
@@ -32,7 +33,7 @@
       </el-dialog>
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" highlight-current-row style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-        <el-table-column label="所属字典">
+        <el-table-column v-if="false" label="所属字典">
           {{ query.dictName }}
         </el-table-column>
         <el-table-column prop="label" label="字典标签" />

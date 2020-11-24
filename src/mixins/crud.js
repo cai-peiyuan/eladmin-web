@@ -5,7 +5,8 @@ import {
 import {
   parseTime,
   downloadFile,
-  getElDictDesc
+  getElDictDesc,
+  getDictLabel
 } from '@/utils/index'
 import checkPermission from '@/utils/permission'
 
@@ -53,6 +54,7 @@ export default {
     parseTime,
     downloadFile,
     getElDictDesc,
+    getDictLabel,
     checkPermission,
     async init() {
       if (!await this.beforeInit()) {

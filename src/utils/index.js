@@ -394,3 +394,11 @@ export function getElDictDesc(elDicValue, elDicKey, vueObj) {
     return '请引入字典' + elDicKey + '查看' + elDicValue + '释意'
   }
 }
+
+export function getDictLabel(elDicValue, elDicKey, vueObj) {
+  if (vueObj._self.dict.dict[elDicKey] && vueObj._self.dict.dict[elDicKey][elDicValue]) {
+    return vueObj._self.dict.dict[elDicKey][elDicValue].label
+  } else {
+    return '请引入字典' + elDicKey + '查看' + elDicValue + '释意'
+  }
+}

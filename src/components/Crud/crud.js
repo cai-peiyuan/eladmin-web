@@ -1,5 +1,5 @@
 import { initData, download } from '@/api/data'
-import { parseTime, downloadFile, getElDictDesc } from '@/utils/index'
+import { parseTime, downloadFile, getElDictDesc, getDictLabel } from '@/utils/index'
 import Vue from 'vue'
 
 /**
@@ -696,7 +696,8 @@ function presenter(crud) {
     },
     methods: {
       parseTime,
-      getElDictDesc
+      getElDictDesc,
+      getDictLabel
     },
     created() {
       for (const k in this.$crud) {
