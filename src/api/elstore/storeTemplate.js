@@ -24,4 +24,12 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function optionData(data) {
+  return request({
+    url: 'api/storeTemplate/optionData',
+    method: 'get',
+    data
+  })
+}
+
+export default { add, edit, del, optionData }

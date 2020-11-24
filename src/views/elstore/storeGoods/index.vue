@@ -10,8 +10,8 @@
         <el-input v-model="query.goodsName" clearable placeholder="物品名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">物品状态</label>
         <el-input v-model="query.goodsStatus" clearable placeholder="物品状态" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <label class="el-form-item-label">物品模板id</label>
-        <el-input v-model="query.goodsTemplateId" clearable placeholder="物品模板id" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <label class="el-form-item-label">物品类型id</label>
+        <el-input v-model="query.goodsTemplateId" clearable placeholder="物品类型id" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">仓库编号</label>
         <el-input v-model="query.storeHouseId" clearable placeholder="仓库编号" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">货架编号</label>
@@ -37,20 +37,56 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
+
+          <el-form-item label="物品类型">
+            <el-input v-if="false" v-model="form.goodsTemplateId" style="width: 370px;" />
+            <el-select v-model="form.goodsTemplateId" style="width: 370px;" clearable>
+              <el-option
+                v-for="item in storeTemplateData"
+                :key="item.id"
+                :label="item.templateName"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+
           <el-form-item label="物品代码">
             <el-input v-model="form.goodsCode" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="物品名称">
             <el-input v-model="form.goodsName" style="width: 370px;" />
           </el-form-item>
+          <el-form-item label="品牌">
+            <el-input v-model="form.goodsBrand" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item label="型号">
+            <el-input v-model="form.goodsModel" style="width: 370px;" />
+          </el-form-item>
           <el-form-item label="物品状态">
-            <el-input v-model="form.goodsStatus" style="width: 370px;" />
+            <el-input v-if="false" v-model="form.goodsStatus" style="width: 370px;" />
+            <el-select
+              v-model="form.goodsStatus"
+              style="width: 370px"
+              placeholder="请选择物品状态"
+            >
+              <el-option
+                v-for="item in dict.APP_STORE_GOODS_STATUS"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
-          <el-form-item label="类型模板">
-            <el-input v-model="form.goodsTemplateId" style="width: 370px;" />
-          </el-form-item>
+
           <el-form-item label="存放位置">
-            <el-cascader :options="storeHouseAndShelf" style="width: 370px;" placeholder="请选择存放位置" clearable />
+            <el-cascader
+              v-model="storeHouseAndShelfIds"
+              :options="storeHouseAndShelf"
+              style="width: 370px;"
+              placeholder="请选择存放位置"
+              clearable
+              @change="selectStoreHouseAndSelf"
+            />
           </el-form-item>
           <el-form-item v-if="false" label="仓库编号">
             <el-input v-model="form.storeHouseId" style="width: 370px;" />
@@ -58,7 +94,7 @@
           <el-form-item v-if="false" label="货架编号">
             <el-input v-model="form.storeShelfId" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="入库时间">
+          <el-form-item v-if="false" label="入库时间">
             <el-date-picker
               v-model="form.storeTimeIn"
               style="width: 370px;"
@@ -66,7 +102,7 @@
               placeholder="选择入库时间"
             />
           </el-form-item>
-          <el-form-item label="出库时间">
+          <el-form-item v-if="false" label="出库时间">
             <el-date-picker
               v-model="form.storeTimeOut"
               style="width: 370px;"
@@ -74,10 +110,10 @@
               placeholder="选择出库时间"
             />
           </el-form-item>
-          <el-form-item label="入库人">
+          <el-form-item v-if="false" label="入库人">
             <el-input v-model="form.storeByIn" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="出库人">
+          <el-form-item v-if="false" label="出库人">
             <el-input v-model="form.storeByOut" style="width: 370px;" />
           </el-form-item>
         </el-form>
@@ -98,9 +134,11 @@
             style="width: 100%;"
             @selection-change="crud.selectionChangeHandler"
             @current-change="showGoodsDetail"
+            @sort-change="crud.changeSortHandler"
           >
             <el-table-column type="selection" width="55" fixed="left" />
-            <el-table-column type="expand">
+            <el-table-column type="index" width="50" fixed="left" />
+            <el-table-column v-if="false" type="expand">
               <template slot-scope="props">
                 <el-form label-position="left" inline class="demo-table-expand" style="padding-left: 60px">
 
@@ -113,7 +151,7 @@
                   <el-form-item label="物品状态">
                     <span>{{ props.row.goodsStatus }}</span>
                   </el-form-item>
-                  <el-form-item label="物品模板id">
+                  <el-form-item label="物品类型ID">
                     <span>{{ props.row.goodsTemplateId }}</span>
                   </el-form-item>
                   <el-form-item label="仓库编号">
@@ -138,24 +176,41 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column prop="goodsCode" label="物品代码" />
-            <el-table-column prop="goodsName" label="物品名称" />
-            <el-table-column prop="goodsStatus" label="物品状态" />
-            <el-table-column v-if="false" prop="goodsTemplateId" label="物品模板id" />
+            <el-table-column prop="goodsTemplateId" label="物品类型" sortable="custom">
+              <template slot-scope="scope">
+                <span>
+                  {{ getTemplateNameById(scope.row.goodsTemplateId, scope) }}
+                </span>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="goodsCode" label="物品代码" sortable="custom" />
+            <el-table-column prop="goodsName" label="物品名称" sortable="custom" />
+            <el-table-column prop="goodsBrand" label="品牌" sortable="custom" />
+            <el-table-column prop="goodsModel" label="型号" sortable="custom" />
+
+            <el-table-column prop="goodsStatus" label="物品状态" sortable="custom">
+              <template slot-scope="scope">
+                <span>
+                  {{ getDictLabel(scope.row.goodsStatus,'APP_STORE_GOODS_STATUS',scope) }}
+                </span>
+              </template>
+            </el-table-column>
+
             <el-table-column v-if="false" prop="storeHouseId" label="仓库编号" />
             <el-table-column v-if="false" prop="storeShelfId" label="货架编号" />
-            <el-table-column prop="storeTimeIn" label="入库时间">
+            <el-table-column v-if="false" prop="storeTimeIn" label="入库时间">
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.storeTimeIn) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="storeTimeOut" label="出库时间">
+            <el-table-column v-if="false" prop="storeTimeOut" label="出库时间">
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.storeTimeOut) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="storeByIn" label="入库人" />
-            <el-table-column prop="storeByOut" label="出库人" />
+            <el-table-column v-if="false" prop="storeByIn" label="入库人" />
+            <el-table-column v-if="false" prop="storeByOut" label="出库人" />
             <el-table-column v-permission="['admin','storeGoods:edit','storeGoods:del']" label="操作" width="150px" align="center" fixed="right">
               <template slot-scope="scope">
                 <udOperation
@@ -178,6 +233,7 @@
 </template>
 
 <script>
+import { optionData } from '@/api/elstore/storeTemplate.js'
 import { getStoreHouseAndShelfTreeData } from '@/api/elstore/storeHouse.js'
 import goodsDetail from './goodsDetail'
 import crudStoreGoods from '@/api/elstore/storeGoods.js'
@@ -187,15 +243,15 @@ import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 
-const defaultForm = { id: null, goodsCode: null, goodsName: null, goodsStatus: null, goodsTemplateId: null, storeHouseId: null, storeShelfId: null, storeTimeIn: null, storeTimeOut: null, storeByIn: null, storeByOut: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
+const defaultForm = { id: null, goodsCode: null, goodsName: null, goodsBrand: null, goodsModel: null, goodsStatus: null, goodsTemplateId: null, storeHouseId: null, storeShelfId: null, storeTimeIn: null, storeTimeOut: null, storeByIn: null, storeByOut: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
 export default {
   name: 'StoreGoods',
   components: { pagination, crudOperation, rrOperation, udOperation, goodsDetail },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
-    return CRUD({ title: 'StoreGoods', url: 'api/storeGoods', idField: 'id', sort: 'id,desc', crudMethod: { ...crudStoreGoods }})
+    return CRUD({ title: '物品信息', url: 'api/storeGoods', idField: 'id', sort: 'id,desc', crudMethod: { ...crudStoreGoods }})
   },
-  dicts: ['APP_STORE_PROPERTY_TYPE'],
+  dicts: ['APP_STORE_PROPERTY_TYPE', 'APP_STORE_GOODS_STATUS'],
   data() {
     return {
       permission: {
@@ -212,7 +268,7 @@ export default {
         { key: 'goodsCode', display_name: '物品代码' },
         { key: 'goodsName', display_name: '物品名称' },
         { key: 'goodsStatus', display_name: '物品状态' },
-        { key: 'goodsTemplateId', display_name: '物品模板id' },
+        { key: 'goodsTemplateId', display_name: '物品类型id' },
         { key: 'storeHouseId', display_name: '仓库编号' },
         { key: 'storeShelfId', display_name: '货架编号' },
         { key: 'storeTimeIn', display_name: '入库时间' },
@@ -220,69 +276,54 @@ export default {
         { key: 'storeByIn', display_name: '入库人' },
         { key: 'storeByOut', display_name: '出库人' }
       ],
-      storeHouseAndShelf: [{
-        value: 'zhinan',
-        label: '指南',
-        disabled: false,
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则'
-        }, {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }, {
-            value: 'dingbudaohang',
-            label: '顶部导航'
-          }]
-        }]
-      }, {
-        value: 'zujian',
-        label: '组件',
-        children: [{
-          value: 'data',
-          label: 'Data'
-        }, {
-          value: 'notice',
-          label: 'Notice'
-        }, {
-          value: 'navigation',
-          label: 'Navigation'
-        }]
-      }, {
-        value: 'ziyuan',
-        label: '资源',
-        children: [{
-          value: 'axure',
-          label: 'Axure Components'
-        }, {
-          value: 'sketch',
-          label: 'Sketch Templates'
-        }, {
-          value: 'jiaohu',
-          label: '组件交互文档'
-        }]
-      }]
+      storeTemplateData: [],
+      storeHouseAndShelfIds: [],
+      storeHouseAndShelf: []
     }
   },
   mounted() {
-    this.loadStoreHouseAndShelfData()
-  },
-  created() {
 
   },
+  created() {
+    this.loadStoreHouseAndShelfData()
+    this.loadStoreTemplateOptionData()
+  },
   methods: {
+    getTemplateNameById(templateId, scope) {
+      // console.log(templateId)
+      // console.log(scope)
+      let retVal = '未知类型'
+      this.storeTemplateData.forEach(res => {
+        if (res.id === templateId) {
+          retVal = res.templateName
+        }
+      })
+      return retVal
+    },
+    selectStoreHouseAndSelf(param) {
+      const houseId = (this.storeHouseAndShelfIds[0])
+      const shelfId = (this.storeHouseAndShelfIds[1])
+      this.form.storeHouseId = houseId
+      this.form.storeShelfId = shelfId
+    },
+    loadStoreTemplateOptionData() {
+      optionData({ a: '' }).then(res => {
+        this.storeTemplateData = res
+      })
+    },
     loadStoreHouseAndShelfData() {
       getStoreHouseAndShelfTreeData({ id: '123' }).then(res => {
-        console.log(res)
+        // console.log(res)
         const data = res.content
         this.storeHouseAndShelf = data
       })
     },
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
+      return true
+    },
+    [CRUD.HOOK.beforeToEdit](crud, form) {
+      this.storeHouseAndShelfIds = [this.form.storeHouseId, this.form.storeShelfId]
       return true
     },
     showGoodsDetail(data) {

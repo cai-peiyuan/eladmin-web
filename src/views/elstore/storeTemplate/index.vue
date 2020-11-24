@@ -90,7 +90,12 @@ export default {
   components: { pagination, crudOperation, rrOperation, udOperation },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
-    return CRUD({ title: 'StoreTemplate', url: 'api/storeTemplate', idField: 'id', sort: 'id,desc', crudMethod: { ...crudStoreTemplate }})
+    return CRUD({
+      title: 'StoreTemplate',
+      url: 'api/storeTemplate',
+      idField: 'id',
+      sort: 'id,desc',
+      crudMethod: { ...crudStoreTemplate }})
   },
   data() {
     return {
