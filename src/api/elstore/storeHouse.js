@@ -24,4 +24,12 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function getStoreHouseAndShelfTreeData(data) {
+  return request({
+    url: 'api/storeHouse/treeData',
+    method: 'post',
+    data
+  })
+}
+
+export default { add, edit, del, getStoreHouseAndShelfTreeData }

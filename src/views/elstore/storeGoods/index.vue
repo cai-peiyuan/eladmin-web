@@ -50,7 +50,7 @@
             <el-input v-model="form.goodsTemplateId" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="存放位置">
-            <el-cascader :options="storeHouseAndShelf" style="width: 370px;" placeholder="请选择存放位置" />
+            <el-cascader :options="storeHouseAndShelf" style="width: 370px;" placeholder="请选择存放位置" clearable />
           </el-form-item>
           <el-form-item v-if="false" label="仓库编号">
             <el-input v-model="form.storeHouseId" style="width: 370px;" />
@@ -178,6 +178,7 @@
 </template>
 
 <script>
+import { getStoreHouseAndShelfTreeData } from '@/api/elstore/storeHouse.js'
 import goodsDetail from './goodsDetail'
 import crudStoreGoods from '@/api/elstore/storeGoods.js'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
@@ -266,7 +267,20 @@ export default {
       }]
     }
   },
+  mounted() {
+    this.loadStoreHouseAndShelfData()
+  },
+  created() {
+
+  },
   methods: {
+    loadStoreHouseAndShelfData() {
+      getStoreHouseAndShelfTreeData({ id: '123' }).then(res => {
+        console.log(res)
+        const data = res.content
+        this.storeHouseAndShelf = data
+      })
+    },
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
