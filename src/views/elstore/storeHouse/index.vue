@@ -17,6 +17,7 @@
         <el-table
           ref="table"
           v-loading="crud.loading"
+          highlight-current-row
           :data="crud.data"
           size="small"
           style="width: 100%;"

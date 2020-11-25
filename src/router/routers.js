@@ -4,6 +4,9 @@ import Layout from '../layout/index.vue'
 
 Vue.use(Router)
 
+/** *
+ * 静态路由配置
+ */
 export const constantRouterMap = [
   { path: '/login',
     meta: { title: '登录', noCache: true },

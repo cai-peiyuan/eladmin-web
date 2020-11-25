@@ -123,8 +123,8 @@
         </div>
       </el-dialog>
 
-      <el-row>
-        <el-col :span="18">
+      <el-row style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)">
+        <el-col :span="16">
           <!--表格渲染-->
           <el-table
             ref="table"
@@ -223,8 +223,27 @@
           <!--分页组件-->
           <pagination />
         </el-col>
-        <el-col :span="6">
-          <goodsDetail ref="goodsDetail" :permission="permission" />
+        <!-- 右侧详细信息卡片 -->
+        <el-col :span="8">
+          <el-tabs type="card">
+            <el-tab-pane label="详细信息">
+              <goodsDetail ref="goodsDetail" :permission="permission" />
+            </el-tab-pane>
+            <el-tab-pane label="文件信息" />
+            <el-tab-pane label="出入库记录">
+              <el-row>
+                <p style="text-align: center; margin: 0 0 20px">
+                  <el-button type="primary" plain><i class="el-icon-arrow-up" />出库</el-button>
+                  <el-button type="success" plain><i class="el-icon-arrow-down" />入库</el-button>
+                </p>
+              </el-row>
+              <el-row>
+                <p style="text-align: center; margin: 0 0 20px">
+                  出入库历史记录
+                </p>
+              </el-row>
+            </el-tab-pane>
+          </el-tabs>
         </el-col>
       </el-row>
     </div>

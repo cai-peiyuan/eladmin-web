@@ -32,4 +32,19 @@ export function optionData(data) {
   })
 }
 
-export default { add, edit, del, optionData }
+export function getTemplatePropertyData(id) {
+  return request({
+    url: 'api/storeTemplate/getTemplatePropertyData/' + id,
+    method: 'get'
+  })
+}
+
+export function saveTemplatePropertyData(id, data) {
+  return request({
+    url: 'api/storeTemplate/saveTemplatePropertyData/' + id,
+    method: 'post',
+    data
+  })
+}
+
+export default { add, edit, del, optionData, getTemplatePropertyData, saveTemplatePropertyData }

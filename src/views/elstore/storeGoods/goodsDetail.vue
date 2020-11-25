@@ -6,7 +6,7 @@
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
         <el-table-column v-if="false" prop="goodsId" label="物品id" />
         <el-table-column v-if="false" prop="goodsTemplateId" label="物品模板编号" />
-        <el-table-column prop="propertySeq" label="属性序号" />
+        <el-table-column v-if="false" prop="propertySeq" label="属性序号" />
         <el-table-column v-if="false" prop="propertyCode" label="属性编码" />
         <el-table-column prop="propertyDesc" label="属性描述" />
         <el-table-column prop="propertyValue" label="属性值" />
