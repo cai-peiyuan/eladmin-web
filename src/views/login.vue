@@ -1,9 +1,7 @@
 <template>
   <div class="login" :style="'background-image:url('+ Background +');'">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
-      <h3 class="title">
-        EL-ADMIN 后台管理系统
-      </h3>
+      <h3 class="title" v-text="loginFormTitle" />
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
@@ -33,6 +31,7 @@
       </el-form-item>
     </el-form>
     <!--  底部  -->
+    <!--  底部  -->
     <div v-if="$store.state.settings.showFooter" id="el-login-footer">
       <span v-html="$store.state.settings.footerTxt" />
       <span> ⋅ </span>
@@ -51,6 +50,7 @@ export default {
   name: 'Login',
   data() {
     return {
+      loginFormTitle: '后台管理系统',
       Background: Background,
       codeUrl: '',
       cookiePass: '',
@@ -78,6 +78,9 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.loadParameter()
+  },
   created() {
     // 获取验证码
     this.getCode()
@@ -87,6 +90,26 @@ export default {
     this.point()
   },
   methods: {
+    /**
+     * 获取系统配置参数
+     */
+    loadParameter() {
+      console.log(this.$store.state.settings)
+      Object.assign(this.$store.state.settings, {
+        title: 'MapAbc', // 不生效
+        tagsView: true,
+        fixedHeader: true,
+        tokenCookieExpires: 1,
+        passCookieExpires: 1,
+        uniqueOpened: true,
+        TokenKey: 'abc-admin-token',
+        timeout: 1200000,
+        sidebarLogo: true,
+        showFooter: true,
+        caseNumber: '备案号码1',
+        footerTxt: '©<a href="http://www.mapabc.com" target="_blank">北京图盟科技有限公司</a> Msp-v7.0.0 2020 '
+      })
+    },
     getCode() {
       getCodeImg().then(res => {
         this.codeUrl = res.img
