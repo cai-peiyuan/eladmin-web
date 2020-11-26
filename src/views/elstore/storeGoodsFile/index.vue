@@ -104,14 +104,14 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="fileName" label="文件名称" sortable="custom" />
-        <el-table-column prop="fileSuffix" label="文件扩展名" sortable="custom" />
+        <el-table-column prop="originalFileName" label="原始名称" sortable="custom" />
+        <el-table-column prop="fileSuffix" label="扩展名" sortable="custom" />
         <el-table-column prop="fileType" label="文件类型" sortable="custom" />
-        <el-table-column prop="fileSize" label="文件大小" sortable="custom" />
-        <el-table-column prop="originalFileName" label="原始文件名称" sortable="custom" />
-        <el-table-column prop="contentType" label="文件类型" sortable="custom" />
-        <el-table-column prop="filePath" label="文件存储路径" sortable="custom" />
-        <el-table-column prop="goodsId" label="所属物品编号" sortable="custom" />
+        <el-table-column prop="fileSize" label="大小" sortable="custom" />
+        <el-table-column prop="contentType" label="内容类型" sortable="custom" />
+        <el-table-column v-if="false" prop="fileName" label="存储名称" sortable="custom" />
+        <el-table-column v-if="false" prop="filePath" label="存储路径" sortable="custom" />
+        <el-table-column v-if="false" prop="goodsId" label="所属物品编号" sortable="custom" />
         <el-table-column v-permission="['admin','storeGoodsFile:edit','storeGoodsFile:del']" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
