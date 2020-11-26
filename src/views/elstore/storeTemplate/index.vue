@@ -42,18 +42,12 @@
       <el-table ref="table" v-loading="crud.loading" highlight-current-row :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
         <el-table-column type="selection" width="55" />
 
-        <el-table-column prop="templateCode" label="物品模板代码" />
-        <el-table-column prop="templateType" label="物品模板类型" />
-        <el-table-column v-if="false" prop="templateName" label="物品模板名称" />
-
-        <el-table-column v-permission="['admin','storeTemplate:edit','storeTemplate:del']" label="物品模板名称" width="150px" align="center">
+        <el-table-column prop="templateCode" label="模板代码" />
+        <el-table-column prop="templateType" label="模板类型" />
+        <el-table-column v-if="false" prop="templateName" label="模板名称" />
+        <el-table-column v-permission="['admin','storeTemplate:edit','storeTemplate:del']" label="模板字段数" width="150px" align="center">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="top">
-              <p>点击设置<span style="color: red;">{{ scope.row.templateName }}</span>模板字段</p>
-              <div slot="reference" class="name-wrapper">
-                <span><el-link type="primary" @click="showTemplatePropertySettingDialog(scope.row)">{{ (scope.row.templateName) }}</el-link></span>
-              </div>
-            </el-popover>
+            <span><el-link type="primary" @click="showTemplatePropertySettingDialog(scope.row)">{{ (scope.row.storeTemplatePropertys.length) }}</el-link></span>
           </template>
         </el-table-column>
 
@@ -192,6 +186,7 @@ export default {
         })
         this.saveTemplateloading = false
         this.showTemplatePropertySettingDialogFlag = false
+        this.crud.toQuery()
       })
     },
     // 显示模板属性配置窗口

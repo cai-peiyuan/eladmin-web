@@ -26,7 +26,7 @@
               <span>{{ props.row.method }}</span>
             </el-form-item>
             <el-form-item label="请求参数">
-              <span>{{ props.row.params }}</span>
+              <span style="word-break:break-all">{{ props.row.params }}</span>
             </el-form-item>
           </el-form>
         </template>

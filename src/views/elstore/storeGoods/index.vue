@@ -132,6 +132,8 @@
             :data="crud.data"
             size="small"
             style="width: 100%;"
+            stripe="stripe"
+            highlight-current-row="highlight-current-row"
             @selection-change="crud.selectionChangeHandler"
             @current-change="showGoodsDetail"
             @sort-change="crud.changeSortHandler"
@@ -229,7 +231,29 @@
             <el-tab-pane label="详细信息">
               <goodsDetail ref="goodsDetail" :permission="permission" />
             </el-tab-pane>
-            <el-tab-pane label="文件信息" />
+            <el-tab-pane label="文件信息">
+              <!-- 文件列表和上传控件 -->
+              <el-upload
+                ref="upload"
+                class="upload-demo"
+                multiple="multiple"
+                name="file"
+                :data="{ id: currentRowData === null ? '' : currentRowData.id }"
+                with-credentials="with-credentials"
+                :headers="uploadHeader()"
+                show-file-list="show-file-list"
+                :action="uploadUrl()"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="fileList"
+                :auto-upload="false"
+              >
+                <el-button slot="trigger" size="small" type="primary">选文件</el-button>
+                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              </el-upload>
+
+            </el-tab-pane>
             <el-tab-pane label="出入库记录">
               <el-row>
                 <p style="text-align: center; margin: 0 0 20px">
@@ -261,6 +285,8 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import { getToken } from '@/utils/auth'
+import { mapGetters } from 'vuex'
 
 const defaultForm = { id: null, goodsCode: null, goodsName: null, goodsBrand: null, goodsModel: null, goodsStatus: null, goodsTemplateId: null, storeHouseId: null, storeShelfId: null, storeTimeIn: null, storeTimeOut: null, storeByIn: null, storeByOut: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
 export default {
@@ -295,10 +321,19 @@ export default {
         { key: 'storeByIn', display_name: '入库人' },
         { key: 'storeByOut', display_name: '出库人' }
       ],
+      currentRowData: { id: '123' },
       storeTemplateData: [],
       storeHouseAndShelfIds: [],
-      storeHouseAndShelf: []
+      storeHouseAndShelf: [],
+      fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }]
     }
+  },
+  computed: {
+    ...mapGetters([
+      'user',
+      'updateAvatarApi',
+      'baseApi'
+    ])
   },
   mounted() {
 
@@ -308,6 +343,21 @@ export default {
     this.loadStoreTemplateOptionData()
   },
   methods: {
+    uploadHeader() {
+      return { 'Authorization': getToken() }
+    },
+    uploadUrl() {
+      return this.$store.getters.baseApi + '/api/storeGoods/upload'
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
     getTemplateNameById(templateId, scope) {
       // console.log(templateId)
       // console.log(scope)
@@ -346,6 +396,7 @@ export default {
       return true
     },
     showGoodsDetail(data) {
+      this.currentRowData = data
       if (data && data.id && this.$refs.goodsDetail) {
         this.$refs.goodsDetail.query.goodsId = data.id
         this.$refs.goodsDetail.goodsId = data.id
