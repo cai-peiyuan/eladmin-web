@@ -250,7 +250,7 @@
               >
                 <el-button slot="trigger" size="small" type="primary">选文件</el-button>
                 <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                <div slot="tip" class="el-upload__tip">上传文件大小控制在5MB以内</div>
               </el-upload>
 
             </el-tab-pane>
@@ -325,7 +325,15 @@ export default {
       storeTemplateData: [],
       storeHouseAndShelfIds: [],
       storeHouseAndShelf: [],
-      fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }]
+      fileList: [{
+        id: '1',
+        name: 'food.jpeg111',
+        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+      }, {
+        id: '2',
+        name: 'food2.jpeg',
+        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+      }]
     }
   },
   computed: {
@@ -402,6 +410,10 @@ export default {
         this.$refs.goodsDetail.goodsId = data.id
         this.$refs.goodsDetail.goodsName = data.goodsName
         this.$refs.goodsDetail.crud.toQuery()
+      }
+      // 查询附件信息
+      if (data) {
+        // 加载附件请求
       }
     }
   }
