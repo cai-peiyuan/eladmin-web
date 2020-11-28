@@ -390,6 +390,8 @@ export function downloadFile(obj, name, suffix) {
 export function getElDictDesc(elDicValue, elDicKey, vueObj) {
   if (vueObj._self.el_dict.dict[elDicKey] && vueObj._self.el_dict.dict[elDicKey][elDicValue]) {
     return vueObj._self.el_dict.dict[elDicKey][elDicValue].desc
+  } else if (elDicValue === null || elDicValue === '') {
+    return ''
   } else {
     return '请引入字典' + elDicKey + '查看' + elDicValue + '释意'
   }
@@ -398,6 +400,8 @@ export function getElDictDesc(elDicValue, elDicKey, vueObj) {
 export function getDictLabel(elDicValue, elDicKey, vueObj) {
   if (vueObj._self.dict.dict[elDicKey] && vueObj._self.dict.dict[elDicKey][elDicValue]) {
     return vueObj._self.dict.dict[elDicKey][elDicValue].label
+  } else if (elDicValue === null || elDicValue === '') {
+    return ''
   } else {
     return '请引入字典' + elDicKey + '查看' + elDicValue + '释意'
   }

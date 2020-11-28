@@ -24,4 +24,11 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function queryByGoodsId(data) {
+  return request({
+    url: 'api/storeGoodsFile?goodsId=' + data.goodsId,
+    method: 'get'
+  })
+}
+
+export default { add, edit, del, queryByGoodsId }

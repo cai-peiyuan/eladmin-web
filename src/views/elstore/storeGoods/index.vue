@@ -27,7 +27,7 @@
         <rrOperation :crud="crud" />
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
-      <crudOperation :permission="permission" />
+      <crudOperation :permission="permission" :hidden-columns="hiddenColumns" />
       <!--表单组件-->
       <el-dialog
         :close-on-click-modal="false"
@@ -135,11 +135,11 @@
             stripe="stripe"
             highlight-current-row="highlight-current-row"
             @selection-change="crud.selectionChangeHandler"
-            @current-change="showGoodsDetail"
+            @row-click="queryGoodsInfo"
             @sort-change="crud.changeSortHandler"
           >
             <el-table-column type="selection" width="55" fixed="left" />
-            <el-table-column type="index" width="50" fixed="left" />
+            <el-table-column type="index" width="50" fixed="left" label="序号" />
             <el-table-column v-if="false" type="expand">
               <template slot-scope="props">
                 <el-form label-position="left" inline class="demo-table-expand" style="padding-left: 60px">
@@ -228,10 +228,10 @@
         <!-- 右侧详细信息卡片 -->
         <el-col :span="8">
           <el-tabs type="card">
-            <el-tab-pane label="详细信息">
+            <el-tab-pane :label="goodsDetailTitle">
               <goodsDetail ref="goodsDetail" :permission="permission" />
             </el-tab-pane>
-            <el-tab-pane label="文件信息">
+            <el-tab-pane :label="goodsFileTitle">
               <!-- 文件列表和上传控件 -->
               <el-upload
                 ref="upload"
@@ -245,7 +245,9 @@
                 :action="uploadUrl()"
                 :on-preview="handlePreview"
                 :on-remove="handleRemove"
+                :on-success="handleSuccess"
                 :file-list="fileList"
+                list-type="text"
                 :auto-upload="false"
               >
                 <el-button slot="trigger" size="small" type="primary">选文件</el-button>
@@ -270,12 +272,40 @@
           </el-tabs>
         </el-col>
       </el-row>
+
+      <el-dialog
+        :title="previewImgTitle"
+        :visible.sync="centerDialogVisible"
+        width="30%"
+        center
+      >
+
+        <el-image
+          :src="previewImgUrl"
+          fit="contain"
+          lazy
+        >
+          <div slot="error">
+            <i class="el-icon-document" />
+          </div>
+        </el-image>
+        <span slot="footer" class="dialog-footer">
+          <a
+            slot="reference"
+            :href="previewImgUrl"
+            class="el-link--primary"
+            style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color: #1890ff;font-size: 13px;"
+            target="_blank"
+          >下载文件</a>
+        </span>
+      </el-dialog>
     </div>
 
   </div>
 </template>
 
 <script>
+import { del as deleteGoodsFile, queryByGoodsId } from '@/api/elstore/storeGoodsFile.js'
 import { optionData } from '@/api/elstore/storeTemplate.js'
 import { getStoreHouseAndShelfTreeData } from '@/api/elstore/storeHouse.js'
 import goodsDetail from './goodsDetail'
@@ -294,7 +324,12 @@ export default {
   components: { pagination, crudOperation, rrOperation, udOperation, goodsDetail },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
-    return CRUD({ title: '物品信息', url: 'api/storeGoods', idField: 'id', sort: 'id,desc', crudMethod: { ...crudStoreGoods }})
+    return CRUD({
+      title: '物品信息',
+      url: 'api/storeGoods',
+      idField: 'id',
+      sort: 'id,desc',
+      crudMethod: { ...crudStoreGoods }})
   },
   dicts: ['APP_STORE_PROPERTY_TYPE', 'APP_STORE_GOODS_STATUS'],
   data() {
@@ -304,6 +339,7 @@ export default {
         edit: ['admin', 'storeGoods:edit'],
         del: ['admin', 'storeGoods:del']
       },
+      hiddenColumns: ['goodsCode', 'goodsName'],
       rules: {
         id: [
           { required: true, message: '主键不能为空', trigger: 'blur' }
@@ -333,7 +369,12 @@ export default {
         id: '2',
         name: 'food2.jpeg',
         url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-      }]
+      }],
+      centerDialogVisible: false,
+      previewImgUrl: '',
+      previewImgTitle: '图片预览',
+      goodsFileTitle: '附件信息',
+      goodsDetailTitle: '详细信息'
     }
   },
   computed: {
@@ -361,9 +402,20 @@ export default {
       this.$refs.upload.submit()
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList)
+      const _this = this
+      if (file && file.id) {
+        deleteGoodsFile([file.id]).then(res => {
+          _this.queryGoodsFile(this.currentRowData)
+        })
+      }
+    },
+    handleSuccess(response, file, fileList) {
+      this.queryGoodsFile(this.currentRowData)
     },
     handlePreview(file) {
+      this.centerDialogVisible = true
+      this.previewImgUrl = file.url
+      this.previewImgTitle = file.name
       console.log(file)
     },
     getTemplateNameById(templateId, scope) {
@@ -403,17 +455,37 @@ export default {
       this.storeHouseAndShelfIds = [this.form.storeHouseId, this.form.storeShelfId]
       return true
     },
-    showGoodsDetail(data) {
-      this.currentRowData = data
+    queryGoodsDetail(data) {
       if (data && data.id && this.$refs.goodsDetail) {
         this.$refs.goodsDetail.query.goodsId = data.id
         this.$refs.goodsDetail.goodsId = data.id
         this.$refs.goodsDetail.goodsName = data.goodsName
         this.$refs.goodsDetail.crud.toQuery()
       }
-      // 查询附件信息
+    },
+    queryGoodsFile(data) {
+      const _this = this
+      // 加载附件请求
+      this.fileList = []
+      queryByGoodsId({ goodsId: data.id }).then(res => {
+        if (res && res.totalElements > 0) {
+          this.goodsFileTitle = '附件信息(' + res.totalElements + ')'
+          res.content.forEach(function(data, index) {
+            data['name'] = data.originalFileName
+            data['url'] = _this.$store.getters.baseApi + '/file/物品附件/' + data.fileName
+          })
+          this.fileList = res.content
+        } else {
+          this.goodsFileTitle = '附件信息(无)'
+        }
+      })
+    },
+    queryGoodsInfo(data) {
+      this.currentRowData = data
+      // 查询物品的一些信息
       if (data) {
-        // 加载附件请求
+        this.queryGoodsDetail(data)
+        this.queryGoodsFile(data)
       }
     }
   }
@@ -438,6 +510,9 @@ export default {
   }
   /deep/ .el-dialog__body {
     padding: 0 20px 10px 20px !important;
+  }
+  /deep/ .el-table__row {
+    cursor: pointer;
   }
   .java.hljs {
     color: #444444;

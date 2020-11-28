@@ -2,6 +2,21 @@
   <div>
     <!--工具栏-->
     <div class="head-container">
+      <div class="crud-opts">
+        <!-- 表格操作左侧内容 -->
+        <span class="crud-opts-right">
+          <!--左侧插槽-->
+          <slot name="left" />
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="danger"
+            plain
+            @click="initGoodsDetailValue"
+          ><svg-icon icon-class="reload" />初始化值
+          </el-button>
+        </span>
+      </div>
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
         <el-table-column v-if="false" prop="goodsId" label="物品id" />
@@ -63,6 +78,9 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    initGoodsDetailValue() {
+
     }
   }
 }

@@ -135,7 +135,8 @@ import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 
-const defaultForm = { id: null, fileName: null, fileSuffix: null, fileType: null, fileSize: null, originalFileName: null, contentType: null, filePath: null, goodsId: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
+const defaultForm = {
+  id: null, fileName: null, fileSuffix: null, fileType: null, fileSize: null, originalFileName: null, contentType: null, filePath: null, goodsId: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
 export default {
   name: 'StoreGoodsFile',
   components: { pagination, crudOperation, rrOperation, udOperation },
