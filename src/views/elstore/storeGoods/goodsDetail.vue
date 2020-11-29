@@ -13,7 +13,9 @@
             type="danger"
             plain
             @click="initGoodsDetailValue"
-          ><svg-icon icon-class="reload" />初始化值
+          >
+            <svg-icon icon-class="reload" />
+            同步模板属性
           </el-button>
         </span>
       </div>
@@ -38,6 +40,16 @@
             <span>{{scope.row.propertyValue}}</span>
           </template>-->
           <template slot-scope="scope">
+            <el-input
+              v-if="currentEditDataId === scope.row.id && ('decimal' === scope.row.propertyType)"
+              v-model="scope.row.propertyValue"
+              size="small"
+              type="text"
+              oninput="value=value.replace(/[^0-9.]/g,'')"
+              @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+              @keyup.enter.native="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+            />
+
             <el-input
               v-if="currentEditDataId === scope.row.id && ('text' === scope.row.propertyType)"
               v-model="scope.row.propertyValue"
@@ -69,6 +81,8 @@
               align="right"
               type="date"
               placeholder="选择"
+              format="yyyy 年 MM 月 dd 日"
+              value-format="yyyy-MM-dd"
               @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
             />
             <el-time-select
@@ -91,10 +105,12 @@
               align="right"
               type="datetime"
               placeholder="选择"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
             />
 
-            <span v-if="currentEditDataId != scope.row.id">{{ scope.row.propertyValue }}</span>
+            <span v-if="currentEditDataId != scope.row.id">{{ parseGoodsDetailValue(scope.row, scope.row.propertyValue) }}</span>
           </template>
 
         </el-table-column>
@@ -204,6 +220,29 @@ export default {
       crudStoreGoodsDetail.edit({ id: id, propertyValue: value }).then(res => {
         console.log(res)
       })
+    },
+    parseGoodsDetailValue(row, value) {
+      if (row.propertyType === 'time') {
+        return (value)
+      }
+      if (row.propertyType === 'text') {
+        return (value)
+      }
+      if (row.propertyType === 'textarea') {
+        return (value)
+      }
+      if (row.propertyType === 'decimal') {
+        return (value)
+      }
+      if (row.propertyType === 'integer') {
+        return (value)
+      }
+      if (row.propertyType === 'date') {
+        return (value)
+      }
+      if (row.propertyType === 'datetime') {
+        return (value)
+      }
     }
   }
 }

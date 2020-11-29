@@ -62,7 +62,7 @@
           <el-form-item label="型号">
             <el-input v-model="form.goodsModel" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="物品状态">
+          <el-form-item v-if="false" label="物品状态">
             <el-input v-if="false" v-model="form.goodsStatus" style="width: 370px;" />
             <el-select
               v-model="form.goodsStatus"
@@ -78,7 +78,7 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="存放位置">
+          <el-form-item v-if="false" label="存放位置">
             <el-cascader
               v-model="storeHouseAndShelfIds"
               :options="storeHouseAndShelf"
@@ -508,7 +508,7 @@ export default {
         })
         return
       }
-      this.$confirm(`确定初始化当前物品所有的属性信息吗?`, '提示', {
+      this.$confirm(`该操作初始化当前物品所有的属性信息吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
