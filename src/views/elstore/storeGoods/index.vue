@@ -226,10 +226,16 @@
           <pagination />
         </el-col>
         <!-- 右侧详细信息卡片 -->
-        <el-col :span="8">
+        <el-col v-if="this.currentRowData != null" :span="8" style="padding-left: 10px">
+          <el-collapse v-if="false" accordion>
+            <el-collapse-item :title="goodsDetailTitle" />
+            <el-collapse-item :title="goodsFileTitle" />
+            <el-collapse-item :title="goodsHistoryTitle" />
+          </el-collapse>
+
           <el-tabs type="card">
             <el-tab-pane :label="goodsDetailTitle">
-              <goodsDetail ref="goodsDetail" :permission="permission" />
+              <goodsDetail ref="goodsDetail" :permission="permission" :init-goods-detail-value-func="initGoodsDetailValue" />
             </el-tab-pane>
             <el-tab-pane :label="goodsFileTitle">
               <!-- 文件列表和上传控件 -->
@@ -357,7 +363,7 @@ export default {
         { key: 'storeByIn', display_name: '入库人' },
         { key: 'storeByOut', display_name: '出库人' }
       ],
-      currentRowData: { id: '123' },
+      currentRowData: null,
       storeTemplateData: [],
       storeHouseAndShelfIds: [],
       storeHouseAndShelf: [],
@@ -374,6 +380,7 @@ export default {
       previewImgUrl: '',
       previewImgTitle: '图片预览',
       goodsFileTitle: '附件信息',
+      goodsHistoryTitle: '出入库记录',
       goodsDetailTitle: '详细信息'
     }
   },
@@ -405,12 +412,12 @@ export default {
       const _this = this
       if (file && file.id) {
         deleteGoodsFile([file.id]).then(res => {
-          _this.queryGoodsFile(this.currentRowData)
+          _this.queryGoodsFile()
         })
       }
     },
     handleSuccess(response, file, fileList) {
-      this.queryGoodsFile(this.currentRowData)
+      this.queryGoodsFile()
     },
     handlePreview(file) {
       this.centerDialogVisible = true
@@ -455,19 +462,22 @@ export default {
       this.storeHouseAndShelfIds = [this.form.storeHouseId, this.form.storeShelfId]
       return true
     },
-    queryGoodsDetail(data) {
-      if (data && data.id && this.$refs.goodsDetail) {
-        this.$refs.goodsDetail.query.goodsId = data.id
-        this.$refs.goodsDetail.goodsId = data.id
-        this.$refs.goodsDetail.goodsName = data.goodsName
+    [CRUD.HOOK.afterRefresh]() {
+      this.currentRowData = null
+    },
+    queryGoodsDetail() {
+      if (this.currentRowData && this.currentRowData.id && this.$refs.goodsDetail) {
+        this.$refs.goodsDetail.query.goodsId = this.currentRowData.id
+        this.$refs.goodsDetail.goodsId = this.currentRowData.id
+        this.$refs.goodsDetail.goodsName = this.currentRowData.goodsName
         this.$refs.goodsDetail.crud.toQuery()
       }
     },
-    queryGoodsFile(data) {
+    queryGoodsFile() {
       const _this = this
       // 加载附件请求
       this.fileList = []
-      queryByGoodsId({ goodsId: data.id }).then(res => {
+      queryByGoodsId({ goodsId: this.currentRowData.id }).then(res => {
         if (res && res.totalElements > 0) {
           this.goodsFileTitle = '附件信息(' + res.totalElements + ')'
           res.content.forEach(function(data, index) {
@@ -483,10 +493,33 @@ export default {
     queryGoodsInfo(data) {
       this.currentRowData = data
       // 查询物品的一些信息
-      if (data) {
-        this.queryGoodsDetail(data)
-        this.queryGoodsFile(data)
+      if (this.currentRowData) {
+        this.queryGoodsDetail()
+        this.queryGoodsFile()
       }
+    },
+    initGoodsDetailValue() {
+      const _this = this
+      if (!this.currentRowData) {
+        this.$notify({
+          title: '请选择一个物品',
+          type: 'error',
+          duration: 1000
+        })
+        return
+      }
+      this.$confirm(`确定初始化当前物品所有的属性信息吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(new Date())
+        crudStoreGoods.initGoodsDetail(_this.currentRowData.id).then(res => {
+          _this.queryGoodsDetail()
+        })
+      }).catch(() => {
+
+      })
     }
   }
 }

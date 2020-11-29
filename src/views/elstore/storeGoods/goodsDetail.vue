@@ -18,14 +18,100 @@
         </span>
       </div>
       <!--表格渲染-->
-      <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+      <el-table
+        ref="table"
+        v-loading="crud.loading"
+        :data="crud.data"
+        size="small"
+        style="width: 100%;"
+        highlight-current-row
+        @row-click="editTheRow"
+        @selection-change="crud.selectionChangeHandler"
+      >
         <el-table-column v-if="false" prop="goodsId" label="物品id" />
         <el-table-column v-if="false" prop="goodsTemplateId" label="物品模板编号" />
         <el-table-column v-if="false" prop="propertySeq" label="属性序号" />
         <el-table-column v-if="false" prop="propertyCode" label="属性编码" />
-        <el-table-column prop="propertyDesc" label="属性描述" />
-        <el-table-column prop="propertyValue" label="属性值" />
+        <el-table-column prop="propertyDesc" label="属性描述" width="100" />
+        <el-table-column prop="propertyValue" label="属性值">
+          <!--<template slot-scope="scope">
+            <span>{{scope.row.propertyValue}}</span>
+          </template>-->
+          <template slot-scope="scope">
+            <el-input
+              v-if="currentEditDataId === scope.row.id && ('text' === scope.row.propertyType)"
+              v-model="scope.row.propertyValue"
+              size="small"
+              type="text"
+              @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+              @keyup.enter.native="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+            />
+
+            <el-input
+              v-if="currentEditDataId === scope.row.id && ('textarea' === scope.row.propertyType)"
+              v-model="scope.row.propertyValue"
+              size="small"
+              type="textarea"
+              @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+              @keyup.enter.native="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+            />
+
+            <el-input-number
+              v-if="currentEditDataId === scope.row.id && 'integer' === scope.row.propertyType"
+              v-model="scope.row.propertyValue"
+              size="small"
+              @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+            />
+
+            <el-date-picker
+              v-if="currentEditDataId === scope.row.id && ('date' === scope.row.propertyType) "
+              v-model="scope.row.propertyValue"
+              align="right"
+              type="date"
+              placeholder="选择"
+              @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+            />
+            <el-time-select
+              v-if="currentEditDataId === scope.row.id && ('time' === scope.row.propertyType) "
+              v-model="scope.row.propertyValue"
+              align="right"
+              type="time"
+              placeholder="选择"
+              :picker-options="{
+                start: '00:00',
+                step: '00:15',
+                end: '23:59'
+              }"
+              @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+            />
+
+            <el-date-picker
+              v-if="currentEditDataId === scope.row.id && ('datetime' === scope.row.propertyType) "
+              v-model="scope.row.propertyValue"
+              align="right"
+              type="datetime"
+              placeholder="选择"
+              @blur="handleInputBlurResult({index:scope.$index, value:scope.row.propertyValue, id: scope.row.id})"
+            />
+
+            <span v-if="currentEditDataId != scope.row.id">{{ scope.row.propertyValue }}</span>
+          </template>
+
+        </el-table-column>
       </el-table>
+
+      <el-form v-if="false" label-width="100px" class="demo-dynamic">
+        <el-form-item
+          v-for="(domain, index) in dynamicValidateForm.domains"
+          :key="domain.key"
+          :label="'域名' + index"
+          :prop="'domains.' + index + '.value'"
+          :rules="{
+            required: true, message: '域名不能为空', trigger: 'blur'
+          }"
+        />
+      </el-form>
+
     </div>
   </div>
 </template>
@@ -47,11 +133,26 @@ export default {
       idField: 'id',
       query: { goodsId: '' },
       sort: 'id,desc',
-      crudMethod: { ...crudStoreGoodsDetail }
+      crudMethod: { ...crudStoreGoodsDetail },
+      queryOnPresenterCreated: false
     })
+  },
+  props: {
+    initGoodsDetailValueFunc: {
+      type: Function,
+      default: null
+    }
   },
   data() {
     return {
+      dynamicValidateForm: {
+        domains: [{
+          value: ''
+        }],
+        email: ''
+      },
+      currentEditIndex: -1,
+      currentEditDataId: '',
       goodsId: null,
       goodsName: null,
       permission: {
@@ -79,8 +180,30 @@ export default {
     [CRUD.HOOK.beforeRefresh]() {
       return true
     },
+    [CRUD.HOOK.afterRefresh]() {
+      this.$crud.data
+      return true
+    },
     initGoodsDetailValue() {
-
+      if (this.initGoodsDetailValueFunc) {
+        this.initGoodsDetailValueFunc()
+      }
+    },
+    editTheRow(rowData, column, event) {
+      this.currentEditDataId = rowData.id
+    },
+    handleInputBlurResult({
+      index,
+      value = '',
+      id = ''
+    }) {
+      console.log(id)
+      console.log(value)
+      this.currentEditIndex = -1
+      this.currentEditDataId = ''
+      crudStoreGoodsDetail.edit({ id: id, propertyValue: value }).then(res => {
+        console.log(res)
+      })
     }
   }
 }

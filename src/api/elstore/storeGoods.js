@@ -24,4 +24,11 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function initGoodsDetail(id) {
+  return request({
+    url: 'api/storeGoods/initGoodsDetail/' + id,
+    method: 'get'
+  })
+}
+
+export default { add, edit, del, initGoodsDetail }
