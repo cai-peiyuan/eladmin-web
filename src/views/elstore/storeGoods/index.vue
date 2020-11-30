@@ -28,6 +28,89 @@
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
       <crudOperation :permission="permission" :hidden-columns="hiddenColumns" />
+
+      <!--出库操作表单组件-->
+      <el-dialog
+        :close-on-click-modal="false"
+        :visible.sync="goodsOutHouseDialogFlag"
+        :title="goodsOutHouseDialogTitle"
+        width="500px"
+      >
+        <el-form ref="outHouseForm" :model="form" :rules="rulesOutHouseForm" size="small" label-width="80px">
+          <el-form-item v-if="true" label="当前物品存放位置">
+            <el-cascader
+              v-model="storeHouseAndShelfIds"
+              :options="storeHouseAndShelf"
+              style="width: 370px;"
+              placeholder="请选择存放位置"
+              clearable
+              @change="selectStoreHouseAndSelf"
+            />
+          </el-form-item>
+          <el-form-item v-if="false" label="仓库编号">
+            <el-input v-model="form.storeHouseId" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item v-if="false" label="货架编号">
+            <el-input v-model="form.storeShelfId" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item v-if="true" label="出库时间">
+            <el-date-picker
+              v-model="form.storeTimeOut"
+              style="width: 370px;"
+              type="datetime"
+              placeholder="选择出库时间"
+            />
+          </el-form-item>
+          <el-form-item v-if="true" label="出库人" prop="storeByOut">
+            <el-input v-model="form.storeByOut" style="width: 370px;" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="text" @click="goodsOutHouseDialogFlag = false">取消</el-button>
+          <el-button :loading="goodsOutHouseLoading" type="primary" @click="doGoodsOutHouse">出库</el-button>
+        </div>
+      </el-dialog>
+      <!--入库操作表单组件-->
+      <el-dialog
+        :close-on-click-modal="false"
+        :visible.sync="goodsInHouseDialogFlag"
+        :title="goodsInHouseDialogTitle"
+        width="500px"
+      >
+        <el-form ref="inHouseForm" :model="form" :rules="rulesInHouseForm" size="small" label-width="80px">
+          <el-form-item v-if="true" label="存放位置" prop="storeHouseId">
+            <el-cascader
+              v-model="storeHouseAndShelfIds"
+              :options="storeHouseAndShelf"
+              style="width: 370px;"
+              placeholder="请选择存放位置"
+              clearable
+              @change="selectStoreHouseAndSelf"
+            />
+          </el-form-item>
+          <el-form-item v-if="false" label="仓库编号" prop="storeHouseId">
+            <el-input v-model="form.storeHouseId" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item v-if="false" label="货架编号" prop="storeShelfId">
+            <el-input v-model="form.storeShelfId" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item label="入库时间" prop="storeTimeIn">
+            <el-date-picker
+              v-model="form.storeTimeIn"
+              style="width: 370px;"
+              type="datetime"
+              placeholder="选择入库时间默认当前时间"
+            />
+          </el-form-item>
+          <el-form-item v-if="true" label="入库人" prop="storeByIn">
+            <el-input v-model="form.storeByIn" style="width: 370px;" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="text" @click="goodsInHouseDialogFlag = false">取消</el-button>
+          <el-button :loading="goodsInHouseLoading" type="primary" @click="doGoodsInHouse">入库</el-button>
+        </div>
+      </el-dialog>
       <!--表单组件-->
       <el-dialog
         :close-on-click-modal="false"
@@ -37,7 +120,6 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-
           <el-form-item label="物品类型">
             <el-input v-if="false" v-model="form.goodsTemplateId" style="width: 370px;" />
             <el-select v-model="form.goodsTemplateId" style="width: 370px;" clearable>
@@ -178,7 +260,7 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column prop="goodsTemplateId" label="物品类型" sortable="custom">
+            <el-table-column prop="goodsTemplateId" label="物品类型" sortable="custom" width="100px">
               <template slot-scope="scope">
                 <span>
                   {{ getTemplateNameById(scope.row.goodsTemplateId, scope) }}
@@ -187,18 +269,37 @@
             </el-table-column>
 
             <el-table-column prop="goodsCode" label="物品代码" sortable="custom" />
-            <el-table-column prop="goodsName" label="物品名称" sortable="custom" />
-            <el-table-column prop="goodsBrand" label="品牌" sortable="custom" />
-            <el-table-column prop="goodsModel" label="型号" sortable="custom" />
+            <el-table-column prop="goodsName" label="物品名称" sortable="custom" width="150px" />
+            <el-table-column prop="goodsBrand" label="品牌" sortable="custom" width="80px" />
+            <el-table-column prop="goodsModel" label="型号" sortable="custom" width="80px" />
 
-            <el-table-column prop="goodsStatus" label="物品状态" sortable="custom">
+            <el-table-column prop="goodsStatus" label="物品状态" sortable="custom" width="80px">
               <template slot-scope="scope">
                 <span>
-                  {{ getDictLabel(scope.row.goodsStatus,'APP_STORE_GOODS_STATUS',scope) }}
+                  <el-tag
+                    :type="(scope.row.goodsStatus === '0' || scope.row.goodsStatus === '2') ? 'warning' : 'success'"
+                    disable-transitions
+                  >{{ getDictLabel(scope.row.goodsStatus,'APP_STORE_GOODS_STATUS',scope) }}</el-tag>
                 </span>
               </template>
             </el-table-column>
-
+            <!-- 自定义的一些列 -->
+            <el-table-column v-if="true" label="存放位置">
+              <template slot-scope="scope">
+                <span>{{ getHouseAndShelfName(scope.row.storeHouseId, scope.row.storeShelfId) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column v-if="true" label="最后操作时间" width="150px">
+              <template slot-scope="scope">
+                <span>{{ getLastModifyTime(scope.row.goodsStatus, scope.row.storeTimeIn, scope.row.storeTimeOut) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column v-if="true" label="最后操作人" width="100px">
+              <template slot-scope="scope">
+                <span>{{ getLastModifyUser(scope.row.goodsStatus, scope.row.storeByIn, scope.row.storeByOut) }}</span>
+              </template>
+            </el-table-column>
+            <!-- 原来的表的列 -->
             <el-table-column v-if="false" prop="storeHouseId" label="仓库编号" />
             <el-table-column v-if="false" prop="storeShelfId" label="货架编号" />
             <el-table-column v-if="false" prop="storeTimeIn" label="入库时间">
@@ -235,7 +336,11 @@
 
           <el-tabs type="card">
             <el-tab-pane :label="goodsDetailTitle">
-              <goodsDetail ref="goodsDetail" :permission="permission" :init-goods-detail-value-func="initGoodsDetailValue" />
+              <goodsDetail
+                ref="goodsDetail"
+                :permission="permission"
+                :init-goods-detail-value-func="initGoodsDetailValue"
+              />
             </el-tab-pane>
             <el-tab-pane :label="goodsFileTitle">
               <!-- 文件列表和上传控件 -->
@@ -265,14 +370,30 @@
             <el-tab-pane label="出入库记录">
               <el-row>
                 <p style="text-align: center; margin: 0 0 20px">
-                  <el-button type="primary" plain><i class="el-icon-arrow-up" />出库</el-button>
-                  <el-button type="success" plain><i class="el-icon-arrow-down" />入库</el-button>
+                  {{ currentRowData?currentRowData.goodsName:'' }}出入库历史记录
+                  <el-button
+                    v-if="currentRowData != null && (currentRowData.goodsStatus === '1') "
+                    type="primary"
+                    plain
+                    @click="goodsOutHouse"
+                  >
+                    <i class="el-icon-arrow-up" />出库
+                  </el-button>
+                  <el-button
+                    v-if="currentRowData != null && (currentRowData.goodsStatus === '0' || currentRowData.goodsStatus === '2') "
+                    type="success"
+                    plain
+                    @click="goodsInHouse"
+                  >
+                    <i class="el-icon-arrow-down" />入库
+                  </el-button>
                 </p>
               </el-row>
               <el-row>
-                <p style="text-align: center; margin: 0 0 20px">
-                  出入库历史记录
-                </p>
+                <goodsLog
+                  ref="goodsLog"
+                  :permission="permission"
+                />
               </el-row>
             </el-tab-pane>
           </el-tabs>
@@ -314,7 +435,8 @@
 import { del as deleteGoodsFile, queryByGoodsId } from '@/api/elstore/storeGoodsFile.js'
 import { optionData } from '@/api/elstore/storeTemplate.js'
 import { getStoreHouseAndShelfTreeData } from '@/api/elstore/storeHouse.js'
-import goodsDetail from './goodsDetail'
+import goodsDetail from './goodsDetail.vue'
+import goodsLog from './goodsLog.vue'
 import crudStoreGoods from '@/api/elstore/storeGoods.js'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
@@ -323,11 +445,12 @@ import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import { getToken } from '@/utils/auth'
 import { mapGetters } from 'vuex'
+import { parseTime } from '../../../utils'
 
 const defaultForm = { id: null, goodsCode: null, goodsName: null, goodsBrand: null, goodsModel: null, goodsStatus: null, goodsTemplateId: null, storeHouseId: null, storeShelfId: null, storeTimeIn: null, storeTimeOut: null, storeByIn: null, storeByOut: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
 export default {
   name: 'StoreGoods',
-  components: { pagination, crudOperation, rrOperation, udOperation, goodsDetail },
+  components: { pagination, crudOperation, rrOperation, udOperation, goodsDetail, goodsLog },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -337,7 +460,7 @@ export default {
       sort: 'id,desc',
       crudMethod: { ...crudStoreGoods }})
   },
-  dicts: ['APP_STORE_PROPERTY_TYPE', 'APP_STORE_GOODS_STATUS'],
+  dicts: ['APP_STORE_PROPERTY_TYPE', 'APP_STORE_GOODS_STATUS', 'APP_STORE_INOUT_TYPE'],
   data() {
     return {
       permission: {
@@ -345,10 +468,32 @@ export default {
         edit: ['admin', 'storeGoods:edit'],
         del: ['admin', 'storeGoods:del']
       },
-      hiddenColumns: ['goodsCode', 'goodsName'],
+      hiddenColumns: ['goodsCode', 'goodsModel'],
       rules: {
         id: [
           { required: true, message: '主键不能为空', trigger: 'blur' }
+        ]
+      },
+      rulesInHouseForm: {
+        id: [
+          { required: true, message: '主键不能为空', trigger: 'blur' }
+        ],
+        storeHouseId: [
+          { required: true, message: '仓库不能为空', trigger: 'blur' }
+        ],
+        storeShelfId: [
+          { required: true, message: '货架不能为空', trigger: 'blur' }
+        ],
+        storeByIn: [
+          { required: true, message: '入库人不能为空', trigger: 'blur' }
+        ]
+      },
+      rulesOutHouseForm: {
+        id: [
+          { required: true, message: '主键不能为空', trigger: 'blur' }
+        ],
+        storeByOut: [
+          { required: true, message: '出库人不能为空', trigger: 'blur' }
         ]
       },
       queryTypeOptions: [
@@ -381,7 +526,13 @@ export default {
       previewImgTitle: '图片预览',
       goodsFileTitle: '附件信息',
       goodsHistoryTitle: '出入库记录',
-      goodsDetailTitle: '详细信息'
+      goodsDetailTitle: '详细信息',
+      goodsOutHouseDialogTitle: '物品出库',
+      goodsOutHouseDialogFlag: false,
+      goodsOutHouseLoading: false,
+      goodsInHouseDialogTitle: '物品入库',
+      goodsInHouseDialogFlag: false,
+      goodsInHouseLoading: false
     }
   },
   computed: {
@@ -399,6 +550,22 @@ export default {
     this.loadStoreTemplateOptionData()
   },
   methods: {
+    getHouseAndShelfName(houseId, shelfId) {
+      let houseName = houseId
+      for (let i = 0; i < this.storeHouseAndShelf.length; i++) {
+        const houseInfo = this.storeHouseAndShelf[i]
+        if (houseInfo.id === houseId) {
+          houseName = houseInfo.label
+        }
+      }
+      return houseName
+    },
+    getLastModifyTime(goodsStatus, storeTimeIn, storeTimeOut) {
+      return (goodsStatus === '0' || goodsStatus === '1') ? parseTime(storeTimeIn) : parseTime(storeTimeOut)
+    },
+    getLastModifyUser(goodsStatus, storeByIn, storeByOut) {
+      return (goodsStatus === '0' || goodsStatus === '1') ? (storeByIn) : (storeByOut)
+    },
     uploadHeader() {
       return { 'Authorization': getToken() }
     },
@@ -465,6 +632,14 @@ export default {
     [CRUD.HOOK.afterRefresh]() {
       this.currentRowData = null
     },
+    queryGoodsLog() {
+      if (this.currentRowData && this.currentRowData.id && this.$refs.goodsLog) {
+        this.$refs.goodsLog.query.goodsId = this.currentRowData.id
+        this.$refs.goodsLog.goodsId = this.currentRowData.id
+        this.$refs.goodsLog.goodsName = this.currentRowData.goodsName
+        this.$refs.goodsLog.crud.toQuery()
+      }
+    },
     queryGoodsDetail() {
       if (this.currentRowData && this.currentRowData.id && this.$refs.goodsDetail) {
         this.$refs.goodsDetail.query.goodsId = this.currentRowData.id
@@ -491,12 +666,54 @@ export default {
       })
     },
     queryGoodsInfo(data) {
+      this.form.id = data.id
       this.currentRowData = data
       // 查询物品的一些信息
       if (this.currentRowData) {
         this.queryGoodsDetail()
         this.queryGoodsFile()
+        this.queryGoodsLog()
       }
+    },
+    // 商品入库
+    doGoodsInHouse() {
+      const _this = this
+      this.$refs['inHouseForm'].validate((valid) => {
+        if (valid) {
+          _this.goodsInHouseLoading = true
+          crudStoreGoods.doGoodsInHouse(this.form).then(res => {
+            _this.goodsInHouseLoading = false
+            _this.crud.refresh()
+            _this.crud.notify('物品入库操作成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    // 商品出库
+    doGoodsOutHouse() {
+      const _this = this
+      this.$refs['outHouseForm'].validate((valid) => {
+        if (valid) {
+          _this.goodsOutHouseLoading = true
+          crudStoreGoods.doGoodsOutHouse(this.form).then(res => {
+            _this.goodsOutHouseLoading = false
+            _this.crud.refresh()
+            _this.crud.notify('物品出库操作成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    // 商品入库
+    goodsInHouse() {
+      this.goodsInHouseDialogFlag = true
+    },
+    // 商品出库
+    goodsOutHouse() {
+      this.goodsOutHouseDialogFlag = true
     },
     initGoodsDetailValue() {
       const _this = this
@@ -513,7 +730,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log(new Date())
         crudStoreGoods.initGoodsDetail(_this.currentRowData.id).then(res => {
           _this.queryGoodsDetail()
         })

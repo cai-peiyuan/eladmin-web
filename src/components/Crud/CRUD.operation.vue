@@ -50,7 +50,7 @@
         :loading="crud.downloadLoading"
         class="filter-item"
         size="mini"
-        type="warning"
+        type="`warning`"
         icon="el-icon-download"
         plain
         @click="crud.doExport"

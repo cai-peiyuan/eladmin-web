@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="padding: 10px">
     <!--工具栏-->
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
@@ -94,8 +94,8 @@
         <el-table-column prop="goodsId" label="物品id" />
         <el-table-column prop="houseId" label="仓库编号" />
         <el-table-column prop="shelfId" label="货架编号" />
-        <el-table-column prop="logType" label="出入库标记" />
-        <el-table-column prop="logTime" label="出入库时间">
+        <el-table-column prop="logType" label="出入库状态" />
+        <el-table-column prop="logTime" label="操作时间">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.logTime) }}</span>
           </template>
@@ -128,12 +128,24 @@ const defaultForm = { id: null, goodsCode: null, goodsId: null, houseId: null, s
 export default {
   name: 'StoreGoodsLog',
   components: { pagination, crudOperation, rrOperation, udOperation },
-  mixins: [presenter(), header(), form(defaultForm), crud()],
+  mixins: [presenter(), header(), form(function() {
+    return Object.assign({ goods: { id: this.goodsId }, goodsId: this.goodsId }, defaultForm)
+  }), crud()],
   cruds() {
-    return CRUD({ title: 'StoreGoodsLog', url: 'api/storeGoodsLog', idField: 'id', sort: 'id,desc', crudMethod: { ...crudStoreGoodsLog }})
+    return CRUD({
+      title: 'StoreGoodsLog',
+      url: 'api/storeGoodsLog',
+      idField: 'id',
+      query: { goodsId: '' },
+      sort: 'logTime,desc',
+      crudMethod: { ...crudStoreGoodsLog }
+    })
   },
+  dicts: ['APP_STORE_INOUT_TYPE'],
   data() {
     return {
+      goodsId: null,
+      goodsName: null,
       permission: {
         add: ['admin', 'storeGoodsLog:add'],
         edit: ['admin', 'storeGoodsLog:edit'],

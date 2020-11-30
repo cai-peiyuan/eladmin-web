@@ -115,19 +115,6 @@
 
         </el-table-column>
       </el-table>
-
-      <el-form v-if="false" label-width="100px" class="demo-dynamic">
-        <el-form-item
-          v-for="(domain, index) in dynamicValidateForm.domains"
-          :key="domain.key"
-          :label="'域名' + index"
-          :prop="'domains.' + index + '.value'"
-          :rules="{
-            required: true, message: '域名不能为空', trigger: 'blur'
-          }"
-        />
-      </el-form>
-
     </div>
   </div>
 </template>
@@ -155,6 +142,14 @@ export default {
   },
   props: {
     initGoodsDetailValueFunc: {
+      type: Function,
+      default: null
+    },
+    inHouseFunc: {
+      type: Function,
+      default: null
+    },
+    outHouseFunc: {
       type: Function,
       default: null
     }
@@ -203,6 +198,16 @@ export default {
     initGoodsDetailValue() {
       if (this.initGoodsDetailValueFunc) {
         this.initGoodsDetailValueFunc()
+      }
+    },
+    inHouse() {
+      if (this.inHouseFunc) {
+        this.inHouseFunc()
+      }
+    },
+    outHouse() {
+      if (this.outHouseFunc) {
+        this.outHouseFunc()
       }
     },
     editTheRow(rowData, column, event) {

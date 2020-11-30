@@ -31,4 +31,20 @@ export function initGoodsDetail(id) {
   })
 }
 
-export default { add, edit, del, initGoodsDetail }
+export function doGoodsInHouse(data) {
+  return request({
+    url: 'api/storeGoods/inHouse',
+    method: 'post',
+    data
+  })
+}
+
+export function doGoodsOutHouse(data) {
+  return request({
+    url: 'api/storeGoods/outHouse',
+    method: 'post',
+    data
+  })
+}
+
+export default { add, edit, del, initGoodsDetail, doGoodsInHouse, doGoodsOutHouse }
