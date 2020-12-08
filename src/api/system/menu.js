@@ -62,4 +62,12 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del, getMenusTree, getMenuSuperior, getMenus, getChild }
+export function addEditButtonMenu(data) {
+  return request({
+    url: 'api/menus/addEditButtonMenu',
+    method: 'post',
+    data
+  })
+}
+
+export default { add, edit, del, getMenusTree, getMenuSuperior, getMenus, getChild, addEditButtonMenu }
