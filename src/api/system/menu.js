@@ -70,4 +70,12 @@ export function addEditButtonMenu(data) {
   })
 }
 
-export default { add, edit, del, getMenusTree, getMenuSuperior, getMenus, getChild, addEditButtonMenu }
+export function updatePropValueById(data) {
+  return request({
+    url: 'api/menus/updatePropValueById',
+    method: 'post',
+    data
+  })
+}
+
+export default { add, edit, del, getMenusTree, getMenuSuperior, getMenus, getChild, addEditButtonMenu, updatePropValueById }

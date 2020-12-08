@@ -98,6 +98,7 @@
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :expand-row-keys="defaultExpandKeys"
       row-key="id"
+      @row-click="editTheRow"
       @select="crud.selectChange"
       @select-all="crud.selectAllChange"
       @selection-change="crud.selectionChangeHandler"
@@ -130,7 +131,18 @@
 
       <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" />
 
-      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" />
+      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="120px">
+        <template slot-scope="scope">
+          <el-input
+            v-if="currentEditDataId === scope.row.id"
+            v-model="scope.row.path"
+            size="small"
+            type="text"
+            @blur="handleInputBlurResult({index:scope.$index, value:scope.row.path, id: scope.row.id, type: 'path'})"
+          />
+          <span v-if="currentEditDataId != scope.row.id">{{ scope.row.path }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径" />
       <el-table-column prop="iframe" label="外链" width="75px">
         <template slot-scope="scope">
@@ -156,9 +168,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="menuSort" align="center" label="排序">
+      <el-table-column prop="menuSort" align="center" label="排序" width="150px">
         <template slot-scope="scope">
-          {{ scope.row.menuSort }}
+          <el-input-number
+            v-if="currentEditDataId === scope.row.id"
+            v-model="scope.row.menuSort"
+            size="small"
+            style="width: 120px"
+            @change="handleInputBlurResult({index:scope.$index, value:scope.row.menuSort, id: scope.row.id, type: 'menuSort'})"
+          />
+          <span v-if="currentEditDataId != scope.row.id">{{ scope.row.menuSort }}</span>
         </template>
       </el-table-column>
 
@@ -205,6 +224,7 @@ export default {
       showParentMenu: true,
       refreshRowId: null,
       defaultExpandKeys: [1, 2],
+      currentEditDataId: '',
       menus: [],
       permission: {
         add: ['admin', 'menu:add'],
@@ -338,6 +358,19 @@ export default {
           message: '取消'
         })
       })
+    },
+    editTheRow(rowData, column, event) {
+      this.currentEditDataId = rowData.id
+    },
+    handleInputBlurResult({ index, value = '', id = '', type = '' }) {
+      console.log(id)
+      console.log(value)
+      // this.currentEditDataId = ''
+      if (type === 'menuSort' || type === 'path') {
+        // 更新菜单的排序值
+        crudMenu.updatePropValueById({ id: id, value: value, prop: type }).then(res => {
+        })
+      }
     }
   }
 }
