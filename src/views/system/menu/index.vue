@@ -8,7 +8,7 @@
         <date-range-picker v-model="query.createTime" class="date-item" />
         <rrOperation />
       </div>
-      <crudOperation :permission="permission" />
+      <crudOperation :permission="permission" :hidden-columns="hiddenColumns" />
     </div>
     <!--表单渲染-->
     <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="580px">
@@ -73,13 +73,13 @@
         <el-form-item v-show="!form.iframe && form.type.toString() === '1'" label="组件路径" prop="component">
           <el-input v-model="form.component" style="width: 178px;" placeholder="组件路径" />
         </el-form-item>
-        <el-form-item label="上级类目" prop="pid">
+        <el-form-item v-if="showParentMenu" label="上级菜单" prop="pid">
           <treeselect
             v-model="form.pid"
             :options="menus"
             :load-options="loadMenus"
             style="width: 450px;"
-            placeholder="选择上级类目"
+            placeholder="选择上级菜单"
           />
         </el-form-item>
       </el-form>
@@ -96,13 +96,32 @@
       :load="getMenus"
       :data="crud.data"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      :expand-row-keys="defaultExpandKeys"
       row-key="id"
       @select="crud.selectChange"
       @select-all="crud.selectAllChange"
       @selection-change="crud.selectionChangeHandler"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" label="菜单标题" width="200px" prop="title" />
+      <el-table-column :show-overflow-tooltip="true" label="菜单标题" width="200px" prop="title">
+        <template slot-scope="scope">
+          <svg-icon :icon-class="scope.row.icon ? scope.row.icon : ''" /> <span v-text="scope.row.title" />
+        </template>
+      </el-table-column>
+      <el-table-column width="55">
+        <template slot-scope="scope">
+          <el-tooltip content="添加下级菜单" placement="top">
+            <span><el-link type="primary" @click="addMenuChild(scope.row)"><i class="el-icon-plus" /></el-link></span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column :show-overflow-tooltip="true" prop="path1" label="类型">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.type === 0">目录</el-tag>
+          <el-tag v-else-if="scope.row.type === 1" type="warning" style="cursor: pointer" @click="addEditButtonMenu(scope.row)">菜单</el-tag>
+          <el-tag v-else type="danger">按钮</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="icon" label="图标" align="center" width="60px">
         <template slot-scope="scope">
           <svg-icon :icon-class="scope.row.icon ? scope.row.icon : ''" />
@@ -174,17 +193,25 @@ export default {
   name: 'Menu',
   components: { Treeselect, IconSelect, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '菜单', url: 'api/menus', crudMethod: { ...crudMenu }})
+    return CRUD({ title: '菜单',
+      url: 'api/menus',
+      crudMethod: { ...crudMenu }
+    })
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
     return {
+      menuDoPop: false,
+      showParentMenu: true,
+      refreshRowId: null,
+      defaultExpandKeys: [1, 2],
       menus: [],
       permission: {
         add: ['admin', 'menu:add'],
         edit: ['admin', 'menu:edit'],
         del: ['admin', 'menu:del']
       },
+      hiddenColumns: ['icon'],
       rules: {
         title: [
           { required: true, message: '请输入标题', trigger: 'blur' }
@@ -198,6 +225,7 @@ export default {
   methods: {
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
+      this.showParentMenu = true
       this.menus = []
       if (form.id != null) {
         if (form.pid === null) {
@@ -207,6 +235,17 @@ export default {
       } else {
         this.menus.push({ id: 0, label: '顶级类目', children: null })
       }
+    },
+    // 刷新表格之后操作
+    [CRUD.HOOK.afterRefresh](crud, form) {
+      console.log(this.crud.data)
+      const _this = this
+      if (_this.refreshRowId) {
+        this.crud.data.forEach(data => {
+          // _this.$refs.table.toggleRowExpansion(data, true)
+        })
+      }
+      return true
     },
     getMenus(tree, treeNode, resolve) {
       const params = { pid: tree.id }
@@ -245,6 +284,60 @@ export default {
     // 选中图标
     selected(name) {
       this.form.icon = name
+    },
+    getTypeDesc(typeCode) {
+      if (typeCode === 0) {
+        return '目录'
+      } else if (typeCode === 1) {
+        return '菜单'
+      } else if (typeCode === 2) {
+        return '按钮'
+      } else {
+        return typeCode
+      }
+    },
+    showMenuDoPop() {
+      this.menuDoPop = true
+    },
+    addMenuChild(rowData) {
+      this.crud.resetForm()
+      this.crud.form.pid = rowData.id
+      this.crud.status.add = CRUD.STATUS.PREPARED
+      this.showParentMenu = false
+    },
+    // 添加增删改的菜单按钮
+    addEditButtonMenu(rowData) {
+      this.$prompt('输入权限标识以批量生成增、删、改权限按钮', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: rowData.permission,
+        inputPattern: /^.{4,100}$/,
+        inputErrorMessage: '权限标识不正确'
+      }).then(({ value }) => {
+        const loading = this.$loading({
+          lock: true,
+          text: '正在处理',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        setTimeout(() => {
+          loading.close()
+        }, 20000)
+        crudMenu.addEditButtonMenu({ id: rowData.id, permission: value }).then(res => {
+          this.$message({
+            type: 'success',
+            message: '操作成功: ' + value
+          })
+          this.refreshRowId = rowData.pid
+          this.crud.refresh()
+          loading.close()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消'
+        })
+      })
     }
   }
 }
@@ -258,4 +351,13 @@ export default {
     height: 30px;
     line-height: 30px;
   }
+ .el-dropdown {
+   vertical-align: top;
+ }
+ .el-dropdown + .el-dropdown {
+   margin-left: 15px;
+ }
+ .el-icon-arrow-down {
+   font-size: 12px;
+ }
 </style>
