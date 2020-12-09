@@ -367,10 +367,25 @@ export default {
       console.log(value)
       // this.currentEditDataId = ''
       if (type === 'menuSort' || type === 'path') {
+        if (type === 'menuSort') {
+          this.$refs.table.sort('menuSort', 'asc')
+        }
+        // this.updateTableData(this.$refs.table.data, type, value, id)
         // 更新菜单的排序值
         crudMenu.updatePropValueById({ id: id, value: value, prop: type }).then(res => {
         })
       }
+    },
+    updateTableData(data, prop, value, id) {
+      data.forEach(item => {
+        if (item.id === id) {
+          item[prop] = value
+          return
+        }
+        if (item.children) {
+          this.updateTableData(item.children, prop, value, id)
+        }
+      })
     }
   }
 }
