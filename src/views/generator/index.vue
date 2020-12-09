@@ -3,6 +3,9 @@
     <!--工具栏-->
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
+        <el-select v-model="query.dataSource" clearable size="small" placeholder="数据源" class="filter-item" style="width: 300px" @change="crud.toQuery">
+          <el-option v-for="item in dataSources" :key="item" :label="item" :value="item" />
+        </el-select>
         <el-input v-model="query.name" clearable size="small" placeholder="请输入表名" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <rrOperation />
       </div>
@@ -22,7 +25,14 @@
       </crudOperation>
     </div>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler" @sort-change="crud.changeSortHandler">
+    <el-table
+      ref="table"
+      v-loading="crud.loading"
+      :data="crud.data"
+      style="width: 100%;"
+      @selection-change="crud.selectionChangeHandler"
+      @sort-change="crud.changeSortHandler"
+    >
       <el-table-column type="selection" width="55" />
       <el-table-column :show-overflow-tooltip="true" prop="tableName" label="表名" sortable="custom" />
       <el-table-column :show-overflow-tooltip="true" prop="engine" label="数据库引擎" />
@@ -57,7 +67,7 @@
 
 <script>
 
-import { generator, sync } from '@/api/generator/generator'
+import { generator, sync, getEntityManagers } from '@/api/generator/generator'
 import { downloadFile } from '@/utils/index'
 import CRUD, { presenter, header } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
@@ -73,13 +83,20 @@ export default {
   mixins: [presenter(), header()],
   data() {
     return {
+      dataSources: [],
       syncLoading: false
     }
   },
   created() {
     this.crud.optShow = { add: false, edit: false, del: false, download: false }
+    this.loadEntityManagers()
   },
   methods: {
+    loadEntityManagers() {
+      getEntityManagers().then(res => {
+        this.dataSources = res
+      })
+    },
     toGen(tableName) {
       // 生成代码
       generator(tableName, 0).then(data => {

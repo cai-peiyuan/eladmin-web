@@ -31,3 +31,9 @@ export function sync(tables) {
   })
 }
 
+export function getEntityManagers() {
+  return request({
+    url: 'api/generator/entityManagers',
+    method: 'get'
+  })
+}
