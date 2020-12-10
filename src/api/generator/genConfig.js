@@ -7,6 +7,13 @@ export function get(tableName) {
   })
 }
 
+export function getColumn(tableName, dataSource) {
+  return request({
+    url: 'api/genConfig/' + dataSource + '/' + tableName,
+    method: 'get'
+  })
+}
+
 export function update(data) {
   return request({
     url: 'api/genConfig',

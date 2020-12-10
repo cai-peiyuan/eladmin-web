@@ -4,8 +4,7 @@
       <el-col style="margin-bottom: 10px">
         <el-card class="box-card" shadow="never">
           <div slot="header" class="clearfix">
-            <span style="font-weight: bold;color: #666;font-size: 15px">字段配置</span>
-            <span class="role-span">数据源：<el-tag type="primary">{{ dataSource }}</el-tag> 数据表：<el-tag type="warning">{{ tableName }}</el-tag></span>
+            <span class="role-span">字段配置 数据源：{{ dataSource }} 数据表：{{ tableName }}</span>
             <el-button
               plain
               :loading="genLoading"
@@ -204,20 +203,17 @@
 
 <script>
 import crud from '@/mixins/crud'
-import { update, getColumn } from '@/api/generator/genConfig'
-import { save, syncWithDataSource, generatorWithDataSource } from '@/api/generator/generator'
-// import { getDicts } from '@/api/system/dict'
+import { update, get } from '@/api/generator/genConfig'
+import { save, sync, generator } from '@/api/generator/generator'
+import { getDicts } from '@/api/system/dict'
 export default {
   name: 'GeneratorConfig',
   components: {},
   mixins: [crud],
   data() {
     return {
-      activeName: 'first',
-      dataSource: '',
-      tableName: '',
-      tableHeight: 550, columnLoading: false, configLoading: false, dicts: [], syncLoading: false, genLoading: false,
-      form: { id: null, tableName: '', dataSource: '', author: '', pack: '', path: '', moduleName: '', cover: 'false', apiPath: '', prefix: '', apiAlias: null },
+      activeName: 'first', tableName: '', tableHeight: 550, columnLoading: false, configLoading: false, dicts: [], syncLoading: false, genLoading: false,
+      form: { id: null, tableName: '', author: '', pack: '', path: '', moduleName: '', cover: 'false', apiPath: '', prefix: '', apiAlias: null },
       rules: {
         author: [
           { required: true, message: '作者不能为空', trigger: 'blur' }
@@ -243,25 +239,22 @@ export default {
   created() {
     this.tableHeight = document.documentElement.clientHeight - 385
     this.tableName = this.$route.params.tableName
-    this.dataSource = this.$route.params.dataSource
     this.$nextTick(() => {
       this.init()
-      getColumn(this.tableName, this.dataSource).then(data => {
+      get(this.tableName).then(data => {
         this.form = data
         this.form.cover = this.form.cover.toString()
       })
-      // 字典太多 加载失败
-      // getDicts().then(data => {
-      //   this.dicts = data
-      // })
+      getDicts().then(data => {
+        this.dicts = data
+      })
     })
   },
   methods: {
     beforeInit() {
       this.url = 'api/generator/columns'
       const tableName = this.tableName
-      const dataSource = this.dataSource
-      this.params = { tableName, dataSource }
+      this.params = { tableName }
       return true
     },
     saveColumnConfig() {
@@ -292,8 +285,7 @@ export default {
     },
     sync() {
       this.syncLoading = true
-      // sync([this.tableName]).then(() => {
-      syncWithDataSource(this.dataSource, [this.tableName]).then(() => {
+      sync([this.tableName]).then(() => {
         this.init()
         this.notify('同步成功', 'success')
         this.syncLoading = false
@@ -306,7 +298,7 @@ export default {
       save(this.data).then(res => {
         this.notify('保存成功', 'success')
         // 生成代码
-        generatorWithDataSource(this.dataSource, this.tableName, 0).then(data => {
+        generator(this.tableName, 0).then(data => {
           this.genLoading = false
           this.notify('生成成功', 'success')
         }).catch(err => {

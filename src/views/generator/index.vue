@@ -34,7 +34,8 @@
       @sort-change="crud.changeSortHandler"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" prop="tableName" label="表名" sortable="custom" />
+      <el-table-column :show-overflow-tooltip="true" prop="dataSourceName" label="数据源名称" sortable />
+      <el-table-column :show-overflow-tooltip="true" prop="tableName" label="表名" sortable />
       <el-table-column :show-overflow-tooltip="true" prop="engine" label="数据库引擎" />
       <el-table-column :show-overflow-tooltip="true" prop="coding" label="字符编码集" />
       <el-table-column :show-overflow-tooltip="true" prop="remark" label="备注" />
@@ -52,7 +53,7 @@
           </el-button>
           <el-button plain size="mini" style="margin-left: -1px;margin-right: 2px" type="text" @click="toDownload(scope.row.tableName)">下载</el-button>
           <el-button plain size="mini" style="margin-left: -1px;margin-right: 2px" type="text">
-            <router-link :to="'/sys-tools/generator/config/' + scope.row.tableName">
+            <router-link :to="'/sys-tools/generator/config/' + scope.row.tableName+'/'+ scope.row.dataSourceName">
               配置
             </router-link>
           </el-button>
@@ -67,7 +68,7 @@
 
 <script>
 
-import { generator, sync, getEntityManagers } from '@/api/generator/generator'
+import { generator, sync, getEntityManagers, getDataSources } from '@/api/generator/generator'
 import { downloadFile } from '@/utils/index'
 import CRUD, { presenter, header } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
@@ -90,10 +91,16 @@ export default {
   created() {
     this.crud.optShow = { add: false, edit: false, del: false, download: false }
     this.loadEntityManagers()
+    // this.loadDataSources()
   },
   methods: {
     loadEntityManagers() {
       getEntityManagers().then(res => {
+        this.dataSources = res
+      })
+    },
+    loadDataSources() {
+      getDataSources().then(res => {
         this.dataSources = res
       })
     },

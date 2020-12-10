@@ -131,7 +131,7 @@
 
       <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" />
 
-      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="120px">
+      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="220px">
         <template slot-scope="scope">
           <el-input
             v-if="currentEditDataId === scope.row.id"
@@ -158,8 +158,8 @@
       </el-table-column>
       <el-table-column prop="hidden" label="可见" width="75px">
         <template slot-scope="scope">
-          <span v-if="scope.row.hidden">否</span>
-          <span v-else>是</span>
+          <el-tag v-if="scope.row.hidden" type="danger" style="cursor: pointer">否</el-tag>
+          <el-tag v-else type="primary" style="cursor: pointer">是</el-tag>
         </template>
       </el-table-column>
       <el-table-column v-if="false" prop="createTime" label="创建日期" width="135px">
