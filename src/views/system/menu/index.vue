@@ -116,7 +116,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="path1" label="类型">
+      <el-table-column :show-overflow-tooltip="true" prop="path1" label="类型" width="120px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.type === 0">目录</el-tag>
           <el-tag v-else-if="scope.row.type === 1" type="warning" style="cursor: pointer" @click="addEditButtonMenu(scope.row)">菜单</el-tag>
@@ -129,7 +129,18 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" />
+      <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" width="220px">
+        <template slot-scope="scope">
+          <el-input
+            v-if="currentEditDataId === scope.row.id"
+            v-model="scope.row.permission"
+            size="small"
+            type="text"
+            @blur="handleInputBlurResult({index:scope.$index, value:scope.row.permission, id: scope.row.id, type: 'permission'})"
+          />
+          <span v-if="currentEditDataId != scope.row.id">{{ scope.row.permission }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="220px">
         <template slot-scope="scope">
@@ -143,23 +154,34 @@
           <span v-if="currentEditDataId != scope.row.id">{{ scope.row.path }}</span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径" />
+      <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径">
+        <template slot-scope="scope">
+          <el-input
+            v-if="currentEditDataId === scope.row.id"
+            v-model="scope.row.component"
+            size="small"
+            type="text"
+            @blur="handleInputBlurResult({index:scope.$index, value:scope.row.component, id: scope.row.id, type: 'component'})"
+          />
+          <span v-if="currentEditDataId != scope.row.id">{{ scope.row.component }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="iframe" label="外链" width="75px">
         <template slot-scope="scope">
-          <span v-if="scope.row.iframe">是</span>
-          <span v-else>否</span>
+          <el-tag v-if="scope.row.iframe" type="danger" style="cursor: pointer">是</el-tag>
+          <el-tag v-else type="primary" style="cursor: pointer">否</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="cache" label="缓存" width="75px">
         <template slot-scope="scope">
-          <span v-if="scope.row.cache">是</span>
-          <span v-else>否</span>
+          <el-tag v-if="scope.row.cache" type="danger" style="cursor: pointer">是</el-tag>
+          <el-tag v-else type="primary" style="cursor: pointer">否</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="hidden" label="可见" width="75px">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.hidden" type="danger" style="cursor: pointer">否</el-tag>
-          <el-tag v-else type="primary" style="cursor: pointer">是</el-tag>
+          <el-tag v-if="scope.row.hidden" type="danger" style="cursor: pointer" @click="changePropBooleanValue(scope.row, 'hidden')">否</el-tag>
+          <el-tag v-else type="primary" style="cursor: pointer" @click="changePropBooleanValue(scope.row, 'hidden')">是</el-tag>
         </template>
       </el-table-column>
       <el-table-column v-if="false" prop="createTime" label="创建日期" width="135px">
@@ -168,7 +190,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="menuSort" align="center" label="排序" width="150px">
+      <el-table-column prop="menuSort" align="center" label="排序" width="150px" sortable>
         <template slot-scope="scope">
           <el-input-number
             v-if="currentEditDataId === scope.row.id"
@@ -366,7 +388,7 @@ export default {
       console.log(id)
       console.log(value)
       // this.currentEditDataId = ''
-      if (type === 'menuSort' || type === 'path') {
+      if (type === 'menuSort' || type === 'path' || type === 'component' || type === 'permission') {
         if (type === 'menuSort') {
           this.$refs.table.sort('menuSort', 'asc')
         }
@@ -375,6 +397,12 @@ export default {
         crudMenu.updatePropValueById({ id: id, value: value, prop: type }).then(res => {
         })
       }
+    },
+    changePropBooleanValue(data, prop) {
+      console.log(prop)
+      data[prop] = !data[prop]
+      crudMenu.updatePropValueById({ id: data.id, value: data[prop], prop: prop }).then(res => {
+      })
     },
     updateTableData(data, prop, value, id) {
       data.forEach(item => {
