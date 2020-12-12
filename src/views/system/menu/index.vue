@@ -129,7 +129,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" width="220px">
+      <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" width="160px">
         <template slot-scope="scope">
           <el-input
             v-if="currentEditDataId === scope.row.id"
@@ -142,7 +142,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="220px">
+      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="140px">
         <template slot-scope="scope">
           <el-input
             v-if="currentEditDataId === scope.row.id"
@@ -154,7 +154,7 @@
           <span v-if="currentEditDataId != scope.row.id">{{ scope.row.path }}</span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径">
+      <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径" width="220px">
         <template slot-scope="scope">
           <el-input
             v-if="currentEditDataId === scope.row.id"
