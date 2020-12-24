@@ -27,9 +27,6 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
-          <el-form-item label="流水号" prop="id">
-            <el-input v-model="form.id" style="width: 370px;" />
-          </el-form-item>
           <el-form-item label="参数名称" prop="name">
             <el-input v-model="form.name" style="width: 370px;" />
           </el-form-item>
@@ -41,9 +38,6 @@
           </el-form-item>
           <el-form-item label="所属分类">
             未设置字典，请手动设置 Select
-          </el-form-item>
-          <el-form-item label="更新时间" prop="updateTime">
-            <el-input v-model="form.updateTime" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="备注">
             <el-input v-model="form.remark" :rows="3" type="textarea" style="width: 370px;" />
@@ -161,19 +155,13 @@ export default {
         del: ['admin', 'mapParam:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: [],
+      hiddenColumns: ['updateTime', 'type'],
       rules: {
-        id: [
-          { required: true, message: '流水号不能为空', trigger: 'blur' }
-        ],
         name: [
           { required: true, message: '参数名称不能为空', trigger: 'blur' }
         ],
         paramKey: [
           { required: true, message: '参数键不能为空', trigger: 'blur' }
-        ],
-        updateTime: [
-          { required: true, message: '更新时间不能为空', trigger: 'blur' }
         ]
       },
       queryTypeOptions: [
