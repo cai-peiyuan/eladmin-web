@@ -87,7 +87,7 @@
         </el-table-column>
         <el-table-column prop="driverClass" label="驱动类" />
         <el-table-column v-if="false" prop="userPassword" label="密码" />
-        <el-table-column v-permission="['admin','elSysDatasource:edit','elSysDatasource:del']" label="操作" width="150px" align="center">
+        <el-table-column v-if="checkPer(['admin','elSysDatasource:edit','elSysDatasource:del'])" label="操作" width="150px" align="center">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

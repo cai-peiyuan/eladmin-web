@@ -45,13 +45,13 @@
         <el-table-column prop="templateCode" label="模板代码" />
         <el-table-column prop="templateType" label="模板类型" />
         <el-table-column v-if="false" prop="templateName" label="模板名称" />
-        <el-table-column v-permission="['admin','storeTemplate:edit','storeTemplate:del']" label="模板字段数" width="150px" align="center">
+        <el-table-column v-if="checkPer(['admin','storeTemplate:edit','storeTemplate:del'])" label="模板字段数" width="150px" align="center">
           <template slot-scope="scope">
             <span><el-link type="primary" @click="showTemplatePropertySettingDialog(scope.row)">{{ (scope.row.storeTemplatePropertys.length) }}</el-link></span>
           </template>
         </el-table-column>
 
-        <el-table-column v-permission="['admin','storeTemplate:edit','storeTemplate:del']" label="操作" width="150px" align="center">
+        <el-table-column v-if="checkPer(['admin','storeTemplate:edit','storeTemplate:del'])" label="操作" width="150px" align="center">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -68,7 +68,7 @@
       <el-dialog
         :close-on-click-modal="false"
         :visible.sync="showTemplatePropertySettingDialogFlag"
-        :title="this.setTemplatePropertyRowData.templateName + '  ->  字段设置'"
+        :title="setTemplatePropertyRowData.templateName + '  ->  字段设置'"
         width="750px"
         style="padding-bottom: 20px;"
       >

@@ -19,7 +19,9 @@ export function parseTime(time, cFormat) {
   } else if (typeof time === 'object') {
     date = time
   } else {
-    if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
+    if ((typeof time === 'string') && time.indexOf('-') > 0) {
+      return time
+    } else if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
       time = parseInt(time)
     }
     if ((typeof time === 'number') && (time.toString().length === 10)) {

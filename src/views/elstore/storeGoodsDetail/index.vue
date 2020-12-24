@@ -88,7 +88,7 @@
         <el-table-column prop="propertyCode" label="属性编码" />
         <el-table-column prop="propertyDesc" label="属性描述" />
         <el-table-column prop="propertyValue" label="属性值" />
-        <el-table-column v-permission="['admin','storeGoodsDetail:edit','storeGoodsDetail:del']" label="操作" width="150px" align="center">
+        <el-table-column v-if="checkPer(['admin','storeGoodsDetail:edit','storeGoodsDetail:del'])" label="操作" width="150px" align="center">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

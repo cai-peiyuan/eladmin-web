@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-button v-permission="permission.edit" plain :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" />
-    <el-popover v-model="pop" v-permission="permission.del" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide">
+    <el-button v-if="checkPer(permission.edit)" plain :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click="crud.toEdit(data)" />
+    <el-popover v-if="checkPer(permission.del)" v-model="pop" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide">
       <p>{{ msg }}</p>
       <div style="text-align: right; margin: 0">
         <el-button plain size="mini" type="text" @click="doCancel">取消</el-button>

@@ -126,7 +126,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="libType" label="类库类型" sortable="custom" />
-        <el-table-column v-permission="['admin','mapWebapiLib:edit','mapWebapiLib:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mapWebapiLib:edit','mapWebapiLib:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

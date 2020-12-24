@@ -108,7 +108,7 @@
         <el-table-column prop="shelfFloor" label="货架层数" />
         <el-table-column prop="floorHeight" label="单层高度" />
         <el-table-column
-          v-permission="['admin','storeShelf:edit','storeShelf:del']"
+          v-if="checkPer(['admin','storeShelf:edit','storeShelf:del'])"
           label="操作"
           width="150px"
           align="center"

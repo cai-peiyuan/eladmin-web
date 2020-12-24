@@ -101,7 +101,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="logBy" label="出入库人" />
-        <el-table-column v-permission="['admin','storeGoodsLog:edit','storeGoodsLog:del']" label="操作" width="150px" align="center">
+        <el-table-column v-if="checkPer(['admin','storeGoodsLog:edit','storeGoodsLog:del'])" label="操作" width="150px" align="center">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

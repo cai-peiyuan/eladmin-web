@@ -25,7 +25,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button plain type="info" @click="cancel">取消</el-button>
-      <el-button v-permission="['admin','deploy:add']" plain :loading="submitLoading" type="primary" @click="doSubmit">确认</el-button>
+      <el-button v-if="checkPer(['admin','deploy:add'])" plain :loading="submitLoading" type="primary" @click="doSubmit">确认</el-button>
     </div>
     <!--分页组件-->
     <el-pagination

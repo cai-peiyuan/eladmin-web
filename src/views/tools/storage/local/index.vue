@@ -11,8 +11,8 @@
       <crudOperation :permission="permission">
         <!-- 新增 -->
         <el-button
+          v-if="checkPer(['admin','storage:add'])"
           slot="left"
-          v-permission="['admin','storage:add']"
           plain
           class="filter-item"
           size="mini"

@@ -14,6 +14,7 @@ import dict from './components/Dict'
 import el_dict from './components/ElDict'
 
 // 权限指令
+import checkPer from '@/utils/permission'
 import permission from './components/Permission'
 import './assets/styles/element-variables.scss'
 // global css
@@ -33,6 +34,7 @@ import 'echarts-gl'
 
 Vue.use(VueHighlightJS)
 Vue.use(mavonEditor)
+Vue.use(checkPer)
 Vue.use(permission)
 Vue.use(dict)
 Vue.use(el_dict)

@@ -11,7 +11,7 @@
       <crudOperation :permission="permission">
         <template slot="right">
           <el-button
-            v-permission="['admin','deploy:add']"
+            v-if="checkPer(['admin','deploy:add'])"
             plain
             :disabled="!selectIndex"
             class="filter-item"
@@ -22,7 +22,7 @@
           >系统还原
           </el-button>
           <el-button
-            v-permission="['admin','deploy:add']"
+            v-if="checkPer(['admin','deploy:add'])"
             plain
             :disabled="!selectIndex"
             class="filter-item"
@@ -33,7 +33,7 @@
           >状态查询
           </el-button>
           <el-button
-            v-permission="['admin','deploy:add']"
+            v-if="checkPer(['admin','deploy:add'])"
             plain
             :disabled="!selectIndex"
             class="filter-item"
@@ -44,7 +44,7 @@
           >启动
           </el-button>
           <el-button
-            v-permission="['admin','deploy:add']"
+            v-if="checkPer(['admin','deploy:add'])"
             plain
             :disabled="!selectIndex"
             class="filter-item"
@@ -55,7 +55,7 @@
           >停止
           </el-button>
           <el-button
-            v-permission="['admin','deploy:add']"
+            v-if="checkPer(['admin','deploy:add'])"
             plain
             :disabled="!selectIndex"
             class="filter-item"
@@ -100,7 +100,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-permission="['admin','deploy:edit','deploy:del']" label="操作" width="150px" align="center">
+      <el-table-column v-if="checkPer(['admin','deploy:edit','deploy:del'])" label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <udOperation
             :data="scope.row"

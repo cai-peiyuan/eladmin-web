@@ -111,7 +111,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-permission="['admin','storeHouse:edit','storeHouse:del']"
+            v-if="checkPer(['admin','storeHouse:edit','storeHouse:del'])"
             fixed="right"
             label="操作"
             width="120px"

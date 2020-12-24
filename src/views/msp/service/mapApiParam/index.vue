@@ -113,7 +113,7 @@
         <el-table-column prop="defaultValue" label="默认值" sortable="custom" />
         <el-table-column prop="validationRegular" label="正则校验" sortable="custom" />
         <el-table-column prop="validationErrorMsg" label="校验错误提示" sortable="custom" />
-        <el-table-column v-permission="['admin','mapApiParam:edit','mapApiParam:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mapApiParam:edit','mapApiParam:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

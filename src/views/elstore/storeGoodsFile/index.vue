@@ -112,7 +112,7 @@
         <el-table-column v-if="false" prop="fileName" label="存储名称" sortable="custom" />
         <el-table-column v-if="false" prop="filePath" label="存储路径" sortable="custom" />
         <el-table-column v-if="false" prop="goodsId" label="所属物品编号" sortable="custom" />
-        <el-table-column v-permission="['admin','storeGoodsFile:edit','storeGoodsFile:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','storeGoodsFile:edit','storeGoodsFile:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

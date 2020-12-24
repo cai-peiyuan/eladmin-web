@@ -114,7 +114,7 @@
         <el-table-column prop="sid" label="服务id" sortable="custom" width="150px" />
         <el-table-column prop="remark" label="备注" sortable="custom" />
         <el-table-column prop="isEnable" label="是否可用" sortable="custom" width="100px" />
-        <el-table-column v-permission="['admin','mapApi:edit','mapApi:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mapApi:edit','mapApi:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

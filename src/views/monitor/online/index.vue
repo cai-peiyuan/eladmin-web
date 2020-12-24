@@ -38,8 +38,8 @@
       <el-table-column label="操作" width="70px" fixed="right">
         <template slot-scope="scope">
           <el-popover
+            v-if="checkPer(['admin'])"
             :ref="scope.$index"
-            v-permission="['admin']"
             placement="top"
             width="180"
           >

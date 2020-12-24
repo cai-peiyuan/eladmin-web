@@ -105,7 +105,7 @@
         </el-table-column>
         <el-table-column prop="createUser" label="创建用户" sortable="custom" />
         <el-table-column prop="fontRemark" label="备注" sortable="custom" />
-        <el-table-column v-permission="['admin','mapFont:edit','mapFont:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mapFont:edit','mapFont:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

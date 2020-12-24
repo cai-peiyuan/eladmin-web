@@ -128,7 +128,7 @@
         </el-table-column>
         <el-table-column prop="reqParam" label="请求参数" sortable="custom" />
         <el-table-column prop="reqHeader" label="请求头信息" sortable="custom" />
-        <el-table-column v-permission="['admin','mapLog:edit','mapLog:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mapLog:edit','mapLog:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

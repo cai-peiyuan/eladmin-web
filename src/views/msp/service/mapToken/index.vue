@@ -130,7 +130,7 @@
         <el-table-column prop="isValid" label="是否启用" sortable="custom" width="120px" />
         <el-table-column prop="refererlist" label="引用站列表" sortable="custom" />
         <el-table-column prop="remark" label="备注" sortable="custom" width="180px" />
-        <el-table-column v-permission="['admin','mapToken:edit','mapToken:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mapToken:edit','mapToken:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

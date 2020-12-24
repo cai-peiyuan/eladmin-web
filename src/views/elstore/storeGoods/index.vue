@@ -314,7 +314,7 @@
             </el-table-column>
             <el-table-column v-if="false" prop="storeByIn" label="入库人" />
             <el-table-column v-if="false" prop="storeByOut" label="出库人" />
-            <el-table-column v-permission="['admin','storeGoods:edit','storeGoods:del']" label="操作" width="150px" align="center" fixed="right">
+            <el-table-column v-if="checkPer(['admin','storeGoods:edit','storeGoods:del'])" label="操作" width="150px" align="center" fixed="right">
               <template slot-scope="scope">
                 <udOperation
                   :data="scope.row"
@@ -327,7 +327,7 @@
           <pagination />
         </el-col>
         <!-- 右侧详细信息卡片 -->
-        <el-col v-if="this.currentRowData != null" :span="8" style="padding-left: 10px">
+        <el-col v-if="currentRowData != null" :span="8" style="padding-left: 10px">
           <el-collapse v-if="false" accordion>
             <el-collapse-item :title="goodsDetailTitle" />
             <el-collapse-item :title="goodsFileTitle" />

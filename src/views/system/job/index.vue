@@ -31,7 +31,7 @@
       </el-table-column>
       <!--   编辑与删除   -->
       <el-table-column
-        v-permission="['admin','job:edit','job:del']"
+        v-if="checkPer(['admin','job:edit','job:del'])"
         label="操作"
         width="130px"
         align="center"

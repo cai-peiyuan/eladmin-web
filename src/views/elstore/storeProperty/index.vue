@@ -112,7 +112,7 @@
         <el-table-column prop="propertyLength" label="输入长度" />
         <el-table-column prop="propertyPrecision" label="输入精度" />
         <el-table-column prop="propertyFormat" label="输入格式" />
-        <el-table-column v-permission="['admin','storeProperty:edit','storeProperty:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','storeProperty:edit','storeProperty:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

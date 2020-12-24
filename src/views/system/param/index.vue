@@ -113,7 +113,7 @@
               <!--                </el-popover>-->
               <!--              </template>-->
             </el-table-column>
-            <!--            <el-table-column v-permission="['admin','elSysParam:edit','elSysParam:del']" label="操作" width="150px" align="center">-->
+            <!--            <el-table-column v-if="checkPer(['admin','elSysParam:edit','elSysParam:del'])" label="操作" width="150px" align="center">-->
             <!--              <template slot-scope="scope">-->
             <!--                <udOperation-->
             <!--                  :data="scope.row"-->

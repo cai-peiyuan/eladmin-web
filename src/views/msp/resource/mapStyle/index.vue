@@ -101,7 +101,7 @@
         <el-table-column prop="styleRemark" label="样式描述" sortable="custom" />
         <el-table-column prop="styleCenter" label="中心点" sortable="custom" />
         <el-table-column prop="styleZoom" label="默认级别" sortable="custom" />
-        <el-table-column v-permission="['admin','mapStyle:edit','mapStyle:del']" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mapStyle:edit','mapStyle:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

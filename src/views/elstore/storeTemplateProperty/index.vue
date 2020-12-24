@@ -61,7 +61,7 @@
         <el-table-column prop="templateId" label="模板编号" />
         <el-table-column prop="propertyId" label="属性编号" />
         <el-table-column prop="defaultValue" label="默认值" />
-        <el-table-column v-permission="['admin','storeTemplateProperty:edit','storeTemplateProperty:del']" label="操作" width="150px" align="center">
+        <el-table-column v-if="checkPer(['admin','storeTemplateProperty:edit','storeTemplateProperty:del'])" label="操作" width="150px" align="center">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

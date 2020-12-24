@@ -130,7 +130,7 @@
         <el-table-column prop="rootName" label="所属分类名称" />
 
         <el-table-column
-          v-permission="['admin','elSysCatalog:edit','elSysCatalog:del']"
+          v-if="checkPer(['admin','elSysCatalog:edit','elSysCatalog:del'])"
           label="操作"
           width="150px"
           align="center"
