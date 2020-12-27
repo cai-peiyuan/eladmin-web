@@ -199,7 +199,7 @@ export default {
         del: ['admin', 'mapDistrict:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: [],
+      hiddenColumns: ['districtCoords', 'bounds'],
       rules: {
         id: [
           { required: true, message: '流水号不能为空', trigger: 'blur' }
