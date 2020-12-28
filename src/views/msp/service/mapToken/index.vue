@@ -113,7 +113,18 @@
           </template>
         </el-table-column>
         <el-table-column prop="appName" label="应用名称" sortable="custom" width="150px" />
-        <el-table-column prop="accessToken" label="token值" sortable="custom" />
+        <el-table-column prop="accessToken" label="token值" sortable="custom">
+          <template slot-scope="scope">
+            <span>
+              <el-link
+                type="primary"
+                @click="showTokenApiSettingDialog(scope.row)"
+              >
+                {{ encryptToken(scope.row.accessToken) }}
+              </el-link>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="invalidTime" label="失效时间" sortable="custom" width="150px">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.invalidTime) }}</span>
@@ -141,6 +152,40 @@
       </el-table>
       <!--分页组件-->
       <pagination />
+
+      <!--表单组件-->
+      <el-dialog
+        :close-on-click-modal="false"
+        :visible.sync="showTokenApiSettingDialogFlag"
+        :title="'Token接口权限设置'"
+        width="750px"
+        style="padding-bottom: 20px;"
+      >
+        <p style="text-align: center;display: none; margin: 0 0 0px">设置{{ setTokenApiRowData.accessToken }}的接口权限属性</p>
+        <div style="text-align: center">
+          <el-transfer
+            v-model="tokenApiDataValue"
+            style="text-align: left; display: inline-block"
+            filterable
+            :left-default-checked="[]"
+            :right-default-checked="[]"
+            :render-content="renderFunc"
+            :titles="['可选接口', '已选接口']"
+            :button-texts="['', '']"
+            :format="{
+              noChecked: '${total}',
+              hasChecked: '${checked}/${total}'
+            }"
+            :data="tokenApiData"
+            @change="handleChange"
+          />
+        </div>
+        <div slot="footer" class="dialog-footer" style="text-align: center">
+          <el-button type="warn" icon="el-icon-refresh" plain @click="showTokenApiSettingDialogFlag = !showTokenApiSettingDialogFlag">取消</el-button>
+          <el-button type="primary" icon="el-icon-refresh" plain @click="reloadTokenApiData">重新加载</el-button>
+          <el-button :loading="saveTokenApiLoading" type="primary" icon="el-icon-check" plain @click="saveTokenApiSetting">保存设置</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -181,13 +226,22 @@ export default {
   },
   data() {
     return {
+      showTokenApiSettingDialogFlag: false,
+      saveTokenApiLoading: false,
+      setTokenApiRowData: {},
+      tokenApiData: [],
+      // 已选中的字段数据
+      tokenApiDataValue: [],
+      renderFunc(h, option) {
+        return <span>{ option.propertyDesc } ({ option.propertyType })</span>
+      },
       permission: {
         add: ['admin', 'mapToken:add'],
         edit: ['admin', 'mapToken:edit'],
         del: ['admin', 'mapToken:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: ['createUser', 'createTime', 'refererlist', 'iplist'],
+      hiddenColumns: ['createUser', 'createTime', 'refererlist', 'iplist', 'accessToken1'],
       rules: {
         id: [
           { required: true, message: '不能为空', trigger: 'blur' }
@@ -208,9 +262,37 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    // 监听模板属性变化操作
+    handleChange(value, direction, movedKeys) {
+      console.log(value, direction, movedKeys)
+    },
+    encryptToken(str) {
+      return str.substr(0, parseInt(str.split('').length / 3)) + '**' + str.substr(parseInt(str.split('').length / 3) * 2, str.split('').length)
+    },
+    // 显示配置窗口
+    showTokenApiSettingDialog(rowData) {
+      this.showTokenApiSettingDialogFlag = !this.showTokenApiSettingDialogFlag
+      this.setTokenApiRowData = rowData
+      this.loadTokenApiData(rowData)
+    },
+    reloadTokenApiData() {
+      this.loadTokenApiData(this.setTokenApiRowData)
+    },
+    loadTokenApiData(rowData) {
+
+    },
+    // 保存模板属性配置信息
+    saveTokenApiSetting() {
+      this.saveTokenApiLoading = true
+
+      this.saveTokenApiLoading = false
+      this.showTokenApiSettingDialogFlag = false
+      this.crud.toQuery()
     }
   }
 }
+
 </script>
 
 <style scoped>
