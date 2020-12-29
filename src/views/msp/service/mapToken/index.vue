@@ -158,14 +158,14 @@
         :close-on-click-modal="false"
         :visible.sync="showTokenApiSettingDialogFlag"
         :title="'Token接口权限设置'"
-        width="750px"
-        style="padding-bottom: 20px;"
+        width="980px"
+        style="padding-bottom: 10px;"
       >
         <p style="text-align: center;display: none; margin: 0 0 0px">设置{{ setTokenApiRowData.accessToken }}的接口权限属性</p>
         <div style="text-align: center">
           <el-transfer
             v-model="tokenApiDataValue"
-            style="text-align: left; display: inline-block"
+            style="text-align: left; display: inline-block;"
             filterable
             :left-default-checked="[]"
             :right-default-checked="[]"
@@ -233,7 +233,7 @@ export default {
       // 已选中的字段数据
       tokenApiDataValue: [],
       renderFunc(h, option) {
-        return <span>{ option.propertyDesc } ({ option.propertyType })</span>
+        return <span>{ option.label }</span>
       },
       permission: {
         add: ['admin', 'mapToken:add'],
@@ -280,15 +280,42 @@ export default {
       this.loadTokenApiData(this.setTokenApiRowData)
     },
     loadTokenApiData(rowData) {
-
+      const _this = this
+      crudMapToken.getTokenApi(rowData.id).then(res => {
+        _this.tokenApiData = []
+        _this.tokenApiDataValue = []
+        // 全部属性字段
+        res.allApi.forEach(function(data, index) {
+          const dataItem = {
+            key: data.sid,
+            label: data.apiName + '' + data.apiUrl,
+            apiUrl: data.apiUrl,
+            apiName: data.apiName,
+            className: data.className,
+            disabled: false
+          }
+          _this.tokenApiData.push(dataItem)
+        })
+        // 已选属性字段
+        res.selectApi.forEach(function(data, index) {
+          _this.tokenApiDataValue.push(data.sid)
+        })
+      })
     },
     // 保存模板属性配置信息
     saveTokenApiSetting() {
       this.saveTokenApiLoading = true
-
-      this.saveTokenApiLoading = false
-      this.showTokenApiSettingDialogFlag = false
-      this.crud.toQuery()
+      crudMapToken.saveTokenApiData(this.setTokenApiRowData.id, this.tokenApiDataValue).then(res => {
+        console.log(res)
+        this.$notify({
+          title: '成功保存->' + res.saveCnt,
+          type: 'success',
+          duration: 2500
+        })
+        this.saveTokenApiLoading = false
+        this.showTokenApiSettingDialogFlag = false
+        this.crud.toQuery()
+      })
     }
   }
 }
@@ -321,5 +348,13 @@ export default {
   }
   /deep/ .el-table__row {
     cursor: pointer;
+  }
+  /deep/ .el-transfer-panel {
+    width: 420px;
+  }
+  /deep/ .el-transfer__buttons {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 0px;
   }
 </style>

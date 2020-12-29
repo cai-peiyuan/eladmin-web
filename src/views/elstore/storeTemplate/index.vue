@@ -180,7 +180,7 @@ export default {
       crudStoreTemplate.saveTemplatePropertyData(this.setTemplatePropertyRowData.id, this.templatePropertyDataValue).then(res => {
         console.log(res)
         this.$notify({
-          title: '成功保存->' + res.saveCnt,
+          title: '成功保存->' + res.state,
           type: 'success',
           duration: 2500
         })
