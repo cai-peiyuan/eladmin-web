@@ -1,5 +1,6 @@
 <template>
   <section class="app-main">
+    <!-- 这里是tabs标签卡片内的内容 -->
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
         <router-view :key="key" />
