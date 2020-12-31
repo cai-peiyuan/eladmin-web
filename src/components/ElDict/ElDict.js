@@ -7,8 +7,8 @@ export default class ElDict {
   }
 
   async init(names, completeCallback) {
-    if (names === undefined || name === null) {
-      throw new Error('need ElDict names')
+    if (names === undefined || names === null || names === '') {
+      console.log('el_dict name is ' + names)
     }
     const ps = []
     names.forEach(n => {
