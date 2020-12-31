@@ -52,7 +52,7 @@
           <div slot="header" class="clearfix">
             <span>字典详情</span>
             <el-button
-              v-if="checkPermission(['admin','dict:add']) && this.$refs.dictDetail && this.$refs.dictDetail.query.dictName"
+              v-if="checkPer(['admin','dict:add']) && this.$refs.dictDetail && this.$refs.dictDetail.query.dictName"
               plain
               class="filter-item"
               size="mini"
@@ -70,7 +70,6 @@
 </template>
 
 <script>
-import checkPermission from '@/utils/permission'
 import dictDetail from './dictDetail.vue'
 import crudDict from '@/api/system/dict'
 
@@ -110,7 +109,6 @@ export default {
     }
   },
   methods: {
-    checkPermission,
     // 获取数据前设置好接口地址
     [CRUD.HOOK.beforeRefresh]() {
       if (this.$refs.dictDetail) {

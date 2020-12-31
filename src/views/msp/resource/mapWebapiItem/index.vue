@@ -16,34 +16,41 @@
         :before-close="crud.cancelCU"
         :visible.sync="crud.status.cu > 0"
         :title="crud.status.title"
-        width="500px"
+        width="600px"
       >
-        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
-          <el-form-item label="主键" prop="id">
+        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="130px">
+          <el-form-item v-if="false" label="主键" prop="id">
             <el-input v-model="form.id" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="资源名称">
             <el-input v-model="form.itemName" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="资源类型js/css">
-            未设置字典，请手动设置 Select
+            <el-select v-model="form.itemType" size="small" placeholder="资源类型" class="filter-item" style="width: 370px;">
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_LIB_ITEM_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <el-form-item label="资源版本">
             <el-input v-model="form.itemVersion" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="资源内容">
-            <el-input v-model="form.itemContent" style="width: 370px;" />
+            <el-upload>
+              <el-button plain size="small" type="primary">点击上传</el-button>
+              <div slot="tip" style="display: block;" class="el-upload__tip">请勿上传违法文件，且文件不超过5M</div>
+            </el-upload>
           </el-form-item>
-          <el-form-item label="资源来类型">
-            未设置字典，请手动设置 Select
+          <el-form-item label="资源内容引用类型">
+            <el-select v-model="form.itemContentType" size="small" placeholder="资源内容引用类型" class="filter-item" style="width: 370px;">
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_LIB_ITEM_CONTENT_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <el-form-item label="描述">
-            <el-input v-model="form.itemRemark" style="width: 370px;" />
+            <el-input v-model="form.itemRemark" style="width: 370px;" type="textarea" />
           </el-form-item>
-          <el-form-item label="创建用户">
+          <el-form-item v-if="false" label="创建用户">
             <el-input v-model="form.createUser" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="创建时间">
+          <el-form-item v-if="false" label="创建时间">
             <el-input v-model="form.createTime" style="width: 370px;" />
           </el-form-item>
         </el-form>
@@ -102,10 +109,24 @@
         </el-table-column>
         <el-table-column prop="id" label="主键" sortable="custom" />
         <el-table-column prop="itemName" label="资源名称" sortable="custom" />
-        <el-table-column prop="itemType" label="资源类型js/css" sortable="custom" />
+        <el-table-column prop="itemType" label="资源类型js/css" sortable="custom">
+          <template slot-scope="scope">
+            <svg-icon v-if="scope.row.itemType === 'js'" icon-class="java-script_1" style="width: 3em; height: 3em" />
+            <svg-icon v-if="scope.row.itemType === 'css'" icon-class="css_1" style="width: 3em; height: 3em" />
+          </template>
+        </el-table-column>
         <el-table-column prop="itemVersion" label="资源版本" sortable="custom" />
         <el-table-column prop="itemContent" label="资源内容" sortable="custom" />
-        <el-table-column prop="itemContentType" label="资源来类型" sortable="custom" />
+        <el-table-column prop="itemContentType" label="资源内容引用类型" sortable="custom">
+          <template slot-scope="scope">
+            <span>
+              <el-tag
+                :type="scope.row.itemContentType === 'import' ? 'primary' : 'success'"
+                disable-transitions
+              >{{ getDictLabel(scope.row.itemContentType,'MSP_RESOURCE_LIB_ITEM_CONTENT_TYPE',scope) }}</el-tag>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="itemRemark" label="描述" sortable="custom" />
         <el-table-column prop="createUser" label="创建用户" sortable="custom" />
         <el-table-column prop="createTime" label="创建时间" sortable="custom">
@@ -160,6 +181,9 @@ export default {
       crudMethod: { ...crudMapWebapiItem }
     })
   },
+  // 数据字典
+  el_dicts: ['MSP_RESOURCE_LIB_ITEM_TYPE', 'MSP_RESOURCE_LIB_ITEM_CONTENT_TYPE'],
+  dicts: ['MSP_RESOURCE_LIB_ITEM_TYPE', 'MSP_RESOURCE_LIB_ITEM_CONTENT_TYPE'],
   data() {
     return {
       permission: {
@@ -168,7 +192,7 @@ export default {
         del: ['admin', 'mapWebapiItem:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: [],
+      hiddenColumns: ['createUser', 'createTime', 'itemContent', 'id'],
       rules: {
         id: [
           { required: true, message: '主键不能为空', trigger: 'blur' }

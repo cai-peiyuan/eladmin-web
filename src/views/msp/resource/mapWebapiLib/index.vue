@@ -125,7 +125,16 @@
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="libType" label="类库类型" sortable="custom" />
+        <el-table-column prop="libType" label="类库类型" sortable="custom">
+          <template slot-scope="scope">
+            <span>
+              <el-tag
+                :type="scope.row.libType === '1' ? 'primary' : 'success'"
+                disable-transitions
+              >{{ getDictLabel(scope.row.libType,'MSP_RESOURCE_LIB_TYPE',scope) }}</el-tag>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkPer(['admin','mapWebapiLib:edit','mapWebapiLib:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
@@ -174,6 +183,9 @@ export default {
       crudMethod: { ...crudMapWebapiLib }
     })
   },
+  // 数据字典
+  el_dicts: ['', ''],
+  dicts: ['', 'MSP_RESOURCE_LIB_TYPE'],
   data() {
     return {
       permission: {
@@ -182,7 +194,7 @@ export default {
         del: ['admin', 'mapWebapiLib:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: [],
+      hiddenColumns: ['id', 'libItemIds', 'libScriptBefore', 'libScriptAfter', 'createUser', 'createTime'],
       rules: {
         id: [
           { required: true, message: '主键不能为空', trigger: 'blur' }
