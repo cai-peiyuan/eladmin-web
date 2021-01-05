@@ -102,7 +102,7 @@ export default {
 
 <style>
 .demo-table-expand {
-  font-size: 0;
+  font-size: 12px;
 }
 .demo-table-expand label {
   width: 70px;

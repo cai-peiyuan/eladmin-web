@@ -22,29 +22,34 @@
           <el-form-item v-if="false" label="主键" prop="id">
             <el-input v-model="form.id" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="资源名称">
+          <el-form-item label="资源名称" prop="itemName">
             <el-input v-model="form.itemName" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="资源类型js/css">
+          <el-form-item label="资源类型js/css" prop="itemType">
             <el-select v-model="form.itemType" size="small" placeholder="资源类型" class="filter-item" style="width: 370px;">
               <el-option v-for="item in dict.dict.MSP_RESOURCE_LIB_ITEM_TYPE" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
-          <el-form-item label="资源版本">
+          <el-form-item label="资源版本" prop="itemVersion">
             <el-input v-model="form.itemVersion" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="资源内容">
-            <el-upload>
+          <el-form-item label="资源文件">
+            <el-upload
+              style="width: 370px;"
+              :action="uploadUrl()"
+              :auto-upload="false"
+              :before-upload="beforeUpload"
+            >
               <el-button plain size="small" type="primary">点击上传</el-button>
-              <div slot="tip" style="display: block;" class="el-upload__tip">请勿上传违法文件，且文件不超过5M</div>
+              <div slot="tip" class="el-upload__tip">只能上传js/css文件，且文件不超过5M</div>
             </el-upload>
           </el-form-item>
-          <el-form-item label="资源内容引用类型">
+          <el-form-item label="资源引用类型" prop="itemContentType">
             <el-select v-model="form.itemContentType" size="small" placeholder="资源内容引用类型" class="filter-item" style="width: 370px;">
               <el-option v-for="item in dict.dict.MSP_RESOURCE_LIB_ITEM_CONTENT_TYPE" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
-          <el-form-item label="描述">
+          <el-form-item label="描述" prop="itemRemark">
             <el-input v-model="form.itemRemark" style="width: 370px;" type="textarea" />
           </el-form-item>
           <el-form-item v-if="false" label="创建用户">
@@ -74,37 +79,17 @@
         <el-table-column type="selection" width="55" fixed="left" />
         <el-table-column type="expand">
           <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand" style="padding-left: 60px">
-
-              <el-form-item label="主键">
-                <span>{{ props.row.id }}</span>
-              </el-form-item>
-              <el-form-item label="资源名称">
-                <span>{{ props.row.itemName }}</span>
-              </el-form-item>
-              <el-form-item label="资源类型js/css">
-                <span>{{ props.row.itemType }}</span>
-              </el-form-item>
-              <el-form-item label="资源版本">
-                <span>{{ props.row.itemVersion }}</span>
-              </el-form-item>
-              <el-form-item label="资源内容">
-                <span>{{ props.row.itemContent }}</span>
-              </el-form-item>
-              <el-form-item label="资源来类型">
-                <span>{{ props.row.itemContentType }}</span>
-              </el-form-item>
-              <el-form-item label="描述">
-                <span>{{ props.row.itemRemark }}</span>
-              </el-form-item>
-              <el-form-item label="创建用户">
-                <span>{{ props.row.createUser }}</span>
-              </el-form-item>
-              <el-form-item label="创建时间">
-                <span>{{ parseTime(props.row.createTime) }}</span>
-              </el-form-item>
-
-            </el-form>
+            <div class="demo-table-expand" style="padding-left: 40px">
+              <ul class="detail-info">
+                <li><div class="detail-title">主键</div><div class="detail-value">{{ props.row.id }}</div></li>
+                <li><div class="detail-title">资源名称</div><div class="detail-value">{{ props.row.itemName }}</div></li>
+                <li><div class="detail-title">资源类型js/css</div><div class="detail-value">{{ props.row.itemType }}</div></li>
+                <li><div class="detail-title">资源版本</div><div class="detail-value">{{ props.row.itemVersion }}</div></li>
+                <li><div class="detail-title">资源来类型</div><div class="detail-value">{{ props.row.itemContentType }}</div></li>
+                <li><div class="detail-title">描述</div><div class="detail-value">{{ props.row.itemRemark }}</div></li>
+                <li><div class="detail-title">创建时间</div><div class="detail-value">{{ parseTime(props.row.createTime) }}</div></li>
+              </ul>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="id" label="主键" sortable="custom" />
@@ -194,8 +179,20 @@ export default {
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['createUser', 'createTime', 'itemContent', 'id'],
       rules: {
-        id: [
-          { required: true, message: '主键不能为空', trigger: 'blur' }
+        itemName: [
+          { required: true, message: '名称不可为空', trigger: 'blur' }
+        ],
+        itemType: [
+          { required: true, message: '资源类型不能为空', trigger: 'blur' }
+        ],
+        itemContentType: [
+          { required: true, message: '引用类型不能为空', trigger: 'blur' }
+        ],
+        itemVersion: [
+          { required: true, message: '版本号不能为空', trigger: 'blur' }
+        ],
+        remark: [
+          { required: true, message: '描述不能为空', trigger: 'blur' }
         ]
       },
       queryTypeOptions: [
@@ -207,14 +204,30 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    beforeUpload(file) {
+      console.log(file)
+      console.log(file.type)
+      const isJPG = file.type === 'text/javascript' || file.type === 'text/css'
+      const isLt2M = file.size / 1024 / 1024 < 5
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 js/css 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 5MB!')
+      }
+      return isJPG && isLt2M
+    },
+    uploadUrl() {
+      return this.$store.getters.baseApi + '/api/storeGoods/upload'
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped rel="stylesheet/scss" lang="scss">
   .demo-table-expand {
-    font-size: 0;
+    font-size: 12px;
   }
   .demo-table-expand label {
     width: 70px;
@@ -238,5 +251,26 @@ export default {
   }
   /deep/ .el-table__row {
     cursor: pointer;
+  }
+  .detail-info {
+    padding-left: 0;
+    list-style: none;
+    li{
+      border-bottom: 1px solid #F0F3F4;
+      padding: 18px 0;
+      font-size: 13px;
+    }
+    .detail-value {
+      float: left;
+      a{
+        color: #317EF3;
+      }
+    }
+    .detail-title {
+      font-size: 14px;
+      font-weight: bold;
+      float: left;
+      width: 200px;
+    }
   }
 </style>

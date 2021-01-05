@@ -188,7 +188,7 @@ export default {
 
 <style scoped>
   .demo-table-expand {
-    font-size: 0;
+    font-size: 12px;
   }
   .demo-table-expand label {
     width: 70px;

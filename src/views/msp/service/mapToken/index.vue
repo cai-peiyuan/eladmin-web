@@ -324,7 +324,7 @@ export default {
 
 <style scoped>
   .demo-table-expand {
-    font-size: 0;
+    font-size: 12px;
   }
   .demo-table-expand label {
     width: 70px;
@@ -351,6 +351,10 @@ export default {
   }
   /deep/ .el-transfer-panel {
     width: 420px;
+    height: 500px;
+  }
+  /deep/ .el-transfer-panel__list.is-filterable {
+    height: 500px;
   }
   /deep/ .el-transfer__buttons {
     display: inline-block;
