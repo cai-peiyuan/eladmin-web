@@ -33,11 +33,15 @@
           <el-form-item label="资源版本" prop="itemVersion">
             <el-input v-model="form.itemVersion" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="资源文件">
+          <el-form-item v-if="crud.status.edit === 1" label="资源文件">
             <el-upload
               style="width: 370px;"
+              name="file"
+              with-credentials="with-credentials"
+              :headers="uploadHeader()"
+              :data="getUploadData()"
               :action="uploadUrl()"
-              :auto-upload="false"
+              :auto-upload="true"
               :before-upload="beforeUpload"
             >
               <el-button plain size="small" type="primary">点击上传</el-button>
@@ -141,6 +145,7 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import { getToken } from '@/utils/auth'
 
 const defaultForm = {
   id: null,
@@ -205,8 +210,15 @@ export default {
     [CRUD.HOOK.beforeRefresh]() {
       return true
     },
+    [CRUD.HOOK.afterSubmit](crud) {
+      console.log(crud)
+      return true
+    },
     beforeUpload(file) {
-      console.log(file)
+      // 修改状态 id有值// return false
+      if (this.crud.form.id) {
+        console.log(file)
+      }
       console.log(file.type)
       const isJPG = file.type === 'text/javascript' || file.type === 'text/css'
       const isLt2M = file.size / 1024 / 1024 < 5
@@ -218,8 +230,15 @@ export default {
       }
       return isJPG && isLt2M
     },
+    getUploadData() {
+      const theItemId = this.crud.form.id
+      return { id: theItemId }
+    },
+    uploadHeader() {
+      return { 'Authorization': getToken() }
+    },
     uploadUrl() {
-      return this.$store.getters.baseApi + '/api/storeGoods/upload'
+      return this.$store.getters.baseApi + '/api/mapWebapiItem/upload'
     }
   }
 }
