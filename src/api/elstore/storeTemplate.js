@@ -24,11 +24,11 @@ export function edit(data) {
   })
 }
 
-export function optionData(data) {
+export function optionData(params) {
   return request({
     url: 'api/storeTemplate/optionData',
     method: 'get',
-    data
+    params
   })
 }
 

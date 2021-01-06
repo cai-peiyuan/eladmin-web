@@ -8,8 +8,6 @@
         <el-input v-model="query.fontName" clearable placeholder="字体名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">字体碎片区间</label>
         <el-input v-model="query.fontRange" clearable placeholder="字体碎片区间" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <label class="el-form-item-label">字体文件内容</label>
-        <el-input v-model="query.fontContent" clearable placeholder="字体文件内容" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">备注</label>
         <el-input v-model="query.fontRemark" clearable placeholder="备注" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <rrOperation :crud="crud" />
@@ -25,31 +23,32 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
-          <el-form-item label="序列号" prop="id">
-            <el-input v-model="form.id" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="字体名称">
+          <el-form-item label="字体名称" prop="fontName">
             <el-input v-model="form.fontName" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="字体碎片区间">
-            <el-input v-model="form.fontRange" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="字体文件内容">
-            <el-input v-model="form.fontContent" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="创建时间">
-            <el-input v-model="form.createTime" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="创建用户">
-            <el-input v-model="form.createUser" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input v-model="form.fontRemark" style="width: 370px;" />
+          <el-form-item label="字体文件">
+            <el-upload
+              ref="upload"
+              style="width: 370px;"
+              name="file"
+              with-credentials="with-credentials"
+              :headers="uploadHeader()"
+              :data="getUploadData()"
+              :action="uploadUrl()"
+              :auto-upload="false"
+              :before-upload="beforeUpload"
+              :on-change="uploadOnchange"
+              :on-exceed="uploadOnexceed"
+              :limit="1"
+            >
+              <el-button plain size="small" type="primary">点击上传</el-button>
+              <div slot="tip" style="display: block;" class="el-upload__tip">将字体文件压缩成zip格式压缩文件进行上传</div>
+            </el-upload>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="text" @click="crud.cancelCU">取消</el-button>
-          <el-button :loading="crud.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+          <el-button :loading="crud.cu === 2" type="primary" @click="doUpload('form')">上传</el-button>
         </div>
       </el-dialog>
       <!--表格渲染-->
@@ -98,21 +97,13 @@
         <el-table-column prop="fontName" label="字体名称" sortable="custom" />
         <el-table-column prop="fontRange" label="字体碎片区间" sortable="custom" />
         <el-table-column prop="fontContent" label="字体文件内容" sortable="custom" />
+        <el-table-column prop="fontRemark" label="备注" sortable="custom" />
         <el-table-column prop="createTime" label="创建时间" sortable="custom">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="createUser" label="创建用户" sortable="custom" />
-        <el-table-column prop="fontRemark" label="备注" sortable="custom" />
-        <el-table-column v-if="checkPer(['admin','mapFont:edit','mapFont:del'])" label="操作" width="150px" align="center" fixed="right">
-          <template slot-scope="scope">
-            <udOperation
-              :data="scope.row"
-              :permission="permission"
-            />
-          </template>
-        </el-table-column>
       </el-table>
       <!--分页组件-->
       <pagination />
@@ -125,8 +116,8 @@ import crudMapFont from '@/api/msp/mapFont.js'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
-import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import { getToken } from '@/utils/auth'
 
 const defaultForm = {
   id: null,
@@ -139,7 +130,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapFont',
-  components: { pagination, crudOperation, rrOperation, udOperation },
+  components: { pagination, crudOperation, rrOperation },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -158,10 +149,10 @@ export default {
         del: ['admin', 'mapFont:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: ['fontContent'],
+      hiddenColumns: ['fontContent', 'id', 'createUser'],
       rules: {
-        id: [
-          { required: true, message: '序列号不能为空', trigger: 'blur' }
+        fontName: [
+          { required: true, message: '名称不能为空', trigger: 'blur' }
         ]
       },
       queryTypeOptions: [
@@ -176,6 +167,53 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    uploadOnexceed(file, fileList) {
+      console.log(file)
+      console.log(fileList)
+      this.$notify({
+        title: '只允许上传单个文件',
+        type: 'success',
+        duration: 2500
+      })
+    },
+    uploadOnchange(file, fileList) {
+      this.crud.form.fontName = file.name.split('.')[0]
+      console.log(file)
+      console.log(fileList)
+    },
+    beforeUpload(file) {
+      // 修改状态 id有值// return false
+      console.log(file.type)
+      const isJPG = file.type === 'application/zip'
+      const isLt2M = file.size / 1024 / 1024 < 210
+      if (!isJPG) {
+        this.$message.error('上传文件只能是 zip 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 50MB!')
+      }
+      return isJPG && isLt2M
+    },
+    getUploadData() {
+      const fontName = this.crud.form.fontName
+      return { fontName: fontName }
+    },
+    uploadHeader() {
+      return { 'Authorization': getToken() }
+    },
+    uploadUrl() {
+      return this.$store.getters.baseApi + '/api/mapFont/upload'
+    },
+    doUpload(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$refs.upload.submit()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     }
   }
 }
