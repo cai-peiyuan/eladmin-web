@@ -2,16 +2,19 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
-      <div v-if="crud.props.searchToggle">
+      <div v-if="crud.props.searchToggle" style="margin: 0 auto;text-align:center;">
         <!-- 搜索 -->
-        <label class="el-form-item-label">js库名称</label>
-        <el-input v-model="query.libName" clearable placeholder="js库名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <label class="el-form-item-label">资源类型js/css</label>
-        <el-input v-model="query.libVersion" clearable placeholder="资源类型js/css" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <label class="el-form-item-label">类库类型</label>
+        <el-select v-model="query.libType" size="small" placeholder="类库类型" class="filter-item" style="width: 185px;" @change="crud.toQuery">
+          <el-option v-for="item in dict.dict.MSP_RESOURCE_LIB_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <label class="el-form-item-label">类库名称</label>
+        <el-input v-model="query.libName" clearable placeholder="类库名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <label class="el-form-item-label">类库版本</label>
+        <el-input v-model="query.libVersion" clearable placeholder="类库版本" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">描述</label>
         <el-input v-model="query.libRemark" clearable placeholder="描述" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <label class="el-form-item-label">类库类型</label>
-        <el-input v-model="query.libType" clearable placeholder="类库类型" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <br>
         <rrOperation :crud="crud" />
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
@@ -25,17 +28,52 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
-          <el-form-item label="主键" prop="id">
+          <el-form-item v-if="false" label="主键" prop="id">
             <el-input v-model="form.id" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="js库名称">
+          <el-form-item label="类库类型">
+            <el-select v-model="form.libType" size="small" placeholder="类库类型" class="filter-item" style="width: 370px;">
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_LIB_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="类库名称" prop="libName">
             <el-input v-model="form.libName" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="资源类型js/css">
+          <el-form-item label="资源版本" prop="libVersion">
             <el-input v-model="form.libVersion" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="资源id，多个用逗号分隔">
+          <el-form-item label="类库资源选择">
+            <el-select
+              v-model="libItemIdsArrValue"
+              multiple
+              filterable
+              clearable
+              placeholder="请选择资源"
+              style="width: 370px;"
+              @change="libItemIdsChange"
+            >
+              <el-option-group
+                v-for="group in libItemOptions"
+                :key="group.label"
+                :label="group.label"
+              >
+                <el-option
+                  v-for="item in group.options"
+                  :key="item.value"
+                  :label="item.itemType + '->' + item.label"
+                  :value="item.value"
+                >
+                  <span style="float: left">{{ item.itemName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px;margin-right: 20px;">{{ item.itemVersion }}</span>
+                </el-option>
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="false" label="资源id，多个用逗号分隔">
             <el-input v-model="form.libItemIds" :rows="3" type="textarea" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item label="描述" prop="libRemark">
+            <el-input v-model="form.libRemark" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="类库之前代码">
             <el-input v-model="form.libScriptBefore" :rows="3" type="textarea" style="width: 370px;" />
@@ -43,17 +81,11 @@
           <el-form-item label="类库之后代码">
             <el-input v-model="form.libScriptAfter" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="描述">
-            <el-input v-model="form.libRemark" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="创建用户">
+          <el-form-item v-if="false" label="创建用户">
             <el-input v-model="form.createUser" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="创建时间">
+          <el-form-item v-if="false" label="创建时间">
             <el-input v-model="form.createTime" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="类库类型">
-            <el-input v-model="form.libType" style="width: 370px;" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -81,7 +113,7 @@
               <el-form-item label="主键">
                 <span>{{ props.row.id }}</span>
               </el-form-item>
-              <el-form-item label="js库名称">
+              <el-form-item label="类库名称">
                 <span>{{ props.row.libName }}</span>
               </el-form-item>
               <el-form-item label="资源类型js/css">
@@ -113,8 +145,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="id" label="主键" sortable="custom" />
-        <el-table-column prop="libName" label="js库名称" sortable="custom" />
-        <el-table-column prop="libVersion" label="资源类型js/css" sortable="custom" />
+        <el-table-column prop="libName" label="类库名称" sortable="custom" />
+        <el-table-column prop="libVersion" label="资源版本" sortable="custom" />
         <el-table-column prop="libItemIds" label="资源id，多个用逗号分隔" sortable="custom" />
         <el-table-column prop="libScriptBefore" label="类库之前代码" sortable="custom" />
         <el-table-column prop="libScriptAfter" label="类库之后代码" sortable="custom" />
@@ -151,6 +183,7 @@
 </template>
 
 <script>
+import { getLibItemOptionData } from '@/api/msp/mapWebapiItem.js'
 import crudMapWebapiLib from '@/api/msp/mapWebapiLib.js'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
@@ -168,7 +201,7 @@ const defaultForm = {
   libRemark: null,
   createUser: null,
   createTime: null,
-  libType: null
+  libType: '0'
 }
 export default {
   name: 'MapWebapiLib',
@@ -188,6 +221,20 @@ export default {
   dicts: ['', 'MSP_RESOURCE_LIB_TYPE'],
   data() {
     return {
+      libItemIdsArrValue: [],
+      libItemOptions: [{
+        label: 'CSS资源',
+        options: [{
+          value: 'Shanghai',
+          label: '上海'
+        }]
+      }, {
+        label: 'JavaScript资源',
+        options: [{
+          value: 'Chengdu',
+          label: '成都'
+        }]
+      }],
       permission: {
         add: ['admin', 'mapWebapiLib:add'],
         edit: ['admin', 'mapWebapiLib:edit'],
@@ -196,22 +243,54 @@ export default {
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['id', 'libItemIds', 'libScriptBefore', 'libScriptAfter', 'createUser', 'createTime'],
       rules: {
-        id: [
-          { required: true, message: '主键不能为空', trigger: 'blur' }
+        libName: [
+          { required: true, message: '名称不能为空', trigger: 'blur' }
+        ],
+        libVersion: [
+          { required: true, message: '版本号不能为空', trigger: 'blur' }
+        ],
+        libType: [
+          { required: true, message: '类型不能为空', trigger: 'blur' }
+        ],
+        libRemark: [
+          { required: true, message: '描述不能为空', trigger: 'blur' }
         ]
       },
       queryTypeOptions: [
-        { key: 'libName', display_name: 'js库名称' },
+        { key: 'libName', display_name: '类库名称' },
         { key: 'libVersion', display_name: '资源类型js/css' },
         { key: 'libRemark', display_name: '描述' },
         { key: 'libType', display_name: '类库类型' }
       ]
     }
   },
+  mounted() {
+    getLibItemOptionData({ page: 0, size: 1000, sort: 'itemName,asc' }).then(res => {
+      this.libItemOptions = res
+    })
+  },
   methods: {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    [CRUD.HOOK.beforeSubmit](crud) {
+      crud.form.libItemIds = this.libItemIdsArrValue.toString()
+      return true
+    },
+    [CRUD.HOOK.beforeToCU](crud) {
+      // debugger
+      this.libItemIdsArrValue = []
+      if (crud.form.libItemIds != null) {
+        crud.form.libItemIds.split(',').forEach(itemId => {
+          this.libItemIdsArrValue.push(itemId / 1)
+        })
+      }
+      return true
+    },
+    libItemIdsChange(data) {
+      // console.log(data)
+      this.crud.form.libItemIds = this.libItemIdsArrValue.toString()
     }
   }
 }

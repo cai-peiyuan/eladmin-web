@@ -24,4 +24,12 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function getLibItemOptionData(params) {
+  return request({
+    url: 'api/mapWebapiItem/getLibItemOptionData',
+    method: 'get',
+    params
+  })
+}
+
+export default { add, edit, del, getLibItemOptionData }
