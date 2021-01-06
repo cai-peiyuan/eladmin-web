@@ -101,15 +101,29 @@
           </template>
         </el-table-column>
         <el-table-column prop="id" label="主键" sortable="custom" />
-        <el-table-column prop="itemName" label="资源名称" sortable="custom" />
         <el-table-column prop="itemType" label="资源类型js/css" sortable="custom">
           <template slot-scope="scope">
             <svg-icon v-if="scope.row.itemType === 'js'" icon-class="java-script_1" style="width: 3em; height: 3em" />
             <svg-icon v-if="scope.row.itemType === 'css'" icon-class="css_1" style="width: 3em; height: 3em" />
           </template>
         </el-table-column>
+        <el-table-column prop="itemName" label="资源名称" sortable="custom" />
         <el-table-column prop="itemVersion" label="资源版本" sortable="custom" />
         <el-table-column prop="itemContent" label="资源内容" sortable="custom" />
+        <el-table-column prop="itemContentSize" label="资源大小" sortable="custom">
+          <template slot-scope="scope">
+            <span>
+              <el-tag
+                :type="scope.row.itemContentSize === 0 ? 'primary' : 'success'"
+                disable-transitions
+              >{{ scope.row.itemContentSize === 0?'未上传资源文件':
+                Math.ceil(scope.row.itemContentSize/1024) > 1024 ?
+                  (scope.row.itemContentSize/1024/1024).toFixed(2)+'MB' :
+                  Math.ceil(scope.row.itemContentSize/1024) + 'KB' }}
+              </el-tag>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="itemContentType" label="资源内容引用类型" sortable="custom">
           <template slot-scope="scope">
             <span>
