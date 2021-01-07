@@ -23,5 +23,12 @@ export function edit(data) {
     data
   })
 }
+export function queryFontNameGroup(params) {
+  return request({
+    url: 'api/mapFont/queryFontNameGroup',
+    method: 'get',
+    params
+  })
+}
 
-export default { add, edit, del }
+export default { add, edit, del, queryFontNameGroup }

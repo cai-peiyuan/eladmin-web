@@ -5,13 +5,26 @@
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <label class="el-form-item-label">字体名称</label>
-        <el-input v-model="query.fontName" clearable placeholder="字体名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <el-select v-model="query.fontName" clearable size="small" placeholder="字体名称" class="filter-item" style="width: 280px" @change="crud.toQuery">
+          <el-option v-for="item in fontNameGroupData" :key="item.FONT_NAME" :label="item.FONT_NAME + '  ' + item.CNT" :value="item.FONT_NAME" />
+        </el-select>
         <label class="el-form-item-label">字体碎片区间</label>
         <el-input v-model="query.fontRange" clearable placeholder="字体碎片区间" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">备注</label>
         <el-input v-model="query.fontRemark" clearable placeholder="备注" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <rrOperation :crud="crud" />
       </div>
+      <el-row v-if="false">
+        <el-button
+          v-for="item in fontNameGroupData"
+          :key="item.FONT_NAME"
+          plain
+          type="default"
+          size="mini"
+          @click="queryByFontName(item.FONT_NAME)"
+        >{{ item.FONT_NAME }}</el-button>
+
+      </el-row>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
       <crudOperation :permission="permission" :hidden-columns="hiddenColumns" />
       <!--表单组件-->
@@ -143,6 +156,7 @@ export default {
   },
   data() {
     return {
+      fontNameGroupData: [],
       permission: {
         add: ['admin', 'mapFont:add'],
         edit: ['admin', 'mapFont:edit'],
@@ -163,7 +177,17 @@ export default {
       ]
     }
   },
+  mounted() {
+    crudMapFont.queryFontNameGroup().then(res => {
+      this.fontNameGroupData = res
+    })
+  },
   methods: {
+    queryByFontName(fontName) {
+      console.log(fontName)
+      this.crud.query.fontName = fontName
+      this.crud.toQuery()
+    },
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
