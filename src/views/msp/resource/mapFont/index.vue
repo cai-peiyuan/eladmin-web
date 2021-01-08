@@ -2,6 +2,51 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
+      <el-row :gutter="40" class="panel-group">
+        <el-col
+          v-for="item in fontNameGroupData"
+          :key="item.FONT_NAME"
+          :xs="12"
+          :sm="12"
+          :lg="6"
+          class="card-panel-col"
+        >
+          <div class="card-panel" @click="queryByFontName(item.FONT_NAME)">
+            <div class="card-panel-icon-wrapper icon-people">
+              <svg-icon icon-class="font" class-name="card-panel-icon" />
+            </div>
+            <div class="card-panel-description">
+              <div class="card-panel-text">
+                {{ item.FONT_NAME }}
+              </div>
+              <count-to
+                :start-val="0"
+                :end-val="item.CNT"
+                :duration="1000"
+                class="card-panel-num"
+              />
+            </div>
+          </div>
+        </el-col>
+
+        <el-col
+          :xs="12"
+          :sm="12"
+          :lg="6"
+          class="card-panel-col"
+        >
+          <div class="card-panel" @click="crud.toAdd">
+            <div class="card-panel-icon-wrapper icon-people">
+              <i class="el-icon-plus" />
+            </div>
+            <div class="card-panel-description">
+              <div class="card-panel-text">
+                上传字体
+              </div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <label class="el-form-item-label">字体名称</label>
@@ -26,7 +71,7 @@
 
       </el-row>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
-      <crudOperation :permission="permission" :hidden-columns="hiddenColumns" />
+      <crudOperation v-if="false" :permission="permission" :hidden-columns="hiddenColumns" />
       <!--表单组件-->
       <el-dialog
         :close-on-click-modal="false"
@@ -131,6 +176,7 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import pagination from '@crud/Pagination'
 import { getToken } from '@/utils/auth'
+import CountTo from 'vue-count-to'
 
 const defaultForm = {
   id: null,
@@ -143,7 +189,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapFont',
-  components: { pagination, crudOperation, rrOperation },
+  components: { pagination, crudOperation, rrOperation, CountTo },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -243,31 +289,125 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .demo-table-expand {
     font-size: 12px;
   }
+
   .demo-table-expand label {
     width: 70px;
     color: #99a9bf;
   }
+
   .demo-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
     width: 100%;
   }
+
   .demo-table-expand .el-form-item__content {
     font-size: 12px;
   }
+
   /deep/ .el-dialog__body {
     padding: 0 20px 10px 20px !important;
   }
+
   .java.hljs {
     color: #444444;
     background: #ffffff !important;
     height: 630px !important;
   }
+
   /deep/ .el-table__row {
     cursor: pointer;
+  }
+
+  .panel-group {
+    margin-top: 18px;
+
+    .card-panel-col {
+      margin-bottom: 32px;
+    }
+
+    .card-panel {
+      height: 108px;
+      cursor: pointer;
+      font-size: 18px;
+      position: relative;
+      overflow: hidden;
+      color: #666;
+      background: #fff;
+      box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
+      border-color: rgba(0, 0, 0, .05);
+
+      &:hover {
+        .card-panel-icon-wrapper {
+          color: #fff;
+        }
+
+        .icon-people {
+          background: #40c9c6;
+        }
+
+        .icon-message {
+          background: #36a3f7;
+        }
+
+        .icon-money {
+          background: #f4516c;
+        }
+
+        .icon-shopping {
+          background: #34bfa3
+        }
+      }
+
+      .icon-people {
+        color: #40c9c6;
+      }
+
+      .icon-message {
+        color: #36a3f7;
+      }
+
+      .icon-money {
+        color: #f4516c;
+      }
+
+      .icon-shopping {
+        color: #34bfa3
+      }
+
+      .card-panel-icon-wrapper {
+        float: left;
+        margin: 14px 0 0 14px;
+        padding: 16px;
+        transition: all 0.38s ease-out;
+        border-radius: 6px;
+      }
+
+      .card-panel-icon {
+        float: left;
+        font-size: 48px;
+      }
+
+      .card-panel-description {
+        width: 160px;
+        float: right;
+        font-weight: bold;
+        margin: 10px;
+        margin-left: 0px;
+
+        .card-panel-text {
+          word-break: break-all;
+          color: rgba(0, 0, 0, 0.45);
+        }
+
+        .card-panel-num {
+          font-size: 20px;
+        }
+      }
+    }
   }
 </style>
