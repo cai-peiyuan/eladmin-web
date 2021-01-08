@@ -3,7 +3,7 @@
     <!--工具栏-->
     <div class="head-container">
       <el-row :gutter="40" class="panel-group">
-        <el-col
+        <div
           v-for="item in fontNameGroupData"
           :key="item.FONT_NAME"
           :xs="12"
@@ -27,9 +27,9 @@
               />
             </div>
           </div>
-        </el-col>
+        </div>
 
-        <el-col
+        <div
           :xs="12"
           :sm="12"
           :lg="6"
@@ -45,7 +45,7 @@
               </div>
             </div>
           </div>
-        </el-col>
+        </div>
       </el-row>
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
@@ -334,9 +334,19 @@ export default {
 
   .panel-group {
     margin-top: 18px;
-
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    min-height: 150px;
     .card-panel-col {
-      margin-bottom: 32px;
+      cursor: pointer;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      width: 165px;
+      height: 150px;
+      position: relative;
     }
 
     .card-panel {
@@ -394,19 +404,19 @@ export default {
         padding: 16px;
         transition: all 0.38s ease-out;
         border-radius: 6px;
+        display: none;
       }
 
       .card-panel-icon {
         float: left;
         font-size: 48px;
+        display: none;
       }
 
       .card-panel-description {
-        width: 160px;
-        float: right;
         font-weight: bold;
         margin: 10px;
-        margin-left: 0px;
+        text-align: center;
 
         .card-panel-text {
           word-break: break-all;
@@ -415,6 +425,7 @@ export default {
 
         .card-panel-num {
           font-size: 20px;
+          margin-top: 20px;
         }
       }
     }
