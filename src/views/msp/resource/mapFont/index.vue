@@ -97,6 +97,7 @@
               :before-upload="beforeUpload"
               :on-change="uploadOnchange"
               :on-exceed="uploadOnexceed"
+              :on-success="uploadSuccess"
               :limit="1"
             >
               <el-button plain size="small" type="primary">点击上传</el-button>
@@ -274,6 +275,14 @@ export default {
     },
     uploadUrl() {
       return this.$store.getters.baseApi + '/api/mapFont/upload'
+    },
+    uploadSuccess() {
+      this.$notify({
+        title: '上传成功',
+        type: 'success',
+        duration: 2500
+      })
+      this.$refs.upload.clearFiles()
     },
     doUpload(formName) {
       this.$refs[formName].validate((valid) => {
