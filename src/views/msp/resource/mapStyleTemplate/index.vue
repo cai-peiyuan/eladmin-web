@@ -3,14 +3,15 @@
     <!--工具栏-->
     <div class="head-container">
       <el-row :gutter="40" class="panel-group" style="padding: 5px 10px 10px 25px">
-        <el-tabs v-model="activeName">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+
           <el-tab-pane label="基础模板" name="first">
             <div class="tab-temp-main">
 
-              <div v-for="item in crud.data" :key="item.id" class="temp-item ">
+              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="crud.toEdit(item)">
                 <div
                   class="temp-img"
-                  :style="styleImgUrl(item.id)"
+                  :style="styleImgUrl(item)"
                 />
                 <div class="temp-info">
                   <div class="temp-name">{{ item.styleTemplateName }}</div>
@@ -21,12 +22,62 @@
                 </div>
               </div>
 
+              <div class="temp-item" @click="crud.toAdd">
+                <div
+                  class="temp-img"
+                  style="text-align: center;"
+                >
+                  <svg-icon
+                    icon-class="add"
+                    style="width: 3em;height: 3em;margin-top: 40px"
+                  />
+                </div>
+                <div class="temp-info">
+                  <div class="temp-name">添加样式</div>
+                </div>
+              </div>
+
             </div>
           </el-tab-pane>
-          <el-tab-pane label="高级模板" name="second" />
+          <el-tab-pane label="高级模板" name="second">
+
+            <div class="tab-temp-main">
+
+              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="crud.toEdit(item)">
+                <div
+                  class="temp-img"
+                  :style="styleImgUrl(item)"
+                />
+                <div class="temp-info">
+                  <div class="temp-name">{{ item.styleTemplateName }}</div>
+                  <a class="temp-use">{{ item.styleTemplateRemark }}</a>
+                  <a class="temp-use-senior">
+                    <i class="iconfont-mapstyle icon-lock" />
+                  </a>
+                </div>
+              </div>
+
+              <div class="temp-item" @click="crud.toAdd">
+                <div
+                  class="temp-img"
+                  style="text-align: center;"
+                >
+                  <svg-icon
+                    icon-class="add"
+                    style="width: 3em;height: 3em;margin-top: 40px"
+                  />
+                </div>
+                <div class="temp-info">
+                  <div class="temp-name">添加样式</div>
+                </div>
+              </div>
+
+            </div>
+
+          </el-tab-pane>
         </el-tabs>
       </el-row>
-      <div v-if="crud.props.searchToggle">
+      <div v-if="crud.props.searchToggle && false">
         <!-- 搜索 -->
         <label class="el-form-item-label">样式id</label>
         <el-input v-model="query.styleTemplateId" clearable placeholder="样式id" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
@@ -39,7 +90,7 @@
         <rrOperation :crud="crud" />
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
-      <crudOperation :permission="permission" :hidden-columns="hiddenColumns" />
+      <crudOperation v-if="false" :permission="permission" :hidden-columns="hiddenColumns" />
       <!--表单组件-->
       <el-dialog
         :close-on-click-modal="false"
@@ -117,14 +168,18 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column prop="styleTemplateThumbnail" label="缩略图" width="80">
+          <template slot-scope="scope">
+            <img :src="scope.row.styleTemplateImgBase64" width="40" height="40" class="head_pic">
+          </template>
+        </el-table-column>
+        <el-table-column v-if="false" prop="styleTemplateType" label="样式类型" />
+        <el-table-column prop="styleTemplateName" label="样式名称" width="160" />
         <el-table-column prop="styleTemplateId" label="样式id" />
-        <el-table-column prop="styleTemplateType" label="样式类型" />
-        <el-table-column prop="styleTemplateName" label="样式名称" />
         <el-table-column prop="styleTemplateRemark" label="样式描述" />
-        <el-table-column prop="styleTemplateContent" label="样式JSOn内容" />
-        <el-table-column prop="styleTemplateThumbnail" label="缩略图" />
-        <el-table-column prop="styleTemplateZoom" label="样式级别" />
-        <el-table-column prop="styleTemplateCenter" label="样式中心点" />
+        <el-table-column v-if="false" prop="styleTemplateContent" label="样式JSOn内容" />
+        <el-table-column v-if="false" prop="styleTemplateZoom" label="样式级别" />
+        <el-table-column v-if="false" prop="styleTemplateCenter" label="样式中心点" />
         <el-table-column v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
@@ -183,7 +238,7 @@ export default {
         del: ['admin', 'mapStyleTemplate:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: ['id'],
+      hiddenColumns: ['id', 'styleTemplateContent', 'styleTemplateZoom', 'styleTemplateThumbnail'],
       rules: {
         styleTemplateId: [
           { required: true, message: '样式id不能为空', trigger: 'blur' }
@@ -210,15 +265,27 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       console.log(crud)
+      if (this.query.styleTemplateType === null) {
+        this.query.styleTemplateType = '1'
+      }
       return true
+    },
+    handleClick(tab, event) {
+      console.log(tab, event)
+      if (tab.name === 'first') {
+        this.query.styleTemplateType = '1'
+      } else {
+        this.query.styleTemplateType = '0'
+      }
+      this.crud.toQuery()
     },
     /**
      * 获取样式预览图
      * @param styleTemplateId
      * @returns {string}
      */
-    styleImgUrl(styleTemplateId) {
-      return "background: url('https://lbs.amap.com/dev/config/mapstyle/img/normal.png?id=" + styleTemplateId + "') center center / 165px 160px no-repeat;"
+    styleImgUrl(styleTemplate) {
+      return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 165px 160px no-repeat;"
     }
   }
 }
