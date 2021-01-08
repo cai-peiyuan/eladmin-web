@@ -10,7 +10,7 @@
               <div v-for="item in crud.data" :key="item.id" class="temp-item ">
                 <div
                   class="temp-img"
-                  style="background: url(https://lbs.amap.com/dev/config/mapstyle/img/normal.png) center center no-repeat;"
+                  :style="styleImgUrl(item.id)"
                 />
                 <div class="temp-info">
                   <div class="temp-name">{{ item.styleTemplateName }}</div>
@@ -211,6 +211,14 @@ export default {
     [CRUD.HOOK.beforeRefresh]() {
       console.log(crud)
       return true
+    },
+    /**
+     * 获取样式预览图
+     * @param styleTemplateId
+     * @returns {string}
+     */
+    styleImgUrl(styleTemplateId) {
+      return "background: url('https://lbs.amap.com/dev/config/mapstyle/img/normal.png?id=" + styleTemplateId + "') center center / 165px 160px no-repeat;"
     }
   }
 }
