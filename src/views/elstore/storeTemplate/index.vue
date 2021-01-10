@@ -246,7 +246,7 @@ export default {
   .demo-table-expand .el-form-item__content {
     font-size: 12px;
   }
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     padding: 0 20px 10px 20px !important;
   }
   .java.hljs {
@@ -254,7 +254,7 @@ export default {
     background: #ffffff !important;
     height: 630px !important;
   }
-  /deep/ .el-transfer-panel {
+  ::v-deep .el-transfer-panel {
     width: 250px;
   }
 </style>

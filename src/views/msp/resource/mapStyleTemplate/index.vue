@@ -82,7 +82,9 @@
         <label class="el-form-item-label">样式id</label>
         <el-input v-model="query.styleTemplateId" clearable placeholder="样式id" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">样式类型</label>
-        <el-input v-model="query.styleTemplateType" clearable placeholder="样式类型" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <el-select v-model="query.styleTemplateType" size="small" placeholder="类库类型" class="filter-item" style="width: 185px;">
+          <el-option v-for="item in dict.dict.MSP_RESOURCE_STYLE_TEMPLATE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
         <label class="el-form-item-label">样式名称</label>
         <el-input v-model="query.styleTemplateName" clearable placeholder="样式名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">样式描述</label>
@@ -104,7 +106,9 @@
             <el-input v-model="form.styleTemplateId" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="样式类型" prop="styleTemplateType">
-            未设置字典，请手动设置 Select
+            <el-select v-model="form.styleTemplateType" size="small" placeholder="类库类型" class="filter-item" style="width: 370px;">
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_STYLE_TEMPLATE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <el-form-item label="样式名称" prop="styleTemplateName">
             <el-input v-model="form.styleTemplateName" style="width: 370px;" />
@@ -173,13 +177,19 @@
             <img :src="scope.row.styleTemplateImgBase64" width="40" height="40" class="head_pic">
           </template>
         </el-table-column>
-        <el-table-column v-if="false" prop="styleTemplateType" label="样式类型" />
-        <el-table-column prop="styleTemplateName" label="样式名称" width="160" />
-        <el-table-column prop="styleTemplateId" label="样式id" />
+        <el-table-column v-if="false" prop="styleTemplateType" label="样式类型" sortable="custom" />
+        <el-table-column prop="styleTemplateName" label="样式名称" width="160" sortable="custom" />
+        <el-table-column prop="styleTemplateId" label="样式id" sortable="custom" />
         <el-table-column prop="styleTemplateRemark" label="样式描述" />
         <el-table-column v-if="false" prop="styleTemplateContent" label="样式JSOn内容" />
         <el-table-column v-if="false" prop="styleTemplateZoom" label="样式级别" />
         <el-table-column v-if="false" prop="styleTemplateCenter" label="样式中心点" />
+        <el-table-column v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="设计样式" width="150px" align="center" fixed="right">
+          <template slot-scope="scope">
+            <el-button type="primary" plain @click="editStyleJson(scope.row)">编辑Json</el-button>
+            <el-button type="primary" plain>在线设计</el-button>
+          </template>
+        </el-table-column>
         <el-table-column v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
@@ -229,6 +239,9 @@ export default {
       crudMethod: { ...crudMapStyleTemplate }
     })
   },
+  // 数据字典
+  el_dicts: ['', ''],
+  dicts: ['', 'MSP_RESOURCE_STYLE_TEMPLATE_TYPE'],
   data() {
     return {
       activeName: 'first',
@@ -279,6 +292,9 @@ export default {
       }
       this.crud.toQuery()
     },
+    editStyleJson(rowData) {
+      console.log(rowData)
+    },
     /**
      * 获取样式预览图
      * @param styleTemplateId
@@ -307,7 +323,7 @@ export default {
   .demo-table-expand .el-form-item__content {
     font-size: 12px;
   }
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     padding: 0 20px 10px 20px !important;
   }
   .java.hljs {
@@ -315,7 +331,7 @@ export default {
     background: #ffffff !important;
     height: 630px !important;
   }
-  /deep/ .el-table__row {
+  ::v-deep .el-table__row {
     cursor: pointer;
   }
 

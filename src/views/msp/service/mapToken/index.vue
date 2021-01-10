@@ -338,7 +338,7 @@ export default {
   .demo-table-expand .el-form-item__content {
     font-size: 12px;
   }
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     padding: 0 20px 10px 20px !important;
   }
   .java.hljs {
@@ -346,17 +346,17 @@ export default {
     background: #ffffff !important;
     height: 630px !important;
   }
-  /deep/ .el-table__row {
+  ::v-deep .el-table__row {
     cursor: pointer;
   }
-  /deep/ .el-transfer-panel {
+  ::v-deep .el-transfer-panel {
     width: 420px;
     height: 500px;
   }
-  /deep/ .el-transfer-panel__list.is-filterable {
+  ::v-deep .el-transfer-panel__list.is-filterable {
     height: 500px;
   }
-  /deep/ .el-transfer__buttons {
+  ::v-deep .el-transfer__buttons {
     display: inline-block;
     vertical-align: middle;
     padding: 0 0px;

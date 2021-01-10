@@ -318,7 +318,7 @@ export default {
     font-size: 12px;
   }
 
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     padding: 0 20px 10px 20px !important;
   }
 
@@ -328,7 +328,7 @@ export default {
     height: 630px !important;
   }
 
-  /deep/ .el-table__row {
+  ::v-deep .el-table__row {
     cursor: pointer;
   }
 
