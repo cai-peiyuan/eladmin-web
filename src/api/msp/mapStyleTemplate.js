@@ -23,5 +23,11 @@ export function edit(data) {
     data
   })
 }
+export function getStyleTemplateByStyleId(styleId) {
+  return request({
+    url: 'api/mapStyleTemplate/' + styleId,
+    method: 'get'
+  })
+}
 
-export default { add, edit, del }
+export default { add, edit, del, getStyleTemplateByStyleId }

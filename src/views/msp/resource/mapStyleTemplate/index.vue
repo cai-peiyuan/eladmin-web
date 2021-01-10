@@ -93,6 +93,21 @@
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
       <crudOperation v-if="false" :permission="permission" :hidden-columns="hiddenColumns" />
+      <el-dialog
+        :close-on-click-modal="false"
+        :visible.sync="vueJsonEditorDialog"
+        :title="crud.status.title"
+        width="900px"
+        height="700px"
+      >
+        <vue-json-editor
+          v-model="currentEditRowData.styleTemplateContent"
+          show-btns="true"
+          :mode="'code'"
+          lang="zh"
+          style="height: 600px;"
+        />
+      </el-dialog>
       <!--表单组件-->
       <el-dialog
         :close-on-click-modal="false"
@@ -212,6 +227,7 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import vueJsonEditor from 'vue-json-editor'
 
 const defaultForm = {
   id: null,
@@ -228,7 +244,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapStyleTemplate',
-  components: { pagination, crudOperation, rrOperation, udOperation },
+  components: { pagination, crudOperation, rrOperation, udOperation, vueJsonEditor },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -244,6 +260,9 @@ export default {
   dicts: ['', 'MSP_RESOURCE_STYLE_TEMPLATE_TYPE'],
   data() {
     return {
+      vueJsonEditorDialog: false,
+      currentEditRowData: {},
+      styleTemplateContent: {},
       activeName: 'first',
       permission: {
         add: ['admin', 'mapStyleTemplate:add'],
@@ -293,7 +312,20 @@ export default {
       this.crud.toQuery()
     },
     editStyleJson(rowData) {
-      console.log(rowData)
+      this.styleTemplateContent = {
+        msg: 'loading'
+      }
+      console.log(this.styleTemplateContent)
+      this.currentEditRowData = rowData
+      this.vueJsonEditorDialog = true
+      const _this = this
+      crudMapStyleTemplate.getStyleTemplateByStyleId(rowData.styleTemplateId).then(res => {
+        if (res.styleTemplateContent != null) {
+          // eslint-disable-next-line no-eval eval('(' + res.styleTemplateContent + ')')
+          _this.styleTemplateContent = JSON.parse(res.styleTemplateContent)
+          console.log(_this.styleTemplateContent)
+        }
+      })
     },
     /**
      * 获取样式预览图
@@ -303,6 +335,7 @@ export default {
     styleImgUrl(styleTemplate) {
       return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 165px 160px no-repeat;"
     }
+
   }
 }
 </script>
@@ -404,5 +437,12 @@ export default {
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  /* jsoneditor右上角默认有一个链接,加css去掉了 */
+  ::v-deep .jsoneditor-poweredBy{
+     display: none;
+  }
+  ::v-deep .jsoneditor-vue{
+     min-height: 550px;
   }
 </style>

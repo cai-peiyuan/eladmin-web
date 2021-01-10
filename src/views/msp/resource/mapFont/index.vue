@@ -72,6 +72,7 @@
       </el-row>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
       <crudOperation v-if="false" :permission="permission" :hidden-columns="hiddenColumns" />
+
       <!--表单组件-->
       <el-dialog
         :close-on-click-modal="false"
