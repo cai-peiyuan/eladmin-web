@@ -25,35 +25,30 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
-          <el-form-item label="应用名称">
+          <el-form-item label="应用名称" prop="appName">
             <el-input v-model="form.appName" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="token值">
-            <el-input v-model="form.accessToken" style="width: 370px;" />
+          <el-form-item label="token值" prop="accessToken">
+            <el-input v-model="form.accessToken" style="width: 300px;" />
+            <el-button v-if="form.id === '' || form.id === null" type="primary" plain @click="generateAccessToken">生成</el-button>
           </el-form-item>
-          <el-form-item label="失效时间">
+          <el-form-item label="失效时间" prop="invalidTime">
             <el-date-picker v-model="form.invalidTime" type="datetime" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="创建时间">
-            <el-input v-model="form.createTime" style="width: 370px;" />
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="form.remark" style="width: 370px;" type="textarea" />
           </el-form-item>
-          <el-form-item label="创建用户">
-            <el-input v-model="form.createUser" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input v-model="form.remark" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="限制客户端列表">
-            <el-input v-model="form.iplist" style="width: 370px;" />
+          <el-form-item label="客户端列表">
+            <el-input v-model="form.iplist" style="width: 370px;" type="textarea" />
           </el-form-item>
           <el-form-item label="每日请求限制">
-            <el-input v-model="form.limitPerDay" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="是否启用" prop="isValid">
-            <el-input v-model="form.isValid" style="width: 370px;" />
+            <el-input-number v-model="form.limitPerDay" :step="100" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="引用站列表">
             <el-input v-model="form.refererlist" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item v-if="false" label="是否启用" prop="isValid">
+            <el-input v-model="form.isValid" style="width: 370px;" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -138,7 +133,16 @@
         <el-table-column prop="createUser" label="创建用户" sortable="custom" width="100px" />
         <el-table-column prop="iplist" label="限制客户端列表" sortable="custom" />
         <el-table-column prop="limitPerDay" label="每日请求限制" sortable="custom" width="120px" />
-        <el-table-column prop="isValid" label="是否启用" sortable="custom" width="120px" />
+        <el-table-column prop="isValid" label="是否启用" sortable="custom" width="120px">
+          <template slot-scope="scope">
+            <span>
+              <el-tag
+                :type="scope.row.isValid === 0 ? 'primary' : 'success'"
+                disable-transitions
+              >{{ getDictLabel(scope.row.isValid,'MSP_SERVICE_TOKEN_VALID',scope) }}</el-tag>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="refererlist" label="引用站列表" sortable="custom" />
         <el-table-column prop="remark" label="备注" sortable="custom" width="180px" />
         <el-table-column v-if="checkPer(['admin','mapToken:edit','mapToken:del'])" label="操作" width="150px" align="center" fixed="right">
@@ -197,6 +201,7 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import { uuid } from 'vue-uuid'
 
 const defaultForm = {
   id: null,
@@ -224,6 +229,7 @@ export default {
       crudMethod: { ...crudMapToken }
     })
   },
+  dicts: ['MSP_SERVICE_TOKEN_VALID'],
   data() {
     return {
       showTokenApiSettingDialogFlag: false,
@@ -243,8 +249,20 @@ export default {
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['createUser', 'createTime', 'refererlist', 'iplist', 'accessToken1'],
       rules: {
-        id: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+        appName: [
+          { required: true, message: '应用名称不能为空', trigger: 'blur' }
+        ],
+        accessToken: [
+          { required: true, message: 'Token值不能为空', trigger: 'blur' }
+        ],
+        invalidTime: [
+          { required: true, message: '失效时间不能为空', trigger: 'blur' }
+        ],
+        limitPerDay: [
+          { required: true, message: '请求限制不能为空', trigger: 'blur' }
+        ],
+        remark: [
+          { required: true, message: '备注信息不能为空', trigger: 'blur' }
         ],
         isValid: [
           { required: true, message: '是否启用不能为空', trigger: 'blur' }
@@ -262,6 +280,9 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    generateAccessToken() {
+      this.crud.form.accessToken = uuid.v4().replace(/-/g, '')
     },
     // 监听模板属性变化操作
     handleChange(value, direction, movedKeys) {

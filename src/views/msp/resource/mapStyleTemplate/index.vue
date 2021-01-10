@@ -2,13 +2,12 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
+
       <el-row :gutter="40" class="panel-group" style="padding: 5px 10px 10px 25px">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-
           <el-tab-pane label="基础模板" name="first">
             <div class="tab-temp-main">
-
-              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="crud.toEdit(item)">
+              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="clickStyleTempalte(item)" @mouseover="hoverStyleTempalte(item)">
                 <div
                   class="temp-img"
                   :style="styleImgUrl(item)"
@@ -43,7 +42,7 @@
 
             <div class="tab-temp-main">
 
-              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="crud.toEdit(item)">
+              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="clickStyleTempalte(item)">
                 <div
                   class="temp-img"
                   :style="styleImgUrl(item)"
@@ -77,36 +76,67 @@
           </el-tab-pane>
         </el-tabs>
       </el-row>
-      <div v-if="crud.props.searchToggle && false">
-        <!-- 搜索 -->
-        <label class="el-form-item-label">样式id</label>
-        <el-input v-model="query.styleTemplateId" clearable placeholder="样式id" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <label class="el-form-item-label">样式类型</label>
-        <el-select v-model="query.styleTemplateType" size="small" placeholder="类库类型" class="filter-item" style="width: 185px;">
-          <el-option v-for="item in dict.dict.MSP_RESOURCE_STYLE_TEMPLATE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <label class="el-form-item-label">样式名称</label>
-        <el-input v-model="query.styleTemplateName" clearable placeholder="样式名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <label class="el-form-item-label">样式描述</label>
-        <el-input v-model="query.styleTemplateRemark" clearable placeholder="样式描述" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <rrOperation :crud="crud" />
-      </div>
-      <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
-      <crudOperation v-if="false" :permission="permission" :hidden-columns="hiddenColumns" />
+
+      <el-row v-if="currentEditRowData.id" :gutter="40" class="panel-group" style="padding: 5px 10px 10px 25px">
+        <div class="demo-table-expand" style="padding-left: 40px">
+          <ul class="detail-info">
+
+            <li>
+              <div class="detail-title">缩略图</div>
+              <div class=""><img :src="currentEditRowData.styleTemplateImgBase64" width="200" height="200" class="head_pic"></div>
+            </li>
+
+            <li><div class="detail-title">样式id</div>
+              <div class="detail-value">{{ currentEditRowData.styleTemplateId }}
+                <el-button>预览样式</el-button>
+              </div>
+            </li>
+
+            <li><div class="detail-title">样式类型</div>
+              <div class="detail-value">{{ currentEditRowData.styleTemplateType }}</div></li>
+            <li><div class="detail-title">样式名称</div>
+              <div class="detail-value">{{ currentEditRowData.styleTemplateName }}</div></li>
+            <li><div class="detail-title">样式描述</div>
+              <div class="detail-value">{{ currentEditRowData.styleTemplateRemark }}</div></li>
+            <li><div class="detail-title">样式Json内容</div>
+              <div class="detail-value">{{ currentEditRowData.styleTemplateContent }}</div></li>
+            <li><div class="detail-title">样式级别</div>
+              <div class="detail-value">{{ currentEditRowData.styleTemplateZoom }}</div></li>
+            <li><div class="detail-title">样式中心点</div>
+              <div class="detail-value">{{ currentEditRowData.styleTemplateCenter }}</div></li>
+            <li v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="设计样式" width="150px" align="center" fixed="right">
+              <el-button type="primary" plain @click="editStyleJson(currentEditRowData)">编辑Json</el-button>
+              <el-button type="primary" plain>
+                <router-link :to="'/msp/resource/mapStyleTemplate/edit/'+ currentEditRowData.styleTemplateId">
+                  在线设计
+                </router-link>
+              </el-button>
+              <el-button type="warning" plain @click="crud.toEdit(currentEditRowData)">修改信息</el-button>
+              <el-button type="danger" plain @click="toDelete(currentEditRowData)">删除样式</el-button>
+            </li>
+          </ul>
+        </div>
+      </el-row>
+
+      <!-- 样式Json内容编辑窗口 -->
       <el-dialog
         :close-on-click-modal="false"
         :visible.sync="vueJsonEditorDialog"
-        :title="crud.status.title"
+        :title="'【' + currentEditRowData.styleTemplateName + '】样式内容编辑'"
         width="900px"
+        center
         height="700px"
       >
         <vue-json-editor
-          v-model="currentEditRowData.styleTemplateContent"
-          show-btns="true"
+          v-model="styleTemplateContent"
           :mode="'code'"
           lang="zh"
           style="height: 600px;"
         />
+        <div style="margin: 0 auto;text-align: center;">
+          <el-button type="info" plain @click="vueJsonEditorDialog = !vueJsonEditorDialog">取消</el-button>
+          <el-button type="primary" plain @click="saveJsonContent">保存</el-button>
+        </div>
       </el-dialog>
       <!--表单组件-->
       <el-dialog
@@ -131,10 +161,10 @@
           <el-form-item label="样式描述" prop="styleTemplateRemark">
             <el-input v-model="form.styleTemplateRemark" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="样式JSOn内容" prop="styleTemplateContent">
+          <el-form-item v-if="false" label="样式JSOn内容" prop="styleTemplateContent">
             <el-input v-model="form.styleTemplateContent" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="缩略图" prop="styleTemplateThumbnail">
+          <el-form-item v-if="false" label="缩略图" prop="styleTemplateThumbnail">
             <el-input v-model="form.styleTemplateThumbnail" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="样式级别" prop="styleTemplateZoom">
@@ -151,6 +181,7 @@
       </el-dialog>
       <!--表格渲染-->
       <el-table
+        v-if="false"
         ref="table"
         v-loading="crud.loading"
         :data="crud.data"
@@ -214,8 +245,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <!--分页组件-->
-      <pagination />
     </div>
   </div>
 </template>
@@ -223,10 +252,7 @@
 <script>
 import crudMapStyleTemplate from '@/api/msp/mapStyleTemplate.js'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
-import rrOperation from '@crud/RR.operation'
-import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
-import pagination from '@crud/Pagination'
 import vueJsonEditor from 'vue-json-editor'
 
 const defaultForm = {
@@ -244,7 +270,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapStyleTemplate',
-  components: { pagination, crudOperation, rrOperation, udOperation, vueJsonEditor },
+  components: { udOperation, vueJsonEditor },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -296,11 +322,37 @@ export default {
   methods: {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
-      console.log(crud)
-      if (this.query.styleTemplateType === null) {
+      console.log(this.query.styleTemplateType)
+      if (this.query.styleTemplateType === undefined || this.query.styleTemplateType === null) {
         this.query.styleTemplateType = '1'
       }
+      this.currentEditRowData = {}
       return true
+    },
+    toDelete(item) {
+      this.$confirm(`确定删除样式?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.crud.delAllLoading = true
+        crudMapStyleTemplate.del([item.id]).then(res => {
+          this.crud.delAllLoading = false
+          this.crud.dleChangePage(1)
+          this.crud.delSuccessNotify()
+          this.crud.toQuery()
+        }).catch(err => {
+          this.crud.delAllLoading = false
+          console.log(err.response.data.message)
+        })
+      }).catch(() => {
+      })
+    },
+    clickStyleTempalte(item) {
+      this.currentEditRowData = item
+      // this.crud.toEdit(item)
+    },
+    hoverStyleTempalte(item) {
     },
     handleClick(tab, event) {
       console.log(tab, event)
@@ -311,19 +363,21 @@ export default {
       }
       this.crud.toQuery()
     },
+    saveJsonContent() {
+      console.log(this.styleTemplateContent)
+    },
     editStyleJson(rowData) {
       this.styleTemplateContent = {
         msg: 'loading'
       }
-      console.log(this.styleTemplateContent)
       this.currentEditRowData = rowData
       this.vueJsonEditorDialog = true
       const _this = this
       crudMapStyleTemplate.getStyleTemplateByStyleId(rowData.styleTemplateId).then(res => {
+        console.log(_this.styleTemplateContent)
         if (res.styleTemplateContent != null) {
           // eslint-disable-next-line no-eval eval('(' + res.styleTemplateContent + ')')
           _this.styleTemplateContent = JSON.parse(res.styleTemplateContent)
-          console.log(_this.styleTemplateContent)
         }
       })
     },
@@ -443,6 +497,15 @@ export default {
      display: none;
   }
   ::v-deep .jsoneditor-vue{
+     min-height: 550px;
+  }
+  ::v-deep .jsoneditor{
+     min-height: 550px;
+  }
+  ::v-deep .jsoneditor-outer{
+     min-height: 550px;
+  }
+  ::v-deep .ace-jsoneditor{
      min-height: 550px;
   }
 </style>
