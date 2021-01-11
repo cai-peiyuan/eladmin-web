@@ -29,7 +29,14 @@
         </el-tab-pane>
         <el-tab-pane label="高级模板" name="second">
           <div class="tab-temp-main">
-            <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="clickStyleTemplate(item)">
+            <div
+              v-for="item in crud.data"
+              :key="item.id"
+              class="temp-item"
+              @click="clickStyleTemplate(item)"
+              @mouseover="hoverStyleTempalte(item)"
+              @mouseleave="hideStyleTempalte(item)"
+            >
               <div
                 class="temp-img"
                 :style="styleImgUrl(item)"

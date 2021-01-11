@@ -65,7 +65,7 @@
           <el-input v-model="form.path" placeholder="路由地址" style="width: 178px;" />
         </el-form-item>
         <el-form-item label="菜单排序" prop="menuSort">
-          <el-input-number v-model.number="form.menuSort" :min="0" :max="999" controls-position="right" style="width: 178px;" />
+          <el-input-number v-model.number="form.menuSort" :min="-999" :max="999" controls-position="right" style="width: 178px;" />
         </el-form-item>
         <el-form-item v-show="!form.iframe && form.type.toString() === '1'" label="组件名称" prop="componentName">
           <el-input v-model="form.componentName" style="width: 178px;" placeholder="匹配组件内Name字段" />
@@ -129,7 +129,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" width="160px">
+      <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" width="200px">
         <template slot-scope="scope">
           <el-input
             v-if="currentEditDataId === scope.row.id"
@@ -142,7 +142,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="140px">
+      <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" width="250px">
         <template slot-scope="scope">
           <el-input
             v-if="currentEditDataId === scope.row.id"
@@ -154,7 +154,7 @@
           <span v-if="currentEditDataId != scope.row.id">{{ scope.row.path }}</span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径" width="220px">
+      <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径" width="250px">
         <template slot-scope="scope">
           <el-input
             v-if="currentEditDataId === scope.row.id"

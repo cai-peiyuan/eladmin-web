@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!--工具栏-->
-    <div class="head-container">
+    <div class="head-container" style="max-width: 1000px;">
       <styleTemplateList />
       <el-alert :closable="false" title="地图样式" />
       <el-row :gutter="40" class="panel-group" style="padding: 5px 10px 10px 25px">
@@ -18,21 +18,14 @@
                         <span class="edit"><i class="iconfont-mapstyle" />{{ item.styleRemark }}</span>
                       </div>
                       <div class="edit-info">
-                        <span class="edit-time">创建用户 {{ item.createUser }}</span>
-                        <span class="pub-time">创建时间 {{ item.createTime }}</span>
+                        <span class="edit-time">分享自 {{ item.createUser }}</span>
+                        <span class="pub-time">时间 {{ item.createTime }}</span>
                       </div>
                     </div>
                     <div class="maystyle-item-info-bottom">
-                      <span><i class="iconfont-mapstyle icon-bianjiqianbixieshuru" />编辑</span>
-                      <span><i class="iconfont-mapstyle icon-post" />发布</span>
-                      <span><i class="iconfont-mapstyle icon-share" />使用与分享</span>
-                      <span><i class="iconfont-mapstyle icon-copy" />复制</span>
-                      <span><i class="iconfont-mapstyle icon-delete" />删除</span>
                       <span><router-link :to="'/msp/resource/mapStyle/view/'+ item.styleId">预览样式</router-link></span>
-                      <span @click="editStyleJson(item)">编辑Json</span>
-                      <span><router-link :to="'/msp/resource/mapStyle/edit/'+ item.styleId">在线设计</router-link></span>
-                      <span @click="crud.toEdit(item)">修改</span>
-                      <span @click="toDelete(item)">删除</span>
+                      <span><i class="iconfont-mapstyle icon-share" />使用</span>
+                      <span><i class="iconfont-mapstyle icon-copy" />复制</span>
                     </div>
                   </div>
                 </div>
@@ -56,15 +49,12 @@
                       </div>
                     </div>
                     <div class="maystyle-item-info-bottom">
-                      <span><i class="iconfont-mapstyle icon-bianjiqianbixieshuru" />编辑</span>
-                      <span><i class="iconfont-mapstyle icon-post" />发布</span>
-                      <span><i class="iconfont-mapstyle icon-share" />使用与分享</span>
-                      <span><i class="iconfont-mapstyle icon-copy" />复制</span>
-                      <span><i class="iconfont-mapstyle icon-delete" />删除</span>
                       <span><router-link :to="'/msp/resource/mapStyle/view/'+ item.styleId">预览样式</router-link></span>
-                      <span @click="editStyleJson(item)">编辑Json</span>
                       <span><router-link :to="'/msp/resource/mapStyle/edit/'+ item.styleId">在线设计</router-link></span>
+                      <span><i class="iconfont-mapstyle icon-share" />使用</span>
+                      <span @click="editStyleJson(item)">编辑Json</span>
                       <span @click="crud.toEdit(item)">修改</span>
+                      <span><i class="iconfont-mapstyle icon-copy" />复制</span>
                       <span @click="toDelete(item)">删除</span>
                     </div>
                   </div>
@@ -129,14 +119,11 @@
           <el-form-item v-if="false" label="样式JSOn内容" prop="styleContent">
             <el-input v-model="form.styleContent" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
-          <el-form-item v-if="false" label="缩略图" prop="styleTemplateThumbnail">
-            <el-input v-model="form.styleTemplateThumbnail" style="width: 370px;" />
+          <el-form-item label="样式级别" prop="styleZoom">
+            <el-input-number v-model="form.styleZoom" style="width: 370px;" :min="1" :max="22" :step="1" />
           </el-form-item>
-          <el-form-item label="样式级别" prop="styleTemplateZoom">
-            <el-input-number v-model="form.styleTemplateZoom" style="width: 370px;" :min="1" :max="22" :step="1" />
-          </el-form-item>
-          <el-form-item label="样式中心点" prop="styleTemplateCenter">
-            <el-input v-model="form.styleTemplateCenter" style="width: 370px;" />
+          <el-form-item label="样式中心点" prop="styleCenter">
+            <el-input v-model="form.styleCenter" style="width: 370px;" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -204,7 +191,7 @@ export default {
         del: ['admin', 'mapStyle:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: ['id', 'styleContent', 'styleTemplateZoom', 'styleTemplateThumbnail'],
+      hiddenColumns: ['id', 'styleContent', 'styleZoom', 'styleThumbnail'],
       rules: {
         styleId: [
           { required: true, message: '样式id不能为空', trigger: 'blur' }
@@ -218,10 +205,10 @@ export default {
         styleRemark: [
           { required: true, message: '样式描述不能为空', trigger: 'blur' }
         ],
-        styleTemplateZoom: [
+        styleZoom: [
           { required: true, message: '样式级别不能为空', trigger: 'blur' }
         ],
-        styleTemplateCenter: [
+        styleCenter: [
           { required: true, message: '样式中心点不能为空', trigger: 'blur' }
         ]
       }
@@ -454,6 +441,9 @@ export default {
   }
   ::v-deep .ace-jsoneditor{
      min-height: 550px;
+  }
+  .mystyle-main {
+    max-width: 1000px;
   }
   .mystyle-header {
     position: relative;
