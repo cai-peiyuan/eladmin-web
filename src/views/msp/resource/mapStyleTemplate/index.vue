@@ -7,7 +7,7 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础模板" name="first">
             <div class="tab-temp-main">
-              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="clickStyleTempalte(item)" @mouseover="hoverStyleTempalte(item)">
+              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="clickStyleTemplate(item)" @mouseover="hoverStyleTempalte(item)">
                 <div
                   class="temp-img"
                   :style="styleImgUrl(item)"
@@ -42,7 +42,7 @@
 
             <div class="tab-temp-main">
 
-              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="clickStyleTempalte(item)">
+              <div v-for="item in crud.data" :key="item.id" class="temp-item" @click="clickStyleTemplate(item)">
                 <div
                   class="temp-img"
                   :style="styleImgUrl(item)"
@@ -90,6 +90,7 @@
                   height="200"
                   class="head_pic"
                   style="cursor: pointer;"
+                  title="点击更换缩略图"
                   @click="uploadThumbnail"
                 >
                 <myUpload
@@ -119,13 +120,11 @@
               <div class="detail-value">{{ currentEditRowData.styleTemplateName }}</div></li>
             <li><div class="detail-title">样式描述</div>
               <div class="detail-value">{{ currentEditRowData.styleTemplateRemark }}</div></li>
-            <li><div class="detail-title">样式Json内容</div>
-              <div class="detail-value">{{ currentEditRowData.styleTemplateContent }}</div></li>
             <li><div class="detail-title">样式级别</div>
               <div class="detail-value">{{ currentEditRowData.styleTemplateZoom }}</div></li>
             <li><div class="detail-title">样式中心点</div>
               <div class="detail-value">{{ currentEditRowData.styleTemplateCenter }}</div></li>
-            <li v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="设计样式" width="150px" align="center" fixed="right">
+            <li v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="设计样式" width="125px" align="center" fixed="right">
               <el-button type="primary" plain @click="editStyleJson(currentEditRowData)">编辑Json</el-button>
               <el-button type="primary" plain>
                 <router-link :to="'/msp/resource/mapStyleTemplate/edit/'+ currentEditRowData.styleTemplateId">
@@ -330,7 +329,7 @@ export default {
       }).catch(() => {
       })
     },
-    clickStyleTempalte(item) {
+    clickStyleTemplate(item) {
       this.currentEditRowData = item
       // this.crud.toEdit(item)
     },
@@ -390,7 +389,7 @@ export default {
      * @returns {string}
      */
     styleImgUrl(styleTemplate) {
-      return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 165px 160px no-repeat;"
+      return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 125px 125px no-repeat;"
     }
 
   }
@@ -450,14 +449,14 @@ export default {
     cursor: pointer;
     margin-left: 20px;
     margin-bottom: 20px;
-    width: 165px;
-    height: 150px;
+    width: 125px;
+    height: 125px;
     position: relative;
   }
   .temp-item .temp-img {
     border-radius: 4px;
-    width: 165px;
-    height: 150px;
+    width: 125px;
+    height: 125px;
     box-shadow: 0 1px 7px rgba(0,0,0,.2);
   }
   .temp-item .temp-info {
@@ -486,7 +485,7 @@ export default {
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    min-height: 240px;
+    min-height: 100px;
   }
   .iconfont-mapstyle {
     font-family: iconfont-mapstyle!important;
