@@ -17,6 +17,11 @@
               回首页
             </router-link>
           </li>
+          <li class="link-type">
+            <el-link @click="logout">
+              注销登录
+            </el-link>
+          </li>
         </ul>
       </el-col>
       <el-col :span="12">
@@ -43,6 +48,11 @@ export default {
       } else {
         this.$router.go(-1)
       }
+    },
+    logout() {
+      this.$store.dispatch('LogOut').then(() => {
+        location.reload()
+      })
     }
   }
 }

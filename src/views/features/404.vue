@@ -11,7 +11,8 @@
         <div class="bullshit__oops">OOPS!</div>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">请检查您输入的网址是否正确，请点击以下按钮返回主页或者发送错误报告</div>
-        <a href="/" class="bullshit__return-home">返回首页</a>
+        <a href="/" class="bullshit__return-home">首页</a>
+        <el-link class="bullshit__return-home" @click="back">上一页</el-link>
       </div>
     </div>
   </div>
@@ -24,6 +25,15 @@ export default {
   computed: {
     message() {
       return '页面找不到了......'
+    }
+  },
+  methods: {
+    back() {
+      if (this.$route.query.noGoBack) {
+        this.$router.push({ path: '/dashboard' })
+      } else {
+        this.$router.go(-1)
+      }
     }
   }
 }
