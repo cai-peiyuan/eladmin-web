@@ -24,4 +24,19 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function getStyleByStyleId(styleId) {
+  return request({
+    url: 'api/mapStyle/' + styleId,
+    method: 'get'
+  })
+}
+
+export function updateStyle(data) {
+  return request({
+    url: 'api/mapStyle/update',
+    method: 'post',
+    data
+  })
+}
+
+export default { add, edit, del, getStyleByStyleId, updateStyle }
