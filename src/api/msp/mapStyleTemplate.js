@@ -23,6 +23,7 @@ export function edit(data) {
     data
   })
 }
+
 export function getStyleTemplateByStyleId(styleId) {
   return request({
     url: 'api/mapStyleTemplate/' + styleId,
@@ -30,4 +31,12 @@ export function getStyleTemplateByStyleId(styleId) {
   })
 }
 
-export default { add, edit, del, getStyleTemplateByStyleId }
+export function updateStyleTemplate(data) {
+  return request({
+    url: 'api/mapStyleTemplate/update',
+    method: 'post',
+    data
+  })
+}
+
+export default { add, edit, del, getStyleTemplateByStyleId, updateStyleTemplate }

@@ -83,12 +83,33 @@
 
             <li>
               <div class="detail-title">缩略图</div>
-              <div class=""><img :src="currentEditRowData.styleTemplateImgBase64" width="200" height="200" class="head_pic"></div>
+              <div class="">
+                <img
+                  :src="currentEditRowData.styleTemplateImgBase64"
+                  width="200"
+                  height="200"
+                  class="head_pic"
+                  style="cursor: pointer;"
+                  @click="uploadThumbnail"
+                >
+                <myUpload
+                  v-model="show"
+                  field="thumbnail"
+                  :params="currentEditRowData"
+                  :headers="headers"
+                  :url="getUploadThumbnailUrl()"
+                  @crop-upload-success="cropUploadSuccess"
+                />
+              </div>
             </li>
 
             <li><div class="detail-title">样式id</div>
               <div class="detail-value">{{ currentEditRowData.styleTemplateId }}
-                <el-button>预览样式</el-button>
+                <el-button type="primary" plain>
+                  <router-link :to="'/msp/resource/mapStyleTemplate/view/'+ currentEditRowData.styleTemplateId">
+                    预览样式
+                  </router-link>
+                </el-button>
               </div>
             </li>
 
@@ -148,10 +169,11 @@
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
           <el-form-item label="样式id" prop="styleTemplateId">
-            <el-input v-model="form.styleTemplateId" style="width: 370px;" />
+            <el-input v-model="form.styleTemplateId" style="width: 300px;" />
+            <el-button v-if="form.id === '' || form.id === null" type="primary" plain @click="generateAccessToken">生成</el-button>
           </el-form-item>
           <el-form-item label="样式类型" prop="styleTemplateType">
-            <el-select v-model="form.styleTemplateType" size="small" placeholder="类库类型" class="filter-item" style="width: 370px;">
+            <el-select v-model="form.styleTemplateType" size="small" placeholder="样式类型" class="filter-item" style="width: 370px;">
               <el-option v-for="item in dict.dict.MSP_RESOURCE_STYLE_TEMPLATE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -168,7 +190,7 @@
             <el-input v-model="form.styleTemplateThumbnail" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="样式级别" prop="styleTemplateZoom">
-            <el-input v-model="form.styleTemplateZoom" style="width: 370px;" />
+            <el-input-number v-model="form.styleTemplateZoom" style="width: 370px;" :min="1" :max="22" :step="1" />
           </el-form-item>
           <el-form-item label="样式中心点" prop="styleTemplateCenter">
             <el-input v-model="form.styleTemplateCenter" style="width: 370px;" />
@@ -179,81 +201,18 @@
           <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
         </div>
       </el-dialog>
-      <!--表格渲染-->
-      <el-table
-        v-if="false"
-        ref="table"
-        v-loading="crud.loading"
-        :data="crud.data"
-        stripe="stripe"
-        highlight-current-row="highlight-current-row"
-        size="small"
-        style="width: 100%;"
-        @selection-change="crud.selectionChangeHandler"
-        @sort-change="crud.changeSortHandler"
-      >
-        <el-table-column type="selection" width="55" fixed="left" />
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <div class="demo-table-expand" style="padding-left: 40px">
-              <ul class="detail-info">
-
-                <li><div class="detail-title">样式id</div>
-                  <div class="detail-value">{{ props.row.styleTemplateId }}</div></li>
-                <li><div class="detail-title">样式类型</div>
-                  <div class="detail-value">{{ props.row.styleTemplateType }}</div></li>
-                <li><div class="detail-title">样式名称</div>
-                  <div class="detail-value">{{ props.row.styleTemplateName }}</div></li>
-                <li><div class="detail-title">样式描述</div>
-                  <div class="detail-value">{{ props.row.styleTemplateRemark }}</div></li>
-                <li><div class="detail-title">样式JSOn内容</div>
-                  <div class="detail-value">{{ props.row.styleTemplateContent }}</div></li>
-                <li><div class="detail-title">缩略图</div>
-                  <div class="detail-value">{{ props.row.styleTemplateThumbnail }}</div></li>
-                <li><div class="detail-title">样式级别</div>
-                  <div class="detail-value">{{ props.row.styleTemplateZoom }}</div></li>
-                <li><div class="detail-title">样式中心点</div>
-                  <div class="detail-value">{{ props.row.styleTemplateCenter }}</div></li>
-              </ul>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="styleTemplateThumbnail" label="缩略图" width="80">
-          <template slot-scope="scope">
-            <img :src="scope.row.styleTemplateImgBase64" width="40" height="40" class="head_pic">
-          </template>
-        </el-table-column>
-        <el-table-column v-if="false" prop="styleTemplateType" label="样式类型" sortable="custom" />
-        <el-table-column prop="styleTemplateName" label="样式名称" width="160" sortable="custom" />
-        <el-table-column prop="styleTemplateId" label="样式id" sortable="custom" />
-        <el-table-column prop="styleTemplateRemark" label="样式描述" />
-        <el-table-column v-if="false" prop="styleTemplateContent" label="样式JSOn内容" />
-        <el-table-column v-if="false" prop="styleTemplateZoom" label="样式级别" />
-        <el-table-column v-if="false" prop="styleTemplateCenter" label="样式中心点" />
-        <el-table-column v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="设计样式" width="150px" align="center" fixed="right">
-          <template slot-scope="scope">
-            <el-button type="primary" plain @click="editStyleJson(scope.row)">编辑Json</el-button>
-            <el-button type="primary" plain>在线设计</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="操作" width="150px" align="center" fixed="right">
-          <template slot-scope="scope">
-            <udOperation
-              :data="scope.row"
-              :permission="permission"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
     </div>
   </div>
 </template>
 
 <script>
+import myUpload from 'vue-image-crop-upload'
 import crudMapStyleTemplate from '@/api/msp/mapStyleTemplate.js'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
-import udOperation from '@crud/UD.operation'
 import vueJsonEditor from 'vue-json-editor'
+import { uuid } from 'vue-uuid'
+import { getToken } from '@/utils/auth'
+import { mapGetters } from 'vuex'
 
 const defaultForm = {
   id: null,
@@ -270,7 +229,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapStyleTemplate',
-  components: { udOperation, vueJsonEditor },
+  components: { vueJsonEditor, myUpload },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -286,6 +245,14 @@ export default {
   dicts: ['', 'MSP_RESOURCE_STYLE_TEMPLATE_TYPE'],
   data() {
     return {
+      uploadThumbnailUrl: 'api/mapStyleTemplate/uploadThumbnail',
+      show: false,
+      uploadParams: {
+        'Authorization': getToken()
+      },
+      headers: {
+        'Authorization': getToken()
+      },
       vueJsonEditorDialog: false,
       currentEditRowData: {},
       styleTemplateContent: {},
@@ -319,6 +286,13 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'user',
+      'updateAvatarApi',
+      'baseApi'
+    ])
+  },
   methods: {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
@@ -328,6 +302,14 @@ export default {
       }
       this.currentEditRowData = {}
       return true
+    },
+    cropUploadSuccess(jsonData, field) {
+      this.currentEditRowData.styleTemplateImgBase64 = (jsonData)
+      console.log(field)
+      this.show = !this.show
+    },
+    generateAccessToken() {
+      this.crud.form.styleTemplateId = uuid.v4().replace(/-/g, '')
     },
     toDelete(item) {
       this.$confirm(`确定删除样式?`, '提示', {
@@ -365,6 +347,21 @@ export default {
     },
     saveJsonContent() {
       console.log(this.styleTemplateContent)
+      crudMapStyleTemplate.updateStyleTemplate({
+        id: this.currentEditRowData.id,
+        styleTemplateContent: this.styleTemplateContent
+      }).then(res => {
+        this.$message({
+          message: '更新成功',
+          type: 'success'
+        })
+        this.vueJsonEditorDialog = false
+      }).catch(error => {
+        this.$message({
+          message: '更新失败' + error,
+          type: 'warning'
+        })
+      })
     },
     editStyleJson(rowData) {
       this.styleTemplateContent = {
@@ -380,6 +377,12 @@ export default {
           _this.styleTemplateContent = JSON.parse(res.styleTemplateContent)
         }
       })
+    },
+    uploadThumbnail() {
+      this.show = !this.show
+    },
+    getUploadThumbnailUrl() {
+      return this.$store.getters.baseApi + '/api/mapStyleTemplate/uploadThumbnail'
     },
     /**
      * 获取样式预览图
@@ -426,7 +429,7 @@ export default {
     padding-left: 0;
     list-style: none;
     li{
-      border-bottom: 1px solid #F0F3F4;
+      border-bottom: 1px solid #b8deea;
       padding: 18px 0;
       font-size: 13px;
     }
