@@ -24,8 +24,8 @@
                     </div>
                     <div class="maystyle-item-info-bottom">
                       <span><router-link :to="'/msp/resource/mapStyle/view/'+ item.styleId">预览样式</router-link></span>
-                      <span><i class="iconfont-mapstyle icon-share" />使用</span>
-                      <span><i class="iconfont-mapstyle icon-copy" />复制</span>
+                      <span @click="useStyleTip(item)"><i class="iconfont-mapstyle icon-share" />使用</span>
+                      <span @click="copyStyleUseCode(item)"><i class="iconfont-mapstyle icon-copy" />复制</span>
                     </div>
                   </div>
                 </div>
@@ -51,10 +51,10 @@
                     <div class="maystyle-item-info-bottom">
                       <span><router-link :to="'/msp/resource/mapStyle/view/'+ item.styleId">预览样式</router-link></span>
                       <span><router-link :to="'/msp/resource/mapStyle/edit/'+ item.styleId">在线设计</router-link></span>
-                      <span><i class="iconfont-mapstyle icon-share" />使用</span>
+                      <span @click="useStyleTip(item)"><i class="iconfont-mapstyle icon-share" />使用</span>
                       <span @click="editStyleJson(item)">编辑Json</span>
                       <span @click="crud.toEdit(item)">修改</span>
-                      <span><i class="iconfont-mapstyle icon-copy" />复制</span>
+                      <span @click="copyStyleUseCode(item)"><i class="iconfont-mapstyle icon-copy" />复制</span>
                       <span @click="toDelete(item)">删除</span>
                     </div>
                   </div>
@@ -90,6 +90,21 @@
         <div style="margin: 0 auto;text-align: center;">
           <el-button type="info" plain @click="vueJsonEditorDialog = !vueJsonEditorDialog">取消</el-button>
           <el-button type="primary" plain @click="saveJsonContent">保存</el-button>
+        </div>
+      </el-dialog>
+      <!-- 样式使用帮助 -->
+      <el-dialog
+        :close-on-click-modal="false"
+        :visible.sync="styleUseTipDialog"
+        :title="'【' + currentEditRowData.styleName + '】样式使用示例'"
+        width="900px"
+        center
+        height="700px"
+      >
+        <Java :value="currentEditRowData.styleUseJavaScript" height="600px" />
+        <div style="margin: 0 auto;text-align: center;">
+          <el-button type="info" plain @click="styleUseTipDialog = !styleUseTipDialog">关闭</el-button>
+          <el-button type="primary" plain @click="copyStyleUseTipCode">复制代码</el-button>
         </div>
       </el-dialog>
       <!--表单组件-->
@@ -137,6 +152,7 @@
 
 <script>
 import myUpload from 'vue-image-crop-upload'
+import Java from '@/components/JavaEdit/index'
 import crudMapStyle from '@/api/msp/mapStyle.js'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
 import vueJsonEditor from 'vue-json-editor'
@@ -157,7 +173,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapStyle',
-  components: { vueJsonEditor, myUpload, styleTemplateList },
+  components: { vueJsonEditor, myUpload, styleTemplateList, Java },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -173,6 +189,7 @@ export default {
   dicts: ['', 'MSP_RESOURCE_STYLE_TEMPLATE_TYPE'],
   data() {
     return {
+      styleUseTipDialog: false,
       uploadThumbnailUrl: 'api/mapStyle/uploadThumbnail',
       show: false,
       uploadParams: {
@@ -231,6 +248,21 @@ export default {
       }
       this.currentEditRowData = {}
       return true
+    },
+    // 复制示例代码
+    copyStyleUseTipCode() {
+      const transfer = document.createElement('input')
+      document.body.appendChild(transfer)
+      // 这里表示想要复制的内容
+      transfer.value = this.currentEditRowData.styleUseJavaScript
+      transfer.focus()
+      transfer.select()
+      if (document.execCommand('copy')) {
+        document.execCommand('copy')
+      }
+      transfer.blur()
+      console.log('复制成功')
+      document.body.removeChild(transfer)
     },
     cropUploadSuccess(jsonData, field) {
       this.currentEditRowData.styleTemplateImgBase64 = (jsonData)
@@ -323,6 +355,39 @@ export default {
      */
     styleImgUrl(styleTemplate) {
       return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 100px 100px no-repeat;"
+    },
+    /**
+     * 复制使用代码
+     * @param item
+     */
+    copyStyleUseCode(item) {
+
+    },
+    /**
+     * 使用样式示例
+     * @param item
+     */
+    useStyleTip(item) {
+      console.log(item)
+      this.currentEditRowData = item
+      this.currentEditRowData.styleUseJavaScript = 'mapabcgl.accessToken = \'申请的accessToken\';\n' +
+        'if (!mapabcgl.supported()) {\n' +
+        '    alert(\'您的浏览器不支持MapAbc GL 建议升级浏览器或者使用Chrome浏览器\');\n' +
+        '}else{\n' +
+        '    var map = new mapabcgl.Map({\n' +
+        '        container : \'map\',\n' +
+        '        style : \'mapabc://style/' + item.styleId + '\',\n' +
+        '        zoom : 8,\n' +
+        '        maxZoom:19, \n' +
+        '        minZoom:4,\n' +
+        '        center : [ 116.391,  39.911 ],\n' +
+        '        pitch:0\n' +
+        '    });\n' +
+        '    map.addControl(new mapabcgl.NavControl({showCompass:true,position:\'bottom-right\'}));\n' +
+        '};\n' +
+        ''
+      this.styleUseTipDialog = true
+      // show dialog
     }
   }
 }
