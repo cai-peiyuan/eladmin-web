@@ -19,7 +19,7 @@
               />
               <div class="temp-info">
                 <div class="temp-name">{{ item.styleTemplateName }}</div>
-                <a v-if="item.id === hoverStyleTemplateId" class="temp-use">使用此模板</a>
+                <a v-if="item.id === hoverStyleTemplateId" class="temp-use">使用此模板创建</a>
                 <a v-if="item.id === hoverStyleTemplateId" class="temp-use-senior">
                   <i class="iconfont-mapstyle icon-lock" />
                 </a>
@@ -43,7 +43,7 @@
               />
               <div class="temp-info">
                 <div class="temp-name">{{ item.styleTemplateName }}</div>
-                <a v-if="item.id === hoverStyleTemplateId" class="temp-use">使用此模板</a>
+                <a v-if="item.id === hoverStyleTemplateId" class="temp-use">使用此模板创建</a>
                 <a v-if="item.id === hoverStyleTemplateId" class="temp-use-senior">
                   <i class="iconfont-mapstyle icon-lock" />
                 </a>
@@ -73,9 +73,15 @@ const defaultForm = {
 }
 
 export default {
-  name: 'MapStyleTemplate',
+  name: 'MapStyleTemplateList',
   components: { },
   mixins: [presenter(), header(), form(defaultForm), crud()],
+  props: {
+    clickFunc: {
+      type: Function,
+      required: true
+    }
+  },
   cruds() {
     return CRUD({
       title: '地图样式模板',
@@ -108,6 +114,9 @@ export default {
     },
     clickStyleTemplate(item) {
       this.currentEditRowData = item
+      if (this.clickFunc) {
+        this.clickFunc(item)
+      }
       // this.crud.toEdit(item)
     },
     hoverStyleTempalte(item) {

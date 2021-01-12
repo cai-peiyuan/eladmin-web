@@ -1,8 +1,8 @@
-<template>
+<template slot-scope="scope">
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container" style="max-width: 1000px;">
-      <styleTemplateList />
+      <styleTemplateList :click-func="styleTemplateClick" />
       <el-alert :closable="false" title="地图样式" />
       <el-row :gutter="40" class="panel-group" style="padding: 5px 10px 10px 25px">
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -15,7 +15,7 @@
                     <div class="maystyle-item-info-top clearfix">
                       <div class="name">
                         <span class="txt text-overflow">{{ item.styleName }}</span>
-                        <span class="edit"><i class="iconfont-mapstyle" />{{ item.styleRemark }}</span>
+                        <span class="txt text-overflow">{{ item.styleRemark }}</span>
                       </div>
                       <div class="edit-info">
                         <span class="edit-time">分享自 {{ item.createUser }}</span>
@@ -26,6 +26,7 @@
                       <span><router-link :to="'/msp/resource/mapStyle/view/'+ item.styleId">预览样式</router-link></span>
                       <span @click="useStyleTip(item)"><i class="iconfont-mapstyle icon-share" />使用</span>
                       <span @click="copyStyleUseCode(item)"><i class="iconfont-mapstyle icon-copy" />复制</span>
+                      <span v-if="checkPer(['admin'])" @click="toDelete(item)">删除</span>
                     </div>
                   </div>
                 </div>
@@ -41,10 +42,10 @@
                     <div class="maystyle-item-info-top clearfix">
                       <div class="name">
                         <span class="txt text-overflow">{{ item.styleName }}</span>
-                        <span class="edit"><i class="iconfont-mapstyle" />{{ item.styleRemark }}</span>
+                        <span class="txt text-overflow" :style="stylePublicTextCss(item)">{{ item.stylePublic === '1' ? '公开样式' : '私有样式' }}</span>
                       </div>
                       <div class="edit-info">
-                        <span class="edit-time">创建用户 {{ item.createUser }}</span>
+                        <span class="edit-time">所有者 {{ item.createUser }}</span>
                         <span class="pub-time">创建时间 {{ item.createTime }}</span>
                       </div>
                     </div>
@@ -101,7 +102,7 @@
         center
         height="700px"
       >
-        <Java :value="currentEditRowData.styleUseJavaScript" height="600px" />
+        <Java :value="styleUseJavaScript" height="600px" />
         <div style="margin: 0 auto;text-align: center;">
           <el-button type="info" plain @click="styleUseTipDialog = !styleUseTipDialog">关闭</el-button>
           <el-button type="primary" plain @click="copyStyleUseTipCode">复制代码</el-button>
@@ -116,13 +117,27 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
+          <el-form-item v-if="false" label="模板id" prop="styleTemplateId">
+            <el-input v-model="form.styleTemplateId" style="width: 300px;" />
+          </el-form-item>
+          <el-form-item v-if="form.styleTemplateId" label="">
+            <div>
+              <img :src="form.styleTemplateImgBase64" width="100" height="100">
+              从模板<el-link type="danger">{{ form.styleTemplateName }}</el-link>复制
+            </div>
+          </el-form-item>
           <el-form-item label="样式id" prop="styleId">
             <el-input v-model="form.styleId" style="width: 300px;" />
             <el-button v-if="form.id === '' || form.id === null" type="primary" plain @click="generateAccessToken">生成</el-button>
           </el-form-item>
           <el-form-item label="样式类型" prop="styleType">
             <el-select v-model="form.styleType" size="small" placeholder="样式类型" class="filter-item" style="width: 370px;">
-              <el-option v-for="item in dict.dict.MSP_RESOURCE_STYLE_TEMPLATE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_STYLE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="是否公开" prop="stylePublic">
+            <el-select v-model="form.stylePublic" size="small" placeholder="样式公开" class="filter-item" style="width: 370px;">
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_STYLE_PUBLIC" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-form-item label="样式名称" prop="styleName">
@@ -168,6 +183,8 @@ const defaultForm = {
   styleRemark: null,
   styleCenter: null,
   styleZoom: null,
+  stylePublic: null,
+  styleTemplateId: null,
   createUser: null,
   createTime: null
 }
@@ -177,16 +194,16 @@ export default {
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
+      sort: ['createTime,desc', 'id,desc'],
       title: '地图样式模板',
       url: 'api/mapStyle',
       idField: 'id',
-      sort: 'id,desc',
       crudMethod: { ...crudMapStyle }
     })
   },
   // 数据字典
   el_dicts: ['', ''],
-  dicts: ['', 'MSP_RESOURCE_STYLE_TEMPLATE_TYPE'],
+  dicts: ['MSP_RESOURCE_STYLE_PUBLIC', 'MSP_RESOURCE_STYLE_TYPE'],
   data() {
     return {
       styleUseTipDialog: false,
@@ -199,6 +216,7 @@ export default {
         'Authorization': getToken()
       },
       vueJsonEditorDialog: false,
+      styleUseJavaScript: '',
       currentEditRowData: {},
       styleContent: {},
       activeName: 'first',
@@ -215,6 +233,9 @@ export default {
         ],
         styleType: [
           { required: true, message: '样式类型不能为空', trigger: 'blur' }
+        ],
+        stylePublic: [
+          { required: true, message: '样式公开不能为空', trigger: 'blur' }
         ],
         styleName: [
           { required: true, message: '样式名称不能为空', trigger: 'blur' }
@@ -249,20 +270,40 @@ export default {
       this.currentEditRowData = {}
       return true
     },
+    /**
+     * 点击地图样式模板回调函数
+     */
+    styleTemplateClick(templateItem) {
+      // 根据模板创建样式
+      console.log(templateItem)
+      this.crud.toAdd()
+      this.crud.form.styleTemplateId = templateItem.styleTemplateId
+      this.crud.form.styleTemplateName = templateItem.styleTemplateName
+      this.crud.form.styleTemplateImgBase64 = templateItem.styleTemplateImgBase64
+      this.crud.form.styleType = templateItem.styleTemplateType
+      this.crud.form.styleName = templateItem.styleTemplateName
+      this.crud.form.styleZoom = templateItem.styleTemplateZoom
+      this.crud.form.styleCenter = templateItem.styleTemplateCenter
+      this.crud.form.styleRemark = templateItem.styleTemplateRemark
+      this.crud.status.title = '从模板[' + templateItem.styleTemplateName + ']复制样式'
+    },
     // 复制示例代码
     copyStyleUseTipCode() {
       const transfer = document.createElement('input')
       document.body.appendChild(transfer)
       // 这里表示想要复制的内容
-      transfer.value = this.currentEditRowData.styleUseJavaScript
+      transfer.value = this.styleUseJavaScript
       transfer.focus()
       transfer.select()
       if (document.execCommand('copy')) {
         document.execCommand('copy')
       }
       transfer.blur()
-      console.log('复制成功')
       document.body.removeChild(transfer)
+      this.$message({
+        message: '代码复制成功',
+        type: 'success'
+      })
     },
     cropUploadSuccess(jsonData, field) {
       this.currentEditRowData.styleTemplateImgBase64 = (jsonData)
@@ -354,14 +395,25 @@ export default {
      * @returns {string}
      */
     styleImgUrl(styleTemplate) {
-      return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 100px 100px no-repeat;"
+      return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 100px 100px no-repeat;" + (styleTemplate.stylePublic === '1' ? 'border: #36a3f7 solid 1px;' : 'border: #ff4949 solid 1px;')
+    },
+    stylePublicTextCss(item) {
+      if (item.stylePublic === '1') {
+        return 'color: #36a3f7'
+      } else {
+        return 'color: #ff4949'
+      }
     },
     /**
      * 复制使用代码
      * @param item
      */
     copyStyleUseCode(item) {
-
+      this.crud.toAdd()
+      this.crud.resetForm(JSON.parse(JSON.stringify(item)))
+      this.crud.form.id = ''
+      this.crud.form.styleId = uuid.v4().replace(/-/g, '')
+      this.crud.status.title = '从模板[' + item.styleName + ']复制样式'
     },
     /**
      * 使用样式示例
@@ -370,7 +422,7 @@ export default {
     useStyleTip(item) {
       console.log(item)
       this.currentEditRowData = item
-      this.currentEditRowData.styleUseJavaScript = 'mapabcgl.accessToken = \'申请的accessToken\';\n' +
+      this.styleUseJavaScript = 'mapabcgl.accessToken = \'申请的accessToken\';\n' +
         'if (!mapabcgl.supported()) {\n' +
         '    alert(\'您的浏览器不支持MapAbc GL 建议升级浏览器或者使用Chrome浏览器\');\n' +
         '}else{\n' +
@@ -580,6 +632,20 @@ export default {
       .maystyle-item-info-bottom {
         position: absolute;
         bottom: 13px;
+        span {
+          display: inline-block;
+          margin-right: 24px;
+          cursor: pointer;
+          i {
+            font-size: 13px;
+            color: #42a4f5;
+            margin-right: 9px;
+          }
+        }
+      }
+      .maystyle-item-info-center {
+        position: absolute;
+        bottom: 63px;
         span {
           display: inline-block;
           margin-right: 24px;
