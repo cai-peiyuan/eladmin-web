@@ -20,43 +20,40 @@
         :before-close="crud.cancelCU"
         :visible.sync="crud.status.cu > 0"
         :title="crud.status.title"
-        width="500px"
+        width="550px"
       >
-        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
-          <el-form-item label="序列号" prop="id">
-            <el-input v-model="form.id" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="源名称">
+        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
+          <el-form-item label="地图数据源标识" prop="sourceName">
             <el-input v-model="form.sourceName" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="源类型">
+          <el-form-item label="源类型" prop="sourceType">
             未设置字典，请手动设置 Select
           </el-form-item>
-          <el-form-item label="源地址">
+          <el-form-item label="源地址" prop="sourceUrl">
             <el-input v-model="form.sourceUrl" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="瓦片大小">
+          <el-form-item label="瓦片大小" prop="tileSize">
             <el-input v-model="form.tileSize" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="最小级别">
-            <el-input v-model="form.minZoom" style="width: 370px;" />
+          <el-form-item label="数据源级别" prop="minZoom">
+            <el-slider
+              v-model="sourceZoomRange"
+              range
+              show-stops
+              :max="22"
+              :min="1"
+              :marks="sourceZoomRangeMarks"
+              style="width: 370px;"
+              @input="sourceZoomRangeChange"
+            />
           </el-form-item>
-          <el-form-item label="最大级别">
-            <el-input v-model="form.maxZoom" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="创建时间">
-            <el-input v-model="form.createTime" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="创建用户">
-            <el-input v-model="form.createUser" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="源备注">
-            <el-input v-model="form.sourceRemark" style="width: 370px;" />
+          <el-form-item label="备注">
+            <el-input v-model="form.sourceRemark" type="textarea" style="width: 370px;" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="text" @click="crud.cancelCU">取消</el-button>
-          <el-button :loading="crud.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+          <el-button type="info" plain @click="crud.cancelCU">取消</el-button>
+          <el-button :loading="crud.cu === 2" type="primary" plain @click="crud.submitCU">确认</el-button>
         </div>
       </el-dialog>
       <!--表格渲染-->
@@ -115,8 +112,8 @@
         <el-table-column prop="sourceType" label="源类型" sortable="custom" />
         <el-table-column prop="sourceUrl" label="源地址" sortable="custom" />
         <el-table-column prop="tileSize" label="瓦片大小" sortable="custom" />
-        <el-table-column prop="minZoom" label="最小级别" sortable="custom" />
-        <el-table-column prop="maxZoom" label="最大级别" sortable="custom" />
+        <el-table-column prop="minZoom" label="最小级别" />
+        <el-table-column prop="maxZoom" label="最大级别" />
         <el-table-column prop="createTime" label="创建时间" sortable="custom">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -153,8 +150,8 @@ const defaultForm = {
   sourceType: null,
   sourceUrl: null,
   tileSize: null,
-  minZoom: null,
-  maxZoom: null,
+  minZoom: 1,
+  maxZoom: 20,
   createTime: null,
   createUser: null,
   sourceRemark: null
@@ -174,13 +171,19 @@ export default {
   },
   data() {
     return {
+      sourceZoomRange: [1, 22],
+      sourceZoomRangeMarks: {
+        1: '1级最小级',
+        22: '最大级别',
+        10: '全国'
+      },
       permission: {
         add: ['admin', 'mapSource:add'],
         edit: ['admin', 'mapSource:edit'],
         del: ['admin', 'mapSource:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: [],
+      hiddenColumns: ['id', 'createUser', 'createTime', 'minZoom', 'maxZoom'],
       rules: {
         id: [
           { required: true, message: '序列号不能为空', trigger: 'blur' }
@@ -197,6 +200,17 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
+    },
+    [CRUD.HOOK.beforeToEdit](crud) {
+      console.log(crud)
+      this.sourceZoomRange = [crud.form.minZoom, crud.form.maxZoom]
+      return true
+    },
+
+    sourceZoomRangeChange(newValue) {
+      this.crud.form.minZoom = newValue[0]
+      this.crud.form.maxZoom = newValue[1]
+      console.log(newValue)
     }
   }
 }
@@ -228,5 +242,8 @@ export default {
   }
   ::v-deep .el-table__row {
     cursor: pointer;
+  }
+  ::v-deep .el-slider__marks-text {
+    word-break: keep-all;
   }
 </style>
