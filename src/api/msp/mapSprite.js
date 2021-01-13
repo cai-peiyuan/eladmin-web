@@ -24,4 +24,20 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function getSpriteNames(params) {
+  return request({
+    url: 'api/mapSprite/getSpriteNames',
+    method: 'get',
+    params
+  })
+}
+
+export function getSprite(params) {
+  return request({
+    url: 'api/mapSprite/getSprite',
+    method: 'get',
+    params
+  })
+}
+
+export default { add, edit, del, getSpriteNames, getSprite }

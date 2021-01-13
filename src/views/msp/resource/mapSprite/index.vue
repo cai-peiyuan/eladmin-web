@@ -2,7 +2,66 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
-      <div v-if="crud.props.searchToggle">
+
+      <el-row :gutter="40" class="panel-group">
+        <div
+          v-for="item in spriteNameGroupData"
+          :key="item.SPRITE_NAME"
+          :xs="12"
+          :sm="12"
+          :lg="6"
+          class="card-panel-col"
+        >
+          <div class="card-panel" @click="queryBySpriteName(item.SPRITE_NAME)">
+            <div class="card-panel-icon-wrapper icon-people">
+              <svg-icon icon-class="sprite" />
+              <svg-icon icon-class="sprite" class-name="card-panel-icon" />
+            </div>
+            <div class="card-panel-description">
+              <div class="card-panel-text">
+                {{ item.SPRITE_NAME }}
+              </div>
+              <count-to
+                :start-val="0"
+                :end-val="item.CNT"
+                :duration="1000"
+                class="card-panel-num"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          :xs="12"
+          :sm="12"
+          :lg="6"
+          class="card-panel-col"
+        >
+          <div class="card-panel" @click="crud.toAdd">
+            <div class="card-panel-icon-wrapper icon-people">
+              <i class="el-icon-plus" />
+            </div>
+            <div class="card-panel-description">
+              <div class="card-panel-text">
+                上传图标集合
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-row>
+      <el-row :gutter="40">
+        <el-col :span="12">这里显示css
+          <Java
+            :value="currentSpriteJsonContent"
+            height="600px"
+            style="overflow-y: hidden"
+          />
+        </el-col>
+        <el-col :span="12">这里显示img
+          <img :src="currentSpritePngBase64" style="width: 100%">
+        </el-col>
+      </el-row>
+      <div v-if="crud.props.searchToggle && false">
         <!-- 搜索 -->
         <label class="el-form-item-label">名称</label>
         <el-input v-model="query.spriteName" clearable placeholder="名称" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
@@ -13,7 +72,7 @@
         <rrOperation :crud="crud" />
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
-      <crudOperation :permission="permission" :hidden-columns="hiddenColumns" />
+      <crudOperation v-if="false" :permission="permission" :hidden-columns="hiddenColumns" />
       <!--表单组件-->
       <el-dialog
         :close-on-click-modal="false"
@@ -55,6 +114,7 @@
       </el-dialog>
       <!--表格渲染-->
       <el-table
+        v-if="false"
         ref="table"
         v-loading="crud.loading"
         :data="crud.data"
@@ -120,13 +180,14 @@
         </el-table-column>
       </el-table>
       <!--分页组件-->
-      <pagination />
+      <pagination v-if="false" />
     </div>
   </div>
 </template>
 
 <script>
 import crudMapSprite from '@/api/msp/mapSprite.js'
+import Java from '@/components/JavaEdit/index'
 import CRUD, { crud, form, header, presenter } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
@@ -145,7 +206,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapSprite',
-  components: { pagination, crudOperation, rrOperation, udOperation },
+  components: { pagination, crudOperation, rrOperation, udOperation, Java },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -158,13 +219,17 @@ export default {
   },
   data() {
     return {
+      spriteNameGroupData: [],
+      currentSpriteName: '',
+      currentSpriteJsonContent: '',
+      currentSpritePngBase64: '',
       permission: {
         add: ['admin', 'mapSprite:add'],
         edit: ['admin', 'mapSprite:edit'],
         del: ['admin', 'mapSprite:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
-      hiddenColumns: [],
+      hiddenColumns: ['id', 'createUser', 'createTime'],
       rules: {
         id: [
           { required: true, message: '序列号不能为空', trigger: 'blur' }
@@ -177,16 +242,34 @@ export default {
       ]
     }
   },
+  created() {
+    crudMapSprite.getSpriteNames({}).then(res => {
+      console.log(res)
+      this.spriteNameGroupData = res
+    })
+  },
   methods: {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
+      this.crud.page.size = 1000
       return true
+    },
+    queryBySpriteName(spriteName) {
+      console.log(spriteName)
+      this.currentSpriteName = spriteName
+      // this.crud.query.spriteName = spriteName
+      // this.crud.toQuery()
+      crudMapSprite.getSprite({ spriteName: spriteName }).then(res => {
+        this.currentSpriteJsonContent = res.spriteJsonContent
+        this.currentSpritePngBase64 = res.spritePngBase64
+        console.log(res)
+      })
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .demo-table-expand {
     font-size: 12px;
   }
@@ -212,5 +295,111 @@ export default {
   }
   ::v-deep .el-table__row {
     cursor: pointer;
+  }
+
+  .panel-group {
+    margin-top: 18px;
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    min-height: 150px;
+    .card-panel-col {
+      cursor: pointer;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      width: 165px;
+      height: 150px;
+      position: relative;
+    }
+
+    .card-panel {
+      height: 108px;
+      cursor: pointer;
+      font-size: 18px;
+      position: relative;
+      overflow: hidden;
+      color: #666;
+      background: #fff;
+      box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
+      border-color: rgba(0, 0, 0, .05);
+
+      & :hover {
+
+        .card-panel-icon-wrapper {
+          color: #fff;
+        }
+
+        .icon-people {
+          background: #40c9c6;
+        }
+
+        .icon-message {
+          background: #36a3f7;
+        }
+
+        .icon-money {
+          background: #f4516c;
+        }
+
+        .icon-shopping {
+          background: #34bfa3
+        }
+
+      }
+
+      .icon-people {
+        color: #40c9c6;
+      }
+
+      .icon-message {
+        color: #36a3f7;
+      }
+
+      .icon-money {
+        color: #f4516c;
+      }
+
+      .icon-shopping {
+        color: #34bfa3
+      }
+
+      .card-panel-icon-wrapper {
+        float: left;
+        margin: 14px 0 0 14px;
+        padding: 16px;
+        transition: all 0.38s ease-out;
+        border-radius: 6px;
+        display: none;
+      }
+
+      .card-panel-icon {
+        float: left;
+        font-size: 48px;
+        display: none;
+      }
+
+      .card-panel-description {
+        font-weight: bold;
+        margin: 10px;
+        text-align: center;
+
+        .card-panel-text {
+          word-break: break-all;
+          color: rgba(0, 0, 0, 0.45);
+        }
+
+        .card-panel-num {
+          font-size: 20px;
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+  .json-editor{
+    .CodeMirror {
+      overflow-y: hidden;
+    }
   }
 </style>
