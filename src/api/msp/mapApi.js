@@ -24,4 +24,12 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del }
+export function getTest(params) {
+  return request({
+    url: 'api/mapApi/test',
+    method: 'get',
+    params
+  })
+}
+
+export default { add, edit, del, getTest }
