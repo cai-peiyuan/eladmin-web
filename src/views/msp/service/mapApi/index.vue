@@ -189,6 +189,9 @@ export default {
     crudMapApi.getTest({}).then(res => {
       console.log(res)
     })
+    crudMapApi.getTestRest({}).then(res => {
+      console.log(res)
+    })
   },
   methods: {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据

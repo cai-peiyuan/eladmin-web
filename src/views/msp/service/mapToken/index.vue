@@ -107,7 +107,15 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="appName" label="应用名称" sortable="custom" width="150px" />
+        <el-table-column prop="appName" label="应用名称" sortable="custom" width="150px">
+          <template slot-scope="scope">
+            <span>
+              <router-link :to="'/msp/service/mapToken/edit/'+ scope.row.accessToken">
+                {{ (scope.row.appName) }}
+              </router-link>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="accessToken" label="token值" sortable="custom">
           <template slot-scope="scope">
             <span>

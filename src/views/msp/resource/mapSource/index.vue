@@ -23,19 +23,25 @@
         width="550px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="120px">
-          <el-form-item label="地图数据源标识" prop="sourceName">
+
+          <el-form-item label="资源描述">
+            <el-input v-model="form.sourceRemark" type="textarea" style="width: 370px;" />
+          </el-form-item>
+          <el-form-item label="数据源标识" prop="sourceName">
             <el-input v-model="form.sourceName" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="源类型" prop="sourceType">
-            未设置字典，请手动设置 Select
+            <el-select v-model="form.sourceType" size="small" placeholder="样式类型" class="filter-item" style="width: 370px;">
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_SOURCE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <el-form-item label="源地址" prop="sourceUrl">
             <el-input v-model="form.sourceUrl" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
           <el-form-item label="瓦片大小" prop="tileSize">
-            <el-input v-model="form.tileSize" style="width: 370px;" />
+            <el-input-number v-model="form.tileSize" style="width: 370px;" :step="128" :min="128" />
           </el-form-item>
-          <el-form-item label="数据源级别" prop="minZoom">
+          <el-form-item label="数据源级别" prop="minZoom" style="margin-bottom: 50px">
             <el-slider
               v-model="sourceZoomRange"
               range
@@ -46,9 +52,6 @@
               style="width: 370px;"
               @input="sourceZoomRangeChange"
             />
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input v-model="form.sourceRemark" type="textarea" style="width: 370px;" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -108,10 +111,15 @@
           </template>
         </el-table-column>
         <el-table-column prop="id" label="序列号" sortable="custom" />
-        <el-table-column prop="sourceName" label="源名称" sortable="custom" />
-        <el-table-column prop="sourceType" label="源类型" sortable="custom" />
+        <el-table-column prop="sourceRemark" label="资源描述" sortable="custom" width="180" />
+        <el-table-column prop="sourceName" label="资源标识" sortable="custom" width="150" />
+        <el-table-column prop="sourceType" label="源类型" sortable="custom" width="150">
+          <template slot-scope="scope">
+            {{ getDictLabel(scope.row.sourceType,'MSP_RESOURCE_SOURCE_TYPE',scope) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="sourceUrl" label="源地址" sortable="custom" />
-        <el-table-column prop="tileSize" label="瓦片大小" sortable="custom" />
+        <el-table-column prop="tileSize" label="瓦片大小" sortable="custom" width="100" />
         <el-table-column prop="minZoom" label="最小级别" />
         <el-table-column prop="maxZoom" label="最大级别" />
         <el-table-column prop="createTime" label="创建时间" sortable="custom">
@@ -119,8 +127,7 @@
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createUser" label="创建用户" sortable="custom" />
-        <el-table-column prop="sourceRemark" label="源备注" sortable="custom" />
+        <el-table-column prop="createUser" label="创建用户" />
         <el-table-column v-if="checkPer(['admin','mapSource:edit','mapSource:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
@@ -169,6 +176,9 @@ export default {
       crudMethod: { ...crudMapSource }
     })
   },
+  // 数据字典
+  el_dicts: ['MSP_RESOURCE_SOURCE_TYPE'],
+  dicts: ['MSP_RESOURCE_SOURCE_TYPE'],
   data() {
     return {
       sourceZoomRange: [1, 22],

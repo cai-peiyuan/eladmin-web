@@ -32,4 +32,12 @@ export function getTest(params) {
   })
 }
 
-export default { add, edit, del, getTest }
+export function getTestRest(params) {
+  return request({
+    url: 'api/mapApi/testRest',
+    method: 'get',
+    params
+  })
+}
+
+export default { add, edit, del, getTest, getTestRest }
