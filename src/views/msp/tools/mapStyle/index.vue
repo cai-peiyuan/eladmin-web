@@ -43,7 +43,7 @@ export default {
     const deviceHeight = document.documentElement.clientHeight
     oIframe.style.width = oIframe.parentElement.style.width
     oIframe.style.height = (Number(deviceHeight) - 120) + 'px'
-    document.getElementById('mapStyleEditorIframe').src = 'http://localhost:8888/?layer=3202069833%7E0#10.66/39.9348/116.3695'
+    document.getElementById('mapStyleEditorIframe').src = 'http://localhost:8888/?editorConfig=mspToolMapStyleEditor&layer=3202069833%7E0#10.66/39.9348/116.3695'
     window.onresize = function() { // 定义窗口大小变更通知事件
       const screenHeight = document.documentElement.clientHeight // 窗口高度
       oIframe.style.width = oIframe.parentElement.style.width
