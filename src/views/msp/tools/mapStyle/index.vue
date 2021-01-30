@@ -26,6 +26,7 @@
 <script >
 export default {
   name: 'MapStyleEditor',
+  dicts: ['MSP_TOOLS_MAP_STYLE_EDITOR_LAYER_TYPE'],
   data() {
     return {
       styleId: '',

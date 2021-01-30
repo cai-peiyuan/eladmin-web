@@ -4,8 +4,10 @@
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
-        <label class="el-form-item-label">图层类型source|style</label>
-        <el-input v-model="query.layerType" clearable placeholder="图层类型source|style" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <label class="el-form-item-label">图层类型</label>
+        <el-select v-model="query.layerType" clearable size="small" placeholder="图层类型" class="filter-item" style="width: 185px" @change="crud.toQuery">
+          <el-option v-for="item in dict.dict.MSP_TOOLS_MAP_STYLE_EDITOR_LAYER_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
         <label class="el-form-item-label">图层分组</label>
         <el-input v-model="query.layerGroup" clearable placeholder="图层分组" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <label class="el-form-item-label">图层id</label>
@@ -86,7 +88,11 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="layerType" label="图层类型source|style" sortable="custom" />
+        <el-table-column prop="layerType" label="图层类型" sortable="custom">
+          <template slot-scope="scope">
+            {{ getDictLabel(scope.row.layerType,'MSP_TOOLS_MAP_STYLE_EDITOR_LAYER_TYPE',scope) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="layerGroup" label="图层分组" sortable="custom" />
         <el-table-column prop="layerId" label="图层id" sortable="custom" />
         <el-table-column prop="layerName" label="图层名称" sortable="custom" />

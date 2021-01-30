@@ -161,6 +161,8 @@
           <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
         </div>
       </el-dialog>
+      <!--分页组件-->
+      <pagination />
     </div>
   </div>
 </template>
@@ -175,6 +177,7 @@ import { uuid } from 'vue-uuid'
 import { getToken } from '@/utils/auth'
 import { mapGetters } from 'vuex'
 import styleTemplateList from './styleTemplateList'
+import pagination from '@crud/Pagination'
 
 const defaultForm = {
   id: null,
@@ -190,7 +193,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapStyle',
-  components: { vueJsonEditor, myUpload, styleTemplateList, Java },
+  components: { pagination, vueJsonEditor, myUpload, styleTemplateList, Java },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -262,7 +265,7 @@ export default {
   methods: {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
-      this.crud.page.size = 1000
+      this.crud.page.size = 5
       console.log(this.query.stylePublic)
       if (this.query.stylePublic === undefined || this.query.stylePublic === null) {
         this.query.stylePublic = '1'
@@ -395,7 +398,9 @@ export default {
      * @returns {string}
      */
     styleImgUrl(styleTemplate) {
-      return "background: url('" + styleTemplate.styleTemplateImgBase64 + "') center center / 100px 100px no-repeat;" + (styleTemplate.stylePublic === '1' ? 'border: #36a3f7 solid 1px;' : 'border: #ff4949 solid 1px;')
+      return "background: url('" +
+        styleTemplate.styleTemplateImgBase64 + "') center center / 70px 70px no-repeat;" +
+        (styleTemplate.stylePublic === '1' ? 'border: #36a3f7 solid 1px;' : 'border: #ff4949 solid 1px;')
     },
     stylePublicTextCss(item) {
       if (item.stylePublic === '1') {
@@ -498,14 +503,14 @@ export default {
     cursor: pointer;
     margin-left: 20px;
     margin-bottom: 20px;
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     position: relative;
   }
   .temp-item .temp-img {
     border-radius: 4px;
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     box-shadow: 0 1px 7px rgba(0,0,0,.2);
   }
   .temp-item .temp-info {
@@ -564,16 +569,16 @@ export default {
   }
   .mystyle-header {
     position: relative;
-    margin-top: 32px;
-    margin-bottom: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
   .maystyle-item {
     position: relative;
     border: 1px dashed #e6ebec;
     border-radius: 3px;
     width: 100%;
-    height: 122px;
-    margin: 12px 12px 24px 0;
+    height: 80px;
+    margin: 12px 12px 10px 0;
     background: #fff;
     padding-left: 139px;
     .maystyle-item-img {
@@ -581,8 +586,8 @@ export default {
       position: absolute;
       left: 0;
       top: 0;
-      width: 120px;
-      height: 120px;
+      width: 80px;
+      height: 80px;
       border-radius: 3px 0 0 3px;
     }
     .maystyle-item-info {
