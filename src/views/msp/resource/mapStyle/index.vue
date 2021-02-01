@@ -224,9 +224,9 @@ export default {
       styleContent: {},
       activeName: 'first',
       permission: {
-        add: ['admin', 'mapStyle:add'],
-        edit: ['admin', 'mapStyle:edit'],
-        del: ['admin', 'mapStyle:del']
+        add: ['admin', 'mspMapStyle:add'],
+        edit: ['admin', 'mspMapStyle:edit'],
+        del: ['admin', 'mspMapStyle:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['id', 'styleContent', 'styleZoom', 'styleThumbnail'],

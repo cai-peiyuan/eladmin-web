@@ -140,7 +140,7 @@
             <span>{{ parseTime(scope.row.updateTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column v-if="checkPer(['admin','mapDistrict:edit','mapDistrict:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapDistrict:edit','mspMapDistrict:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -194,9 +194,9 @@ export default {
   data() {
     return {
       permission: {
-        add: ['admin', 'mapDistrict:add'],
-        edit: ['admin', 'mapDistrict:edit'],
-        del: ['admin', 'mapDistrict:del']
+        add: ['admin', 'mspMapDistrict:add'],
+        edit: ['admin', 'mspMapDistrict:edit'],
+        del: ['admin', 'mspMapDistrict:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['districtCoords', 'bounds'],

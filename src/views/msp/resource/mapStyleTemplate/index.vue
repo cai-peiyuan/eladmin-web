@@ -124,7 +124,7 @@
               <div class="detail-value">{{ currentEditRowData.styleTemplateZoom }}</div></li>
             <li><div class="detail-title">样式中心点</div>
               <div class="detail-value">{{ currentEditRowData.styleTemplateCenter }}</div></li>
-            <li v-if="checkPer(['admin','mapStyleTemplate:edit','mapStyleTemplate:del'])" label="设计样式" width="125px" align="center" fixed="right">
+            <li v-if="checkPer(['admin','mspMapStyleTemplate:edit','mspMapStyleTemplate:del'])" label="设计样式" width="125px" align="center" fixed="right">
               <el-button type="primary" plain @click="editStyleJson(currentEditRowData)">编辑Json</el-button>
               <el-button type="primary" plain>
                 <router-link :to="'/msp/resource/mapStyleTemplate/edit/'+ currentEditRowData.styleTemplateId">
@@ -257,9 +257,9 @@ export default {
       styleTemplateContent: {},
       activeName: 'first',
       permission: {
-        add: ['admin', 'mapStyleTemplate:add'],
-        edit: ['admin', 'mapStyleTemplate:edit'],
-        del: ['admin', 'mapStyleTemplate:del']
+        add: ['admin', 'mspMapStyleTemplate:add'],
+        edit: ['admin', 'mspMapStyleTemplate:edit'],
+        del: ['admin', 'mspMapStyleTemplate:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['id', 'styleTemplateContent', 'styleTemplateZoom', 'styleTemplateThumbnail'],

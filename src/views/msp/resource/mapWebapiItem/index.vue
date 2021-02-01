@@ -141,7 +141,7 @@
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column v-if="checkPer(['admin','mapWebapiItem:edit','mapWebapiItem:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapWebapiItem:edit','mspMapWebapiItem:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -195,9 +195,9 @@ export default {
   data() {
     return {
       permission: {
-        add: ['admin', 'mapWebapiItem:add'],
-        edit: ['admin', 'mapWebapiItem:edit'],
-        del: ['admin', 'mapWebapiItem:del']
+        add: ['admin', 'mspMapWebapiItem:add'],
+        edit: ['admin', 'mspMapWebapiItem:edit'],
+        del: ['admin', 'mspMapWebapiItem:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['createUser', 'createTime', 'itemContent', 'id'],

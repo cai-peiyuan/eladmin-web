@@ -170,7 +170,7 @@
         </el-table-column>
         <el-table-column prop="createUser" label="创建用户" sortable="custom" />
         <el-table-column prop="spriteRemark" label="备注" sortable="custom" />
-        <el-table-column v-if="checkPer(['admin','mapSprite:edit','mapSprite:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapSprite:edit','mspMapSprite:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -225,9 +225,9 @@ export default {
       currentSpriteJsonContent: '',
       currentSpritePngBase64: '',
       permission: {
-        add: ['admin', 'mapSprite:add'],
-        edit: ['admin', 'mapSprite:edit'],
-        del: ['admin', 'mapSprite:del']
+        add: ['admin', 'mspMapSprite:add'],
+        edit: ['admin', 'mspMapSprite:edit'],
+        del: ['admin', 'mspMapSprite:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['id', 'createUser', 'createTime'],

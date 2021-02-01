@@ -97,7 +97,7 @@
         <el-table-column prop="layerId" label="图层id" sortable="custom" />
         <el-table-column prop="layerName" label="图层名称" sortable="custom" />
         <el-table-column prop="layerComment" label="图层描述" sortable="custom" />
-        <el-table-column v-if="checkPer(['admin','mapStyleEditorLayer:edit','mapStyleEditorLayer:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapStyleEditorLayer:edit','mspMapStyleEditorLayer:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -148,9 +148,9 @@ export default {
     return {
       layerGroup: [],
       permission: {
-        add: ['admin', 'mapStyleEditorLayer:add'],
-        edit: ['admin', 'mapStyleEditorLayer:edit'],
-        del: ['admin', 'mapStyleEditorLayer:del']
+        add: ['admin', 'mspMapStyleEditorLayer:add'],
+        edit: ['admin', 'mspMapStyleEditorLayer:edit'],
+        del: ['admin', 'mspMapStyleEditorLayer:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['id'],

@@ -42,9 +42,14 @@ module.exports = {
   /**
    * 底部文字，支持html语法
    */
-  footerTxt: '© 2019 Zheng Jie <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License 2.0</a>',
+  footerTxt: '© 2019 Zheng Jie <a href="http://www.mapabc.com" target="_blank">MapAbc</a>',
   /**
    * 备案号
    */
-  caseNumber: '浙ICP备18005431号'
+  caseNumber: '北京图盟科技有限公司',
+  /**
+   * 样式编辑器地址url
+   */
+  // mspMapStyleEditorUrl: 'http://121.36.56.157:19528/editor/'
+  mspMapStyleEditorUrl: 'http://localhost:8888/'
 }

@@ -153,7 +153,7 @@
         </el-table-column>
         <el-table-column prop="refererlist" label="引用站列表" sortable="custom" />
         <el-table-column prop="remark" label="备注" sortable="custom" width="180px" />
-        <el-table-column v-if="checkPer(['admin','mapToken:edit','mapToken:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapToken:edit','mspMapToken:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -250,9 +250,9 @@ export default {
         return <span>{ option.label }</span>
       },
       permission: {
-        add: ['admin', 'mapToken:add'],
-        edit: ['admin', 'mapToken:edit'],
-        del: ['admin', 'mapToken:del']
+        add: ['admin', 'mspMapToken:add'],
+        edit: ['admin', 'mspMapToken:edit'],
+        del: ['admin', 'mspMapToken:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['createUser', 'createTime', 'refererlist', 'iplist', 'accessToken1'],

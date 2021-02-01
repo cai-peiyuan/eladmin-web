@@ -113,7 +113,7 @@
         <el-table-column prop="defaultValue" label="默认值" sortable="custom" />
         <el-table-column prop="validationRegular" label="正则校验" sortable="custom" />
         <el-table-column prop="validationErrorMsg" label="校验错误提示" sortable="custom" />
-        <el-table-column v-if="checkPer(['admin','mapApiParam:edit','mapApiParam:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapApiParam:edit','mspMapApiParam:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -163,9 +163,9 @@ export default {
   data() {
     return {
       permission: {
-        add: ['admin', 'mapApiParam:add'],
-        edit: ['admin', 'mapApiParam:edit'],
-        del: ['admin', 'mapApiParam:del']
+        add: ['admin', 'mspMapApiParam:add'],
+        edit: ['admin', 'mspMapApiParam:edit'],
+        del: ['admin', 'mspMapApiParam:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: [],

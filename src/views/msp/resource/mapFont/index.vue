@@ -206,9 +206,9 @@ export default {
     return {
       fontNameGroupData: [],
       permission: {
-        add: ['admin', 'mapFont:add'],
-        edit: ['admin', 'mapFont:edit'],
-        del: ['admin', 'mapFont:del']
+        add: ['admin', 'mspMapFont:add'],
+        edit: ['admin', 'mspMapFont:edit'],
+        del: ['admin', 'mspMapFont:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['fontContent', 'id', 'createUser'],

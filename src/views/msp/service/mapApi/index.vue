@@ -114,7 +114,7 @@
         <el-table-column prop="sid" label="服务id" sortable="custom" width="150px" />
         <el-table-column prop="remark" label="备注" sortable="custom" />
         <el-table-column prop="isEnable" label="是否可用" sortable="custom" width="100px" />
-        <el-table-column v-if="checkPer(['admin','mapApi:edit','mapApi:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapApi:edit','mspMapApi:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -163,9 +163,9 @@ export default {
   data() {
     return {
       permission: {
-        add: ['admin', 'mapApi:add'],
-        edit: ['admin', 'mapApi:edit'],
-        del: ['admin', 'mapApi:del']
+        add: ['admin', 'mspMapApi:add'],
+        edit: ['admin', 'mspMapApi:edit'],
+        del: ['admin', 'mspMapApi:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['remark', ''],

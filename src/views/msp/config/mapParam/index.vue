@@ -101,7 +101,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注" sortable="custom" />
-        <el-table-column v-if="checkPer(['admin','mapParam:edit','mapParam:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapParam:edit','mspMapParam:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -150,9 +150,9 @@ export default {
   data() {
     return {
       permission: {
-        add: ['admin', 'mapParam:add'],
-        edit: ['admin', 'mapParam:edit'],
-        del: ['admin', 'mapParam:del']
+        add: ['admin', 'mspMapParam:add'],
+        edit: ['admin', 'mspMapParam:edit'],
+        del: ['admin', 'mspMapParam:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['updateTime', 'type'],

@@ -100,7 +100,7 @@
         <el-table-column prop="configKey" label="配置项目" sortable="custom" />
         <el-table-column prop="configValue" label="配置值" sortable="custom" />
         <el-table-column prop="valueType" label="配置值类型" sortable="custom" />
-        <el-table-column v-if="checkPer(['admin','mapStyleEditorConfig:edit','mapStyleEditorConfig:del'])" label="操作" width="150px" align="center" fixed="right">
+        <el-table-column v-if="checkPer(['admin','mspMapStyleEditorConfig:edit','mspMapStyleEditorConfig:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -154,9 +154,9 @@ export default {
   data() {
     return {
       permission: {
-        add: ['admin', 'mapStyleEditorConfig:add'],
-        edit: ['admin', 'mapStyleEditorConfig:edit'],
-        del: ['admin', 'mapStyleEditorConfig:del']
+        add: ['admin', 'mspMapStyleEditorConfig:add'],
+        edit: ['admin', 'mspMapStyleEditorConfig:edit'],
+        del: ['admin', 'mspMapStyleEditorConfig:del']
       },
       // 默认隐藏的数据列放到这个数组内 这里可以手动控制显示与隐藏 默认隐藏
       hiddenColumns: ['id', 'configGroup', 'configValue', 'valueType'],
