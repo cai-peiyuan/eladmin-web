@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Logo from '@/assets/images/logo.png'
+import Logo from '@/assets/images/logo_c.svg'
 export default {
   name: 'SidebarLogo',
   props: {
@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      title: '仓储管理系统',
+      title: '地图服务管理平台',
       logo: Logo
     }
   }
