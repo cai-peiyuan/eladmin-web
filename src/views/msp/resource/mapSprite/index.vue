@@ -6,24 +6,24 @@
       <el-row :gutter="40" class="panel-group">
         <div
           v-for="item in spriteNameGroupData"
-          :key="item.SPRITE_NAME"
+          :key="item.sprite_name"
           :xs="12"
           :sm="12"
           :lg="6"
           class="card-panel-col"
         >
-          <div class="card-panel" @click="queryBySpriteName(item.SPRITE_NAME)">
+          <div class="card-panel" @click="queryBySpriteName(item.sprite_name)">
             <div class="card-panel-icon-wrapper icon-people">
               <svg-icon icon-class="sprite" />
               <svg-icon icon-class="sprite" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">
-                {{ item.SPRITE_NAME }}
+                {{ item.sprite_name }}
               </div>
               <count-to
                 :start-val="0"
-                :end-val="item.CNT"
+                :end-val="item.cnt"
                 :duration="1000"
                 class="card-panel-num"
               />
@@ -193,6 +193,7 @@ import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
+import CountTo from 'vue-count-to'
 
 const defaultForm = {
   id: null,
@@ -206,7 +207,7 @@ const defaultForm = {
 }
 export default {
   name: 'MapSprite',
-  components: { pagination, crudOperation, rrOperation, udOperation, Java },
+  components: { pagination, crudOperation, rrOperation, udOperation, Java, CountTo },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   cruds() {
     return CRUD({
@@ -242,7 +243,7 @@ export default {
       ]
     }
   },
-  created() {
+  mounted() {
     crudMapSprite.getSpriteNames({}).then(res => {
       console.log(res)
       this.spriteNameGroupData = res

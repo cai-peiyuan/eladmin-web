@@ -5,23 +5,23 @@
       <el-row :gutter="40" class="panel-group">
         <div
           v-for="item in fontNameGroupData"
-          :key="item.FONT_NAME"
+          :key="item.font_name"
           :xs="12"
           :sm="12"
           :lg="6"
           class="card-panel-col"
         >
-          <div class="card-panel" @click="queryByFontName(item.FONT_NAME)">
+          <div class="card-panel" @click="queryByFontName(item.font_name)">
             <div class="card-panel-icon-wrapper icon-people">
               <svg-icon icon-class="font" class-name="card-panel-icon" />
             </div>
             <div class="card-panel-description">
               <div class="card-panel-text">
-                {{ item.FONT_NAME }}
+                {{ item.font_name }}
               </div>
               <count-to
                 :start-val="0"
-                :end-val="item.CNT"
+                :end-val="item.cnt"
                 :duration="1000"
                 class="card-panel-num"
               />

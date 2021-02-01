@@ -297,7 +297,9 @@ export default {
       console.log(value, direction, movedKeys)
     },
     encryptToken(str) {
-      return str.substr(0, parseInt(str.split('').length / 3)) + '**' + str.substr(parseInt(str.split('').length / 3) * 2, str.split('').length)
+      return str ? str.substr(0, parseInt(str.split('').length / 3)) +
+        '**' +
+        str.substr(parseInt(str.split('').length / 3) * 2, str.split('').length) : ''
     },
     // 显示配置窗口
     showTokenApiSettingDialog(rowData) {
