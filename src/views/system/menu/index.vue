@@ -104,9 +104,17 @@
       @selection-change="crud.selectionChangeHandler"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" label="菜单标题" width="200px" prop="title">
+      <el-table-column :show-overflow-tooltip="true" label="菜单标题" width="260px" prop="title">
         <template slot-scope="scope">
-          <svg-icon :icon-class="scope.row.icon ? scope.row.icon : ''" /> <span v-text="scope.row.title" />
+          <svg-icon :icon-class="scope.row.icon ? scope.row.icon : ''" />
+          <el-input
+            v-if="currentEditDataId === scope.row.id"
+            v-model="scope.row.title"
+            size="small"
+            type="text"
+            @blur="handleInputBlurResult({index:scope.$index, value:scope.row.title, id: scope.row.id, type: 'title'})"
+          />
+          <span v-if="currentEditDataId != scope.row.id" v-text="scope.row.title" />
         </template>
       </el-table-column>
       <el-table-column width="55">
@@ -388,7 +396,7 @@ export default {
       console.log(id)
       console.log(value)
       // this.currentEditDataId = ''
-      if (type === 'menuSort' || type === 'path' || type === 'component' || type === 'permission') {
+      if (type === 'menuSort' || type === 'path' || type === 'component' || type === 'permission' || type === 'title') {
         if (type === 'menuSort') {
           this.$refs.table.sort('menuSort', 'asc')
         }

@@ -42,7 +42,7 @@ module.exports = {
   /**
    * 底部文字，支持html语法
    */
-  footerTxt: '© 2019 Zheng Jie <a href="http://www.mapabc.com" target="_blank">MapAbc</a>',
+  footerTxt: '© 2021 <a href="http://www.mapabc.com" target="_blank">MapAbc</a>',
   /**
    * 备案号
    */
@@ -51,5 +51,9 @@ module.exports = {
    * 样式编辑器地址url
    */
   // mspMapStyleEditorUrl: 'http://121.36.56.157:19528/editor/'
-  mspMapStyleEditorUrl: 'http://localhost:8888/'
+  mspMapStyleEditorUrl: 'http://localhost:8888/',
+  /**
+   * 图标编辑器
+   */
+  mspMapSpriteEditorUrl: 'http://www.baidu.com'
 }
