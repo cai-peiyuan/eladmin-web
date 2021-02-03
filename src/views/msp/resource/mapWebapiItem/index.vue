@@ -105,6 +105,7 @@
           <template slot-scope="scope">
             <svg-icon v-if="scope.row.itemType === 'js'" icon-class="java-script_1" style="width: 3em; height: 3em" />
             <svg-icon v-if="scope.row.itemType === 'css'" icon-class="css_1" style="width: 3em; height: 3em" />
+            <svg-icon v-if="scope.row.itemType === 'json'" icon-class="json" style="width: 3em; height: 3em" />
           </template>
         </el-table-column>
         <el-table-column prop="itemName" label="资源名称" sortable="custom" />
@@ -238,10 +239,10 @@ export default {
         console.log(file)
       }
       console.log(file.type)
-      const isJPG = file.type === 'text/javascript' || file.type === 'text/css'
+      const isJPG = file.type === 'text/javascript' || file.type === 'text/css' || file.type === 'application/json'
       const isLt2M = file.size / 1024 / 1024 < 5
       if (!isJPG) {
-        this.$message.error('上传文件只能是 js/css 格式!')
+        this.$message.error('上传文件只能是 js/css/json 格式!')
       }
       if (!isLt2M) {
         this.$message.error('上传文件大小不能超过 5MB!')

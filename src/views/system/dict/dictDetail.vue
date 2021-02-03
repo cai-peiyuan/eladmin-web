@@ -61,7 +61,7 @@ import pagination from '@crud/Pagination'
 import rrOperation from '@crud/RR.operation'
 import udOperation from '@crud/UD.operation'
 
-const defaultForm = { id: null, label: null, value: null, dictSort: 999 }
+const defaultForm = { id: null, label: null, value: null, dictSort: 0 }
 
 export default {
   components: { pagination, rrOperation, udOperation },

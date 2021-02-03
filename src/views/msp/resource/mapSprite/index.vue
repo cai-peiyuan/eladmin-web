@@ -82,29 +82,16 @@
         width="500px"
       >
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
-          <el-form-item label="序列号" prop="id">
-            <el-input v-model="form.id" style="width: 370px;" />
-          </el-form-item>
           <el-form-item label="名称">
             <el-input v-model="form.spriteName" style="width: 370px;" />
           </el-form-item>
-          <el-form-item label="类型">
-            未设置字典，请手动设置 Select
-          </el-form-item>
-          <el-form-item label="JSON">
-            <el-input v-model="form.spriteJson" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="PNG">
-            <el-input v-model="form.spritePng" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="创建时间">
-            <el-input v-model="form.createTime" style="width: 370px;" />
-          </el-form-item>
-          <el-form-item label="创建用户">
-            <el-input v-model="form.createUser" style="width: 370px;" />
+          <el-form-item label="类型" prop="spriteType">
+            <el-select v-model="form.spriteType" size="small" placeholder="类型" class="filter-item" style="width: 370px;">
+              <el-option v-for="item in dict.dict.MSP_RESOURCE_SPRITE_TYPE" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
           </el-form-item>
           <el-form-item label="备注">
-            <el-input v-model="form.spriteRemark" style="width: 370px;" />
+            <el-input v-model="form.spriteRemark" :rows="3" type="textarea" style="width: 370px;" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -218,6 +205,9 @@ export default {
       crudMethod: { ...crudMapSprite }
     })
   },
+  // 数据字典
+  el_dicts: ['', ''],
+  dicts: ['MSP_RESOURCE_SPRITE_TYPE'],
   data() {
     return {
       spriteNameGroupData: [],

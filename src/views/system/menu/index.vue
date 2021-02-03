@@ -237,7 +237,7 @@ import udOperation from '@crud/UD.operation'
 import DateRangePicker from '@/components/DateRangePicker'
 
 // crud交由presenter持有
-const defaultForm = { id: null, title: null, menuSort: 999, path: null, component: null, componentName: null, iframe: false, roles: [], pid: 0, icon: null, cache: false, hidden: false, type: 0, permission: null }
+const defaultForm = { id: null, title: null, menuSort: 0, path: null, component: null, componentName: null, iframe: false, roles: [], pid: 0, icon: null, cache: false, hidden: false, type: 0, permission: null }
 export default {
   name: 'Menu',
   components: { Treeselect, IconSelect, crudOperation, rrOperation, udOperation, DateRangePicker },
