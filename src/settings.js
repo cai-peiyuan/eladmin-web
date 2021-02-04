@@ -50,10 +50,10 @@ module.exports = {
   /**
    * 样式编辑器地址url
    */
-  // mspMapStyleEditorUrl: 'http://121.36.56.157:19528/editor/'
+  // mspMapStyleEditorUrl: 'http://121.36.56.157:19528/editor/',
   mspMapStyleEditorUrl: 'http://localhost:8888/',
   /**
    * 图标编辑器
    */
-  mspMapSpriteEditorUrl: 'http://www.baidu.com'
+  mspMapSpriteEditorUrl: 'http://121.36.56.157:19528/sprite-generator'
 }
